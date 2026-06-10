@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>✨ Holi picioso ✨ | 3 días de conocernos</title>
+    
+    <!-- ========== ICONO PARA LA PESTAÑA (FAVICON) ========== -->
+    <!-- Favicon en formato emoji (corazón brillante) usando data:image -->
+    <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGwSURBVFhH7ZaxTsJQFIa/0tjaREIc1MHJxMRBgyYOTiYmLj6C8QEcHBycdHZx9SlcfQEXExMHJxMTo6ZOpmBpoaWlV++BhpSGQkv5yS8p6X/P/XtvT2+BIEVRFGWf6XT6KMuynBACoYQkSZlhGFxVVdzpdLimaTidTjFN0xEEIYQQvF6vVwRBwEIIhBBnPM+zOI5ZVVXpYrGgbDaj/X6fzufzNBwO6XA4PBJCsFgsFgiCgEIIhBAsiqJ4MwyDgBCSdrvdy263y7LZDJvNZqjVaqHX62Gz2YR0Og1JkvB6vWKxWAx5nofFYgF0Oh0YjUaIxWIYDAaCIAhksVgIQRDAZDKByWQCiqLkYDAIgiAItVotTSaTKIqijKZpyvM8TdM0Jcuy5Hme5DhOxnGcDKJIq9VKVqsVOp0O0DQNiqJAURQ4jkMQBAGhUAgYhoHRaITJZILZbAaKomSz2QwMw4CiKCiKAoIgQBAEQBAGBAHh+wnA8xyYzWaIRqNQrVYhGAxCoVCAXC4HuVwOMpkMpFIpGI/Hg+12C7FYDPL5PJRKJajVasCyLCRJkizLglAoFDKZTHg8HkOWZcnzvES2AJlMJlRVlTzPkwMAAAAASUVORK5CYII=">
+    <!-- Favicon alternativo con SVG inline (corazón) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23ff66cc' d='M50,30 L50,30 C35,10 5,20 5,40 C5,60 30,75 50,90 C70,75 95,60 95,40 C95,20 65,10 50,30Z'/%3E%3C/svg%3E">
+    
     <!-- TIPOGRAFÍAS -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -345,7 +349,7 @@
             box-shadow: 0 0 25px #ff77dd;
         }
 
-        /* BOTÓN DE SORPRESA (NUEVO) */
+        /* BOTÓN DE SORPRESA */
         .sorpresa-btn {
             background: linear-gradient(95deg, #ff44aa, #ff88dd, #c084fc);
             border: none;
@@ -600,7 +604,7 @@
             <button class="btn-cariño" id="btnSuperBesos"><i class="fas fa-star"></i> +25</button>
         </div>
 
-        <!-- NUEVO BOTÓN DE SORPRESA -->
+        <!-- BOTÓN DE SORPRESA -->
         <div class="center-btn">
             <button class="sorpresa-btn" id="btnSorpresa">
                 <i class="fas fa-gift"></i> 🎁 TE TENGO UNA SORPRESA 🎁 <i class="fas fa-heart"></i>
@@ -793,17 +797,11 @@
         // ========== BOTÓN DE SORPRESA (WHATSAPP) ==========
         const btnSorpresa = document.getElementById('btnSorpresa');
         btnSorpresa.addEventListener('click', () => {
-            // Número de teléfono (sin el +, solo código y número)
             const telefono = "7701829848";
-            // Mensaje personalizado con la cantidad actual de besos
             const mensaje = `Te debo ${besoCount} besos y lo cumpliré o me quedo pelón 😘💗`;
-            // Codificar el mensaje para URL
             const mensajeCodificado = encodeURIComponent(mensaje);
-            // Crear el enlace de WhatsApp
             const urlWhatsApp = `https://wa.me/${telefono}?text=${mensajeCodificado}`;
-            // Abrir WhatsApp en una nueva pestaña
             window.open(urlWhatsApp, '_blank');
-            // Efecto visual de éxito
             btnSorpresa.style.transform = 'scale(0.95)';
             setTimeout(() => { btnSorpresa.style.transform = ''; }, 200);
             createFloatingHeart();
@@ -879,5 +877,4 @@
         }, 1000);
     </script>
 </body>
-
 </html>
