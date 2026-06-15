@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SURVICOS - Sistema de Gestión Sanitaria</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+:root{
+  --brand:#0f4c5c;
+  --brand-dark:#0a3540;
+  --brand-darker:#072830;
+  --accent:#e07a5f;
+  --accent-light:#fbe7e1;
+  --gold:#d4a373;
+
+  --blue:#2563eb;--blue-light:#dbeafe;--blue-mid:#3b82f6;
+  --green:#0f766e;--green-light:#ccfbf1;
+  --red:#dc2626;--red-light:#fde4e4;
+  --amber:#b45309;--amber-light:#fef3c7;
+  --gray:#475569;--gray-light:#f8fafc;
+  --purple:#6d28d9;--purple-light:#ede9fe;
+
+  --border:#e2e8ef;
+  --border-strong:#c8d3dc;
+  --shadow-sm:0 1px 3px rgba(15,76,92,.07);
+  --shadow:0 4px 16px rgba(15,76,92,.10);
+  --shadow-lg:0 12px 32px rgba(10,53,64,.16);
+  --bg:#eef2f6;
+  --surface:#ffffff;
+  --ink:#1a2832;
+  --ink-muted:#64748b;
+  --radius:14px;
+  --radius-sm:9px;
+  --font-display:'Manrope','Inter',system-ui,sans-serif;
+}
+
+/* ===================== LOGIN (unchanged) ===================== */
+#login-screen{
+  display:flex;align-items:center;justify-content:center;min-height:100vh;
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(212,163,115,.18) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(224,122,95,.16) 0%, transparent 45%),
+    linear-gradient(160deg,var(--brand-darker) 0%,var(--brand-dark) 45%,var(--brand) 100%);
+  padding:1.5rem;
+}
+#login-screen::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:42px 42px;pointer-events:none;
+}
+.login-wrap{
+  display:flex;width:100%;max-width:920px;border-radius:20px;overflow:hidden;
+  box-shadow:var(--shadow-lg);position:relative;z-index:1;background:#fff;min-height:560px;
+}
+.login-side{
+  flex:1.05;
+  background:
+    linear-gradient(155deg, rgba(7,40,48,.55) 0%, rgba(15,76,92,.65) 100%),
+    linear-gradient(160deg,var(--brand-darker),var(--brand) 70%, var(--gold) 140%);
+  color:#fff;padding:3rem 2.6rem;
+  display:flex;flex-direction:column;justify-content:space-between;position:relative;
+}
+.login-side::after{content:'';position:absolute;right:-60px;bottom:-60px;width:230px;height:230px;border-radius:50%;border:1px solid rgba(255,255,255,.12);}
+.login-side::before{content:'';position:absolute;right:30px;bottom:40px;width:140px;height:140px;border-radius:50%;border:1px solid rgba(255,255,255,.08);}
+.login-brandmark{width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:1.3rem;letter-spacing:1px;margin-bottom:1.5rem;backdrop-filter:blur(6px);}
+.login-side h1{font-family:var(--font-display);font-size:2.1rem;font-weight:800;letter-spacing:1px;line-height:1.15;margin-bottom:.6rem;}
+.login-side .tagline{font-size:.92rem;color:rgba(255,255,255,.78);line-height:1.6;max-width:320px;font-weight:400;}
+.login-features{display:flex;flex-direction:column;gap:.85rem;margin-top:2.2rem;position:relative;z-index:1}
+.login-feature{display:flex;align-items:center;gap:.7rem;font-size:.85rem;color:rgba(255,255,255,.88)}
+.login-feature .dot{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;border:1px solid rgba(255,255,255,.15);}
+.login-footer-side{font-size:.74rem;color:rgba(255,255,255,.5);position:relative;z-index:1;margin-top:2rem}
+.login-form-side{flex:1;padding:3rem 3rem;display:flex;flex-direction:column;justify-content:center;}
+.login-form-header{margin-bottom:2rem}
+.login-form-header h2{font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--brand-darker);letter-spacing:.2px}
+.login-form-header p{color:#8a99a0;font-size:.85rem;margin-top:.35rem}
+.login-form .form-group{margin-bottom:1.15rem}
+.login-form label{display:block;font-size:.76rem;font-weight:700;color:var(--brand-darker);margin-bottom:.45rem;text-transform:uppercase;letter-spacing:.6px;}
+.login-input-wrap{position:relative}
+.login-input-wrap .icon{position:absolute;left:.9rem;top:50%;transform:translateY(-50%);font-size:1rem;opacity:.55;pointer-events:none;}
+.login-form input,.login-form select{width:100%;padding:.78rem 1rem .78rem 2.6rem;border:1.5px solid var(--border);border-radius:10px;font-size:.92rem;outline:none;transition:all .18s;background:var(--gray-light);color:var(--ink);font-family:inherit;appearance:none;}
+.login-form select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a99a0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;background-size:16px;}
+.login-form input:focus,.login-form select:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 4px rgba(15,76,92,.08);}
+.login-form input::placeholder{color:#a8b5ba}
+.btn-login{width:100%;margin-top:.5rem;padding:.85rem;background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;border:none;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px;box-shadow:0 6px 16px rgba(15,76,92,.28);display:flex;align-items:center;justify-content:center;gap:.5rem;}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(15,76,92,.36)}
+.btn-login:active{transform:translateY(0)}
+.login-divider{display:flex;align-items:center;gap:.75rem;margin:1.4rem 0;font-size:.72rem;color:#a8b5ba;text-transform:uppercase;letter-spacing:.8px;font-weight:600;}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.login-hint{font-size:.78rem;color:#8a99a0;text-align:center;margin-top:1.4rem;line-height:1.5;}
+.login-hint strong{color:var(--brand)}
+@media (max-width:760px){.login-side{display:none}.login-wrap{min-height:auto}.login-form-side{padding:2.2rem 1.6rem}}
+
+/* ===================== APP SHELL ===================== */
+#app{display:none;flex-direction:column;min-height:100vh}
+
+/* --- TOPBAR --- */
+.topbar{
+  background:linear-gradient(135deg,var(--brand-darker) 0%, var(--brand-dark) 60%, #0d4050 100%);
+  color:#fff;display:flex;align-items:center;padding:0 1.6rem;height:60px;flex-shrink:0;
+  box-shadow:0 2px 16px rgba(7,40,48,.3);position:relative;z-index:50;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.topbar-logo{
+  font-family:var(--font-display);font-size:1.1rem;font-weight:800;letter-spacing:2.5px;margin-right:2rem;
+  display:flex;align-items:center;gap:.55rem;flex-shrink:0;
+}
+.topbar-logo-icon{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg, rgba(212,163,115,.35), rgba(224,122,95,.25));
+  border:1px solid rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+}
+.topbar-nav{display:flex;gap:.2rem;flex:1}
+.nav-btn{
+  padding:.42rem .95rem;border-radius:8px;border:none;background:transparent;
+  color:rgba(255,255,255,.55);cursor:pointer;font-size:.8rem;font-weight:600;
+  transition:all .18s;letter-spacing:.3px;font-family:inherit;
+}
+.nav-btn:hover{background:rgba(255,255,255,.09);color:rgba(255,255,255,.9)}
+.nav-btn.active{
+  background:rgba(255,255,255,.13);color:#fff;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);
+}
+.topbar-right{display:flex;align-items:center;gap:.9rem}
+.user-badge{display:flex;align-items:center;gap:.6rem;font-size:.82rem}
+.user-avatar{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(135deg,var(--gold),var(--accent));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:.74rem;color:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+  border:1.5px solid rgba(255,255,255,.2);
+}
+.btn-logout{
+  padding:.38rem .85rem;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.11);
+  color:rgba(255,255,255,.7);border-radius:7px;cursor:pointer;
+  font-size:.77rem;font-weight:600;transition:all .18s;font-family:inherit;
+}
+.btn-logout:hover{color:#fff;background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.22)}
+
+/* --- LAYOUT --- */
+.main-layout{display:flex;flex:1;overflow:hidden}
+
+/* --- SIDEBAR --- */
+.sidebar{
+  width:230px;background:var(--surface);border-right:1px solid var(--border);
+  overflow-y:auto;flex-shrink:0;padding:0 0 1.5rem;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+}
+.sidebar-section{
+  padding:1.25rem 1rem .4rem;font-size:.65rem;font-weight:800;
+  color:#9cb0bc;text-transform:uppercase;letter-spacing:1.4px;
+}
+.sidebar-item{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.58rem 1rem;margin:.1rem .65rem;
+  border-radius:9px;cursor:pointer;font-size:.83rem;
+  color:#5a7080;font-weight:500;transition:all .15s;position:relative;
+}
+.sidebar-item:hover{background:#f0f5f8;color:var(--brand-darker)}
+.sidebar-item.active{
+  background:linear-gradient(135deg,rgba(15,76,92,.1) 0%,rgba(15,76,92,.05) 100%);
+  color:var(--brand);font-weight:700;
+}
+.sidebar-item.active::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:60%;background:var(--brand);border-radius:0 3px 3px 0;
+}
+.sidebar-badge{
+  margin-left:auto;background:var(--accent);color:#fff;border-radius:20px;
+  padding:.1rem .48rem;font-size:.67rem;font-weight:700;
+}
+.sidebar-divider{height:1px;background:var(--border);margin:.5rem 1rem;}
+
+/* --- CONTENT --- */
+.content{flex:1;overflow-y:auto;padding:1.6rem 1.9rem;background:var(--bg)}
+.page{display:none}
+.page.active{display:block}
+
+/* --- PAGE HEADER --- */
+.page-header{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap;
+}
+.page-title{
+  font-family:var(--font-display);font-size:1.3rem;font-weight:800;
+  color:var(--brand-darker);letter-spacing:.1px;
+}
+.page-sub{font-size:.82rem;color:var(--ink-muted);margin-top:.22rem}
+
+/* ===================== STATS ===================== */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.4rem}
+.stat-card{
+  background:var(--surface);border-radius:var(--radius);padding:1.15rem 1.3rem;
+  border:1px solid var(--border);box-shadow:var(--shadow-sm);
+  position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s;
+}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.stat-card::after{
+  content:'';position:absolute;top:0;right:0;width:80px;height:80px;
+  border-radius:50%;transform:translate(20px,-20px);opacity:.07;
+}
+.stat-card.blue::after{background:var(--blue)}
+.stat-card.green::after{background:var(--green)}
+.stat-card.amber::after{background:var(--amber)}
+.stat-card.red::after{background:var(--red)}
+.stat-icon{
+  width:36px;height:36px;border-radius:10px;margin-bottom:.75rem;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+}
+.stat-card.blue .stat-icon{background:var(--blue-light);color:var(--blue)}
+.stat-card.green .stat-icon{background:var(--green-light);color:var(--green)}
+.stat-card.amber .stat-icon{background:var(--amber-light);color:var(--amber)}
+.stat-card.red .stat-icon{background:var(--red-light);color:var(--red)}
+.stat-label{font-size:.73rem;color:var(--ink-muted);font-weight:600;margin-bottom:.3rem;letter-spacing:.1px}
+.stat-value{font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--ink);line-height:1}
+.stat-sub{font-size:.7rem;color:#9cb0bc;margin-top:.3rem}
+.stat-card.blue .stat-value{color:var(--blue)}
+.stat-card.green .stat-value{color:var(--green)}
+.stat-card.amber .stat-value{color:var(--amber)}
+.stat-card.red .stat-value{color:var(--red)}
+
+/* ===================== BUTTONS ===================== */
+.btn{
+  padding:.5rem 1.1rem;border-radius:9px;border:none;cursor:pointer;
+  font-size:.82rem;font-weight:700;transition:all .16s;
+  display:inline-flex;align-items:center;gap:.4rem;letter-spacing:.1px;
+  font-family:inherit;white-space:nowrap;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--brand),var(--brand-dark));
+  color:#fff;box-shadow:0 2px 8px rgba(15,76,92,.22);
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(15,76,92,.32)}
+.btn-success{background:linear-gradient(135deg,#0f9b8e,var(--green));color:#fff;box-shadow:0 2px 8px rgba(15,118,110,.22)}
+.btn-success:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(15,118,110,.3)}
+.btn-danger{background:linear-gradient(135deg,#ef4444,var(--red));color:#fff;box-shadow:0 2px 8px rgba(220,38,38,.2)}
+.btn-danger:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(220,38,38,.28)}
+.btn-warning{background:linear-gradient(135deg,#d97706,var(--amber));color:#fff;box-shadow:0 2px 8px rgba(180,83,9,.2)}
+.btn-warning:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(180,83,9,.28)}
+.btn-outline{
+  background:var(--surface);color:var(--gray);
+  border:1.5px solid var(--border);
+}
+.btn-outline:hover{background:#f0f5f8;border-color:var(--border-strong);color:var(--brand-darker)}
+.btn-sm{padding:.3rem .7rem;font-size:.75rem;border-radius:7px}
+.btn-group{display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* ===================== CARDS ===================== */
+.card{
+  background:var(--surface);border-radius:var(--radius);
+  border:1px solid var(--border);overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+.card-header{
+  padding:1rem 1.3rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(180deg,#fbfdfe,var(--surface));
+}
+.card-title{font-size:.92rem;font-weight:700;color:var(--brand-darker);font-family:var(--font-display)}
+.card-body{padding:1.3rem}
+
+/* ===================== TABLES ===================== */
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+thead tr{background:#f4f8fa}
+th{
+  padding:.7rem 1rem;text-align:left;
+  font-weight:700;color:#8099a7;font-size:.69rem;
+  text-transform:uppercase;letter-spacing:.7px;
+  border-bottom:1.5px solid var(--border);
+}
+td{
+  padding:.72rem 1rem;border-bottom:1px solid #f0f5f8;
+  color:var(--gray);vertical-align:middle;
+}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background .12s}
+tbody tr:hover td{background:#f6fafc}
+
+/* ===================== BADGES ===================== */
+.badge{
+  display:inline-flex;align-items:center;gap:.3rem;
+  padding:.2rem .65rem;border-radius:20px;
+  font-size:.7rem;font-weight:700;letter-spacing:.2px;
+}
+.badge-blue{background:#dbeafe;color:#1d4ed8}
+.badge-green{background:#ccfbf1;color:#0f766e}
+.badge-red{background:#fee2e2;color:#b91c1c}
+.badge-amber{background:var(--amber-light);color:#92400e}
+.badge-gray{background:#f1f5f9;color:#475569}
+.badge-purple{background:var(--purple-light);color:#5b21b6}
+
+/* ===================== FORMS ===================== */
+.form-group{margin-bottom:1rem}
+.form-label{display:block;font-size:.77rem;font-weight:700;color:var(--brand-darker);margin-bottom:.4rem;letter-spacing:.1px}
+.form-label span{color:var(--red)}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:.62rem .95rem;border:1.5px solid var(--border);
+  border-radius:9px;font-size:.84rem;outline:none;
+  transition:all .16s;background:var(--surface);color:var(--ink);font-family:inherit;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  border-color:var(--brand);
+  box-shadow:0 0 0 3px rgba(15,76,92,.09);
+}
+.form-input:hover,.form-select:hover{border-color:var(--border-strong)}
+.form-textarea{resize:vertical;min-height:84px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.form-select{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238099a7' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right .8rem center;background-size:15px;
+  padding-right:2.2rem;
+}
+
+/* ===================== MODAL ===================== */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(7,40,48,.5);
+  z-index:1000;display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(3px);
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--surface);border-radius:16px;
+  width:690px;max-width:95vw;max-height:90vh;overflow-y:auto;
+  box-shadow:0 24px 64px rgba(7,40,48,.3);
+  border:1px solid var(--border);
+}
+.modal-header{
+  padding:1.15rem 1.5rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--surface);z-index:1;
+}
+.modal-title{font-size:1rem;font-weight:800;color:var(--brand-darker);font-family:var(--font-display)}
+.modal-close{
+  width:30px;height:30px;border-radius:8px;border:none;
+  background:#f0f5f8;cursor:pointer;font-size:.9rem;
+  display:flex;align-items:center;justify-content:center;color:#7a9aaa;
+  transition:all .16s;
+}
+.modal-close:hover{background:#e4ecf0;color:var(--ink)}
+.modal-body{padding:1.5rem}
+.modal-footer{
+  padding:1rem 1.5rem;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:.6rem;
+  background:#f8fafc;
+}
+
+/* ===================== ALERTS ===================== */
+.alert{
+  padding:.8rem 1.05rem;border-radius:10px;font-size:.82rem;
+  margin-bottom:1rem;display:flex;align-items:flex-start;gap:.6rem;
+  border:1px solid transparent;
+}
+.alert-success{background:#f0fdf9;color:#0f766e;border-color:#99f6e4}
+.alert-warning{background:#fffbeb;color:#92400e;border-color:#fcd34d}
+.alert-danger{background:#fef2f2;color:#b91c1c;border-color:#fca5a5}
+.alert-info{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+
+/* ===================== FILTER BAR ===================== */
+.filter-bar{
+  display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;
+  margin-bottom:1.1rem;padding:.85rem 1.1rem;
+  background:var(--surface);border-radius:11px;
+  border:1px solid var(--border);box-shadow:var(--shadow-sm);
+}
+.filter-bar .form-input,.filter-bar .form-select{
+  padding:.42rem .75rem;font-size:.79rem;width:auto;height:34px;
+}
+.filter-label{font-size:.77rem;font-weight:700;color:var(--brand-darker)}
+
+/* ===================== MISC ===================== */
+.urgency-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:.4rem;flex-shrink:0}
+.dot-urgente{background:#ef4444}
+.dot-convencional{background:#3b82f6}
+.dot-retraso{background:#f59e0b}
+
+/* Steps */
+.steps{display:flex;gap:0;margin-bottom:1.5rem;position:relative}
+.steps::before{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:var(--border);z-index:0;transform:translateY(-50%)}
+.step{
+  flex:1;padding:.55rem .5rem;text-align:center;font-size:.72rem;font-weight:700;
+  background:var(--surface);color:#9cb0bc;border:1.5px solid var(--border);
+  position:relative;z-index:1;transition:all .2s;
+}
+.step:first-child{border-radius:8px 0 0 8px}
+.step:last-child{border-radius:0 8px 8px 0}
+.step.done{background:var(--green-light);color:var(--green);border-color:#6ee7d1}
+.step.active{background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;border-color:transparent;box-shadow:0 2px 10px rgba(15,76,92,.28)}
+
+/* Notification dot */
+.notification-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid var(--brand-dark)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:3.5rem 1rem;color:#9cb0bc}
+.empty-icon{font-size:2.8rem;margin-bottom:.75rem;opacity:.5}
+.empty-text{font-size:.9rem;font-weight:600}
+.empty-sub{font-size:.78rem;margin-top:.4rem;opacity:.7}
+
+/* Timeline */
+.timeline{border-left:2px solid var(--border);margin-left:1rem;padding-left:1.4rem}
+.timeline-item{position:relative;margin-bottom:1rem;padding-bottom:.6rem}
+.timeline-dot{position:absolute;left:-1.73rem;top:.25rem;width:10px;height:10px;border-radius:50%;border:2px solid var(--brand);background:var(--surface)}
+.timeline-time{font-size:.71rem;color:#9cb0bc;margin-bottom:.18rem;font-weight:600}
+.timeline-text{font-size:.83rem;color:var(--gray)}
+.timeline-user{font-size:.78rem;color:var(--brand);font-weight:700}
+
+/* Tabs */
+.tab-group{
+  display:flex;gap:0;border-bottom:2px solid var(--border);
+  margin-bottom:1.4rem;
+}
+.tab-btn{
+  padding:.58rem 1.25rem;border:none;background:transparent;
+  font-size:.83rem;font-weight:700;color:#8099a7;cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-2px;
+  transition:all .16s;font-family:inherit;
+}
+.tab-btn.active{color:var(--brand);border-bottom-color:var(--brand)}
+.tab-btn:hover:not(.active){color:var(--brand-darker)}
+
+/* Priority bars */
+.priority-bar{height:3px;border-radius:2px;margin-top:.3rem}
+.priority-high{background:var(--red)}
+.priority-mid{background:var(--amber)}
+.priority-low{background:var(--green)}
+
+/* Toast */
+#toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.55rem}
+.toast-msg{
+  background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;
+  padding:.75rem 1.25rem;border-radius:11px;font-size:.83rem;
+  box-shadow:0 8px 24px rgba(7,40,48,.28);animation:slideIn .28s ease;
+  display:flex;align-items:center;gap:.6rem;font-weight:600;
+  border:1px solid rgba(255,255,255,.1);
+}
+.toast-msg.success{background:linear-gradient(135deg,#0f9b8e,#0a6b63)}
+.toast-msg.error{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+@keyframes slideIn{from{transform:translateX(110%);opacity:0}to{transform:none;opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN (unchanged) -->
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-side">
+      <div>
+        <div class="login-brandmark">SC</div>
+        <h1>SURVICOS</h1>
+        <p class="tagline">Sistema de Gestión Sanitaria del Centro Integral de Servicios. Trazabilidad completa de expedientes, dictámenes y resoluciones.</p>
+        <div class="login-features">
+          <div class="login-feature"><span class="dot">📄</span> Gestión documental DEDS de extremo a extremo</div>
+          <div class="login-feature"><span class="dot">⚖️</span> Procedimientos y resoluciones SERS</div>
+          <div class="login-feature"><span class="dot">🔐</span> Acceso por perfiles y trazabilidad de acciones</div>
+        </div>
+      </div>
+      <div class="login-footer-side">© 2024 COFEPRIS — Plataforma interna SURVICOS</div>
+    </div>
+    <div class="login-form-side">
+      <div class="login-form-header">
+        <h2>Iniciar sesión</h2>
+        <p>Ingresa tus credenciales para acceder al sistema</p>
+      </div>
+      <div class="login-form">
+        <div class="form-group">
+          <label>Correo electrónico</label>
+          <div class="login-input-wrap">
+            <span class="icon">✉️</span>
+            <input type="text" id="login-user" value="usuario@cofepris.gob.mx" placeholder="usuario@cofepris.gob.mx">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Contraseña</label>
+          <div class="login-input-wrap">
+            <span class="icon">🔒</span>
+            <input type="password" id="login-pass" value="••••••••" placeholder="Tu contraseña">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Perfil de acceso</label>
+          <div class="login-input-wrap">
+            <span class="icon">👤</span>
+            <select id="login-profile-select">
+              <option value="super_usuario" data-name="Admin Sistema">Súper Usuario</option>
+              <option value="entradas" data-name="María López">Entradas (DEDS)</option>
+              <option value="dictaminador" data-name="Carlos Ruíz">Dictaminador</option>
+              <option value="gerente" data-name="Ana García">Gerente</option>
+              <option value="subdireccion" data-name="Juan Cerón">Subdirección</option>
+              <option value="direccion" data-name="J.C. Galicia">Dirección</option>
+              <option value="salidas" data-name="Patricia Vera">Salidas</option>
+              <option value="archivo" data-name="Roberto Díaz">Archivo</option>
+              <option value="sers_pa" data-name="Sofía Morales">SERS-PA</option>
+              <option value="sers" data-name="Dr. Martínez">SERS-Subdirector</option>
+              <option value="sers_dj" data-name="Lic. Torres">SERS-DJ</option>
+              <option value="cos" data-name="Com. Hernández">COS</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-login" onclick="doLogin()">Iniciar sesión →</button>
+        <div class="login-hint">Selecciona el <strong>perfil</strong> con el que deseas ingresar para probar las distintas vistas del sistema.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-logo-icon">⛨</div>
+      SURVICOS
+    </div>
+    <div class="topbar-nav" id="topbar-nav"></div>
+    <div class="topbar-right">
+      <div class="user-badge">
+        <div class="user-avatar" id="user-avatar">US</div>
+        <span id="user-name-display" style="font-size:.81rem;font-weight:600"></span>
+        <span id="user-profile-badge" class="badge badge-blue" style="font-size:.69rem"></span>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Cerrar sesión</button>
+    </div>
+  </div>
+  <div class="main-layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="content" id="content-area"></div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Modal</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ===================== DATA STORE =====================
+const STORE = {
+  currentUser: null,
+  documentos: [
+    {id:'DOC-001',folio:'DEDS-2024-001',establecimiento:'Farmacia del Ahorro S.A.',tipo:'Dictamen',materia:'PS',urgencia:'urgente',estatus:'en_dictamen',dictaminador:'Carlos Ruíz',gerente:'Ana García',fecha:'2024-01-15',origen:'DEDS',descripcion:'Revisión de productos farmacéuticos'},
+    {id:'DOC-002',folio:'DEDS-2024-002',establecimiento:'Hospital Angeles',tipo:'Oficio',materia:'AS',urgencia:'convencional',estatus:'en_gerencia',dictaminador:null,gerente:'Ana García',fecha:'2024-01-16',origen:'DEDS',descripcion:'Servicios de salud - dictamen'},
+    {id:'DOC-003',folio:'DEDS-2024-003',establecimiento:'Lab Bayer México',tipo:'Memorándum',materia:'MS',urgencia:'retraso',estatus:'pendiente',dictaminador:null,gerente:null,fecha:'2024-01-12',origen:'DEDS',descripcion:'Insumos para la salud'},
+    {id:'DOC-004',folio:'DEDS-2024-004',establecimiento:'SEDECU Planta Industrial',tipo:'Dictamen',materia:'SS',urgencia:'convencional',estatus:'firmado',dictaminador:'Carlos Ruíz',gerente:'Ana García',fecha:'2024-01-10',origen:'DEDS',descripcion:'Salud ambiental - industria'},
+    {id:'DOC-005',folio:'DEDS-2024-005',establecimiento:'Tercero Autorizado SA',tipo:'Oficio',materia:'TS',urgencia:'urgente',estatus:'enviado',dictaminador:'Pedro Sosa',gerente:'Luis Mora',fecha:'2024-01-18',origen:'DEDS',descripcion:'Revisión tercero autorizado'},
+  ],
+  expedientes: [
+    {id:'SERS-001',razonSocial:'Farmacia Express SA',area:'DEDS',materia:'PS',numActa:'ACT-2024-001',numOrden:'ORD-2024-001',fechaActa:'2024-01-05',fechaIngreso:'2024-01-10',estatus:'en_revision',asignadoA:'Lic. Torres',resolucion:null,sancion:null},
+    {id:'SERS-002',razonSocial:'Clínica Santa Fe',area:'CAS',materia:'MS',numActa:'ACT-2024-002',numOrden:'ORD-2024-002',fechaActa:'2024-01-08',fechaIngreso:'2024-01-12',estatus:'en_dictamen',asignadoA:'Lic. Torres',resolucion:'RES-2024-001',sancion:'multa'},
+    {id:'SERS-003',razonSocial:'Industria Química SA',area:'DESVS-M',materia:'P',numInforme:'INF-2024-001',fechaInforme:'2024-01-06',fechaIngreso:'2024-01-11',estatus:'resuelto',asignadoA:null,resolucion:'RES-2024-002',sancion:'clausura'},
+    {id:'SERS-004',razonSocial:'Hospital Nacional',area:'DEDS',materia:'AS',numActa:'ACT-2024-004',numOrden:'ORD-2024-004',fechaActa:'2024-01-15',fechaIngreso:'2024-01-18',estatus:'nuevo',asignadoA:null,resolucion:null,sancion:null},
+  ],
+  usuarios: [
+    {id:'U001',nombre:'Admin Sistema',email:'admin@cofepris.gob.mx',perfil:'super_usuario',area:'TI',estatus:'activo'},
+    {id:'U002',nombre:'María López',email:'mlopez@cofepris.gob.mx',perfil:'entradas',area:'DEDS',estatus:'activo'},
+    {id:'U003',nombre:'Carlos Ruíz',email:'cruiz@cofepris.gob.mx',perfil:'dictaminador',area:'DEDS-PS',estatus:'activo'},
+    {id:'U004',nombre:'Ana García',email:'agarcia@cofepris.gob.mx',perfil:'gerente',area:'DEDS',estatus:'activo'},
+    {id:'U005',nombre:'Juan Cerón',email:'jceron@cofepris.gob.mx',perfil:'subdireccion',area:'DEDS',estatus:'activo'},
+    {id:'U006',nombre:'J.C. Galicia',email:'jgalicia@cofepris.gob.mx',perfil:'direccion',area:'DEDS',estatus:'activo'},
+    {id:'U007',nombre:'Patricia Vera',email:'pvera@cofepris.gob.mx',perfil:'salidas',area:'DEDS',estatus:'activo'},
+    {id:'U008',nombre:'Roberto Díaz',email:'rdiaz@cofepris.gob.mx',perfil:'archivo',area:'DEDS',estatus:'activo'},
+    {id:'U009',nombre:'Sofía Morales',email:'smorales@cofepris.gob.mx',perfil:'sers_pa',area:'SERS',estatus:'activo'},
+    {id:'U010',nombre:'Dr. Martínez',email:'dmartinez@cofepris.gob.mx',perfil:'sers',area:'SERS',estatus:'activo'},
+    {id:'U011',nombre:'Lic. Torres',email:'ltorres@cofepris.gob.mx',perfil:'sers_dj',area:'SERS',estatus:'activo'},
+    {id:'U012',nombre:'Com. Hernández',email:'chernandez@cofepris.gob.mx',perfil:'cos',area:'COS',estatus:'activo'},
+    {id:'U013',nombre:'Pedro Sosa',email:'psosa@cofepris.gob.mx',perfil:'dictaminador',area:'DEDS-TS',estatus:'inactivo'},
+    {id:'U014',nombre:'Luis Mora',email:'lmora@cofepris.gob.mx',perfil:'gerente',area:'DEDS',estatus:'activo'},
+  ],
+  expedientesArchivo: [
+    {id:'ARC-001',folio:'DEDS-2024-004',establecimiento:'SEDECU Planta Industrial',ubicacion:'Estante A-3',fechaIngreso:'2024-01-20',estatus:'resguardado',prestado:false},
+  ],
+  resoluciones: [
+    {id:'RES-2024-001',expedienteId:'SERS-002',texto:'Resolución de multa por incumplimiento',rubricado:true,firmado:false,observaciones:null,estatus:'pendiente_firma'},
+    {id:'RES-2024-002',expedienteId:'SERS-003',texto:'Resolución de clausura definitiva',rubricado:true,firmado:true,observaciones:null,estatus:'firmada',procederClausura:true},
+  ],
+  notificaciones: [
+    {id:'N1',texto:'DOC-002 asignado a revisión de Gerencia',leido:false,fecha:'2024-01-16'},
+    {id:'N2',texto:'Expediente SERS-002 en dictamen jurídico',leido:false,fecha:'2024-01-17'},
+    {id:'N3',texto:'Resolución RES-2024-001 pendiente de firma',leido:true,fecha:'2024-01-18'},
+  ]
+};
+
+const PROFILES = {
+  super_usuario:{label:'Súper Usuario',nav:['usuarios']},
+  entradas:{label:'Entradas DEDS',nav:['gestion','reportes']},
+  dictaminador:{label:'Dictaminador',nav:['dictamen','reportes']},
+  gerente:{label:'Gerente',nav:['gestion','dictamen','reportes']},
+  subdireccion:{label:'Subdirección',nav:['gestion','dictamen','reportes']},
+  direccion:{label:'Dirección',nav:['gestion','dictamen','reportes']},
+  salidas:{label:'Salidas DEDS',nav:['salidas','reportes']},
+  archivo:{label:'Archivo DEDS',nav:['archivo','reportes']},
+  sers_pa:{label:'SERS-Administrativo',nav:['sers_admin','reportes']},
+  sers:{label:'SERS-Subdirector',nav:['sers_subdirector','reportes']},
+  sers_dj:{label:'SERS-Dictaminador Jur.',nav:['sers_dj','reportes']},
+  cos:{label:'COS',nav:['cos_resoluciones','reportes']},
+};
+
+let currentPage = '';
+
+function doLogin(){
+  const u=document.getElementById('login-user').value;
+  const p=document.getElementById('login-pass').value;
+  const sel=document.getElementById('login-profile-select');
+  const selectedProfile=sel.value;
+  const selectedProfileName=sel.options[sel.selectedIndex].dataset.name;
+  if(!u||!p){showToast('Complete usuario y contraseña','error');return;}
+  if(!u.includes('@cofepris.gob.mx')&&!u.includes('@')){showToast('Dominio de correo no válido','error');return;}
+  STORE.currentUser={email:u,nombre:selectedProfileName,perfil:selectedProfile};
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  initApp();
+  showToast('Bienvenido, '+selectedProfileName,'success');
+}
+
+function doLogout(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  STORE.currentUser=null;
+}
+
+function initApp(){
+  const u=STORE.currentUser;
+  const initials=u.nombre.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('user-avatar').textContent=initials;
+  document.getElementById('user-name-display').textContent=u.nombre;
+  document.getElementById('user-profile-badge').textContent=PROFILES[u.perfil].label;
+  buildNav();buildSidebar();
+  showPage(getDefaultPage());
+}
+
+function getDefaultPage(){
+  const p=STORE.currentUser.perfil;
+  const map={super_usuario:'usuarios',entradas:'gestion_entradas',dictaminador:'dictamen_lista',gerente:'gestion_gerente',subdireccion:'gestion_subdir',direccion:'gestion_dir',salidas:'salidas_lista',archivo:'archivo_lista',sers_pa:'sers_registro',sers:'sers_revision',sers_dj:'sers_analisis',cos:'cos_resoluciones'};
+  return map[p]||'dashboard';
+}
+
+function buildNav(){
+  const nav=document.getElementById('topbar-nav');
+  nav.innerHTML='';
+  const p=STORE.currentUser.perfil;
+  const items=[];
+  if(['entradas','gerente','subdireccion','direccion','salidas','archivo'].includes(p)) items.push({id:'deds_home',label:'DEDS'});
+  if(['sers_pa','sers','sers_dj','cos'].includes(p)) items.push({id:'sers_home',label:'SERS'});
+  if(p==='super_usuario') items.push({id:'usuarios',label:'Gestión de Usuarios'});
+  items.push({id:'reportes_page',label:'Reportes'});
+  items.push({id:'notificaciones_page',label:'🔔 Notificaciones'});
+  items.forEach(item=>{
+    const btn=document.createElement('button');
+    btn.className='nav-btn';btn.textContent=item.label;
+    btn.onclick=()=>showPage(item.id);nav.appendChild(btn);
+  });
+}
+
+function buildSidebar(){
+  const sb=document.getElementById('sidebar');
+  const p=STORE.currentUser.perfil;
+  let html='';
+  if(p==='super_usuario'){
+    html+=sidebarSection('Administración');
+    html+=sidebarItem('usuarios','👥 Usuarios del Sistema',true);
+    html+=sidebarItem('usuarios_nuevo','➕ Agregar Usuario');
+  }else if(p==='entradas'){
+    html+=sidebarSection('DEDS — Entradas');
+    html+=sidebarItem('gestion_entradas','📄 Gestión de Asuntos',true);
+    html+=sidebarItem('gestion_entradas_nuevo','➕ Nuevo Documento');
+  }else if(p==='dictaminador'){
+    html+=sidebarSection('Dictamen');
+    html+=sidebarItem('dictamen_lista','📋 Mis Documentos',true,'3');
+    html+=sidebarItem('dictamen_urgentes','🔴 Urgentes');
+  }else if(p==='gerente'){
+    html+=sidebarSection('Gestión de Asuntos');
+    html+=sidebarItem('gestion_gerente','📬 Recepción',true,'2');
+    html+=sidebarItem('dictamen_lista','📝 Dictaminar');
+    html+=sidebarItem('asignacion_dictaminador','👤 Asignar Dictaminador');
+  }else if(p==='subdireccion'){
+    html+=sidebarSection('Subdirección');
+    html+=sidebarItem('gestion_subdir','📬 Documentos',true,'1');
+    html+=sidebarItem('dictamen_lista','📝 Dictaminar');
+  }else if(p==='direccion'){
+    html+=sidebarSection('Dirección');
+    html+=sidebarItem('gestion_dir','📬 Documentos',true,'2');
+    html+=sidebarItem('dictamen_lista','📝 Dictaminar');
+  }else if(p==='salidas'){
+    html+=sidebarSection('Salidas');
+    html+=sidebarItem('salidas_lista','📤 Documentos Recibidos',true,'1');
+    html+=sidebarItem('salidas_envio','📮 Registrar Envío');
+    html+=sidebarItem('salidas_acuses','📋 Acuses');
+  }else if(p==='archivo'){
+    html+=sidebarSection('Archivo');
+    html+=sidebarItem('archivo_lista','🗄️ Expedientes',true,'1');
+    html+=sidebarItem('archivo_prestamo','📤 Préstamos');
+  }else if(p==='sers_pa'){
+    html+=sidebarSection('SERS — Administrativo');
+    html+=sidebarItem('sers_registro','📄 Registro de Expedientes',true);
+    html+=sidebarItem('sers_admin_gestion','📋 Mis Expedientes','2');
+    html+=sidebarItem('sers_archivo','🗄️ Archivo');
+  }else if(p==='sers'){
+    html+=sidebarSection('SERS — Subdirector');
+    html+=sidebarItem('sers_revision','📬 Revisión ET',true,'2');
+    html+=sidebarItem('sers_firma','✍️ Firmar Documentos','1');
+    html+=sidebarItem('sers_visita','🏥 Visitas Verificación');
+  }else if(p==='sers_dj'){
+    html+=sidebarSection('SERS — Dict. Jurídico');
+    html+=sidebarItem('sers_analisis','📂 Análisis ET',true,'1');
+    html+=sidebarItem('sers_eval','📋 Evaluación EA');
+    html+=sidebarItem('sers_resolucion','⚖️ Resoluciones');
+  }else if(p==='cos'){
+    html+=sidebarSection('COS — Comisionado');
+    html+=sidebarItem('cos_resoluciones','⚖️ Resoluciones',true,'1');
+    html+=sidebarItem('cos_clausuras','🔒 Clausuras');
+    html+=sidebarItem('cos_firmadas','✅ Firmadas');
+  }
+  html+='<div class="sidebar-divider"></div>';
+  html+=sidebarSection('General');
+  html+=sidebarItem('reportes_page','📊 Reportes');
+  html+=sidebarItem('notificaciones_page','🔔 Notificaciones','2');
+  sb.innerHTML=html;
+  sb.querySelectorAll('.sidebar-item').forEach(item=>{
+    item.addEventListener('click',()=>showPage(item.dataset.page));
+  });
+}
+
+function sidebarSection(label){return`<div class="sidebar-section">${label}</div>`;}
+function sidebarItem(page,label,active,badge){
+  return`<div class="sidebar-item${active?' active':''}" data-page="${page}">${label}${badge?`<span class="sidebar-badge">${badge}</span>`:''}</div>`;
+}
+
+function showPage(pageId){
+  currentPage=pageId;
+  document.querySelectorAll('.sidebar-item').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`[data-page="${pageId}"]`)?.classList.add('active');
+  const area=document.getElementById('content-area');
+  const pages={
+    usuarios:renderUsuarios,
+    usuarios_nuevo:()=>openModalAgregarUsuario(),
+    gestion_entradas:renderGestionEntradas,
+    gestion_entradas_nuevo:()=>openModalNuevoDocumento(),
+    dictamen_lista:renderDictamenLista,
+    dictamen_urgentes:()=>renderDictamenLista('urgente'),
+    gestion_gerente:renderGestionGerente,
+    gestion_subdir:renderGestionSubdir,
+    gestion_dir:renderGestionDir,
+    asignacion_dictaminador:renderAsignacionDictaminador,
+    salidas_lista:renderSalidasLista,
+    salidas_envio:renderSalidasEnvio,
+    salidas_acuses:renderSalidasAcuses,
+    archivo_lista:renderArchivoLista,
+    archivo_prestamo:renderArchivoPrestamo,
+    sers_registro:renderSersRegistro,
+    sers_admin_gestion:renderSersAdminGestion,
+    sers_revision:renderSersRevision,
+    sers_firma:renderSersFirma,
+    sers_visita:renderSersVisita,
+    sers_analisis:renderSersAnalisis,
+    sers_eval:renderSersEval,
+    sers_resolucion:renderSersResolucion,
+    sers_archivo:renderSersArchivo,
+    cos_resoluciones:renderCosResoluciones,
+    cos_clausuras:renderCosClausuras,
+    cos_firmadas:renderCosFirmadas,
+    reportes_page:renderReportes,
+    notificaciones_page:renderNotificaciones,
+    deds_home:renderGestionEntradas,
+    sers_home:renderSersRegistro,
+  };
+  if(pages[pageId]) area.innerHTML=pages[pageId]()||'';
+  else area.innerHTML=`<div class="empty-state"><div class="empty-icon">🚧</div><div class="empty-text">Página en construcción</div></div>`;
+}
+
+// ===================== PAGES =====================
+
+function renderUsuarios(){
+  let rows=STORE.usuarios.map(u=>`
+    <tr>
+      <td><span style="font-family:var(--font-display);font-weight:700;color:var(--brand-darker)">${u.id}</span></td>
+      <td><strong>${u.nombre}</strong></td>
+      <td style="color:var(--ink-muted)">${u.email}</td>
+      <td><span class="badge ${perfilBadge(u.perfil)}">${PROFILES[u.perfil]?.label||u.perfil}</span></td>
+      <td>${u.area}</td>
+      <td><span class="badge ${u.estatus==='activo'?'badge-green':'badge-red'}">${u.estatus}</span></td>
+      <td>
+        <div class="btn-group">
+          <button class="btn btn-outline btn-sm" onclick="openModalEditarUsuario('${u.id}')">✏️ Editar</button>
+          <button class="btn btn-danger btn-sm" onclick="confirmarEliminarUsuario('${u.id}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`).join('');
+  return`<div class="page-header">
+    <div>
+      <div class="page-title">Gestión de Usuarios</div>
+      <div class="page-sub">Administrar perfiles y accesos del sistema SURVICOS</div>
+    </div>
+    <button class="btn btn-primary" onclick="openModalAgregarUsuario()">+ Agregar Usuario</button>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">Buscar:</span>
+    <input class="form-input" placeholder="Nombre o correo..." id="filtro-usuario" oninput="filtrarUsuarios()">
+    <select class="form-select" id="filtro-perfil-u" onchange="filtrarUsuarios()">
+      <option value="">Todos los perfiles</option>
+      ${Object.entries(PROFILES).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join('')}
+    </select>
+    <select class="form-select" id="filtro-estatus-u" onchange="filtrarUsuarios()">
+      <option value="">Todos</option><option value="activo">Activo</option><option value="inactivo">Inactivo</option>
+    </select>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Usuarios Registrados</span>
+      <span class="badge badge-blue">${STORE.usuarios.length} total</span>
+    </div>
+    <table id="tabla-usuarios">
+      <thead><tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Perfil</th><th>Área</th><th>Estatus</th><th>Acciones</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+function filtrarUsuarios(){
+  const txt=(document.getElementById('filtro-usuario')?.value||'').toLowerCase();
+  const pf=document.getElementById('filtro-perfil-u')?.value||'';
+  const es=document.getElementById('filtro-estatus-u')?.value||'';
+  const rows=STORE.usuarios.filter(u=>
+    (!txt||(u.nombre+u.email).toLowerCase().includes(txt))&&
+    (!pf||u.perfil===pf)&&(!es||u.estatus===es)
+  ).map(u=>`<tr>
+    <td><span style="font-family:var(--font-display);font-weight:700;color:var(--brand-darker)">${u.id}</span></td>
+    <td><strong>${u.nombre}</strong></td>
+    <td style="color:var(--ink-muted)">${u.email}</td>
+    <td><span class="badge ${perfilBadge(u.perfil)}">${PROFILES[u.perfil]?.label||u.perfil}</span></td>
+    <td>${u.area}</td>
+    <td><span class="badge ${u.estatus==='activo'?'badge-green':'badge-red'}">${u.estatus}</span></td>
+    <td><div class="btn-group">
+      <button class="btn btn-outline btn-sm" onclick="openModalEditarUsuario('${u.id}')">✏️ Editar</button>
+      <button class="btn btn-danger btn-sm" onclick="confirmarEliminarUsuario('${u.id}')">🗑️</button>
+    </div></td>
+  </tr>`).join('');
+  document.querySelector('#tabla-usuarios tbody').innerHTML=rows||'<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:2rem">Sin resultados</td></tr>';
+}
+
+function perfilBadge(p){
+  const m={super_usuario:'badge-purple',entradas:'badge-blue',dictaminador:'badge-amber',gerente:'badge-green',subdireccion:'badge-blue',direccion:'badge-purple',salidas:'badge-gray',archivo:'badge-gray',sers_pa:'badge-amber',sers:'badge-blue',sers_dj:'badge-green',cos:'badge-purple'};
+  return m[p]||'badge-gray';
+}
+
+function openModalAgregarUsuario(){
+  openModal('Agregar Nuevo Usuario',`
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nombre completo <span>*</span></label><input class="form-input" id="nu-nombre" placeholder="Nombre Apellido"></div>
+      <div class="form-group"><label class="form-label">Correo electrónico <span>*</span></label><input class="form-input" id="nu-email" placeholder="correo@cofepris.gob.mx" type="email"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Perfil <span>*</span></label>
+        <select class="form-select" id="nu-perfil">
+          ${Object.entries(PROFILES).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Área <span>*</span></label><input class="form-input" id="nu-area" placeholder="DEDS, SERS, COS..."></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Contraseña temporal <span>*</span></label><input class="form-input" id="nu-pass" type="password" placeholder="Mínimo 8 caracteres"></div>
+      <div class="form-group"><label class="form-label">Estatus</label>
+        <select class="form-select" id="nu-estatus"><option value="activo">Activo</option><option value="inactivo">Inactivo</option></select>
+      </div>
+    </div>
+  `,()=>{
+    const n=document.getElementById('nu-nombre').value;
+    const e=document.getElementById('nu-email').value;
+    const pf=document.getElementById('nu-perfil').value;
+    const a=document.getElementById('nu-area').value;
+    const es=document.getElementById('nu-estatus').value;
+    if(!n||!e||!a){showToast('Complete todos los campos requeridos','error');return;}
+    if(!e.includes('@')){showToast('Correo electrónico inválido','error');return;}
+    const id='U'+String(STORE.usuarios.length+1).padStart(3,'0');
+    STORE.usuarios.push({id,nombre:n,email:e,perfil:pf,area:a,estatus:es});
+    closeModal();showToast('Usuario '+n+' agregado exitosamente','success');showPage('usuarios');
+  },'Agregar Usuario');
+}
+
+function openModalEditarUsuario(id){
+  const u=STORE.usuarios.find(x=>x.id===id);if(!u)return;
+  openModal('Editar Usuario: '+u.nombre,`
+    <div class="alert alert-info">⚠️ El ID de usuario no puede modificarse por seguridad.</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nombre completo</label><input class="form-input" id="eu-nombre" value="${u.nombre}"></div>
+      <div class="form-group"><label class="form-label">Correo</label><input class="form-input" id="eu-email" value="${u.email}" type="email"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Perfil</label>
+        <select class="form-select" id="eu-perfil">
+          ${Object.entries(PROFILES).map(([k,v])=>`<option value="${k}" ${k===u.perfil?'selected':''}>${v.label}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Área</label><input class="form-input" id="eu-area" value="${u.area}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Estatus</label>
+      <select class="form-select" id="eu-estatus">
+        <option value="activo" ${u.estatus==='activo'?'selected':''}>Activo</option>
+        <option value="inactivo" ${u.estatus==='inactivo'?'selected':''}>Inactivo</option>
+      </select>
+    </div>
+  `,()=>{
+    u.nombre=document.getElementById('eu-nombre').value;
+    u.email=document.getElementById('eu-email').value;
+    u.perfil=document.getElementById('eu-perfil').value;
+    u.area=document.getElementById('eu-area').value;
+    u.estatus=document.getElementById('eu-estatus').value;
+    closeModal();showToast('Usuario actualizado','success');showPage('usuarios');
+  },'Guardar Cambios');
+}
+
+function confirmarEliminarUsuario(id){
+  const u=STORE.usuarios.find(x=>x.id===id);if(!u)return;
+  openModal('⚠️ Archivar Usuario',`
+    <div class="alert alert-danger">Esta acción archivará al usuario <strong>${u.nombre}</strong>. El registro quedará en el sistema para trazabilidad pero el usuario no podrá acceder.</div>
+    <p style="font-size:.85rem;color:#374151">¿Está seguro de que desea continuar?</p>
+  `,()=>{
+    u.estatus='inactivo';
+    closeModal();showToast('Usuario '+u.nombre+' archivado','success');showPage('usuarios');
+  },'Confirmar Eliminación','btn-danger');
+}
+
+function renderGestionEntradas(){
+  const docs=STORE.documentos;
+  return`<div class="page-header">
+    <div><div class="page-title">Gestión de Asuntos — Entradas DEDS</div><div class="page-sub">Registrar, modificar y pre-asignar documentos, muestras y/o etiquetas</div></div>
+    <button class="btn btn-primary" onclick="openModalNuevoDocumento()">+ Nuevo Documento</button>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card blue"><div class="stat-icon">📄</div><div class="stat-label">Total documentos</div><div class="stat-value">${docs.length}</div></div>
+    <div class="stat-card amber"><div class="stat-icon">⚡</div><div class="stat-label">Urgentes</div><div class="stat-value">${docs.filter(d=>d.urgencia==='urgente').length}</div></div>
+    <div class="stat-card red"><div class="stat-icon">⏰</div><div class="stat-label">Con retraso</div><div class="stat-value">${docs.filter(d=>d.urgencia==='retraso').length}</div></div>
+    <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-label">Enviados</div><div class="stat-value">${docs.filter(d=>d.estatus==='enviado').length}</div></div>
+  </div>
+  ${renderTablaDocumentos(docs,'entradas')}`;
+}
+
+function renderTablaDocumentos(docs,modo){
+  const rows=docs.map(d=>`<tr>
+    <td><span style="font-family:var(--font-display);font-weight:700;color:var(--brand-darker)">${d.folio}</span></td>
+    <td><strong>${d.establecimiento}</strong></td>
+    <td><span class="badge badge-blue">${d.materia}</span></td>
+    <td><span style="display:inline-flex;align-items:center;gap:.35rem;font-size:.8rem"><span class="urgency-dot dot-${d.urgencia}"></span>${d.urgencia}</span></td>
+    <td><span class="badge ${estatusBadge(d.estatus)}">${d.estatus.replace('_',' ')}</span></td>
+    <td style="color:var(--ink-muted)">${d.fecha}</td>
+    <td><div class="btn-group">${accionesPorModo(d,modo)}</div></td>
+  </tr>`).join('');
+  return`<div class="filter-bar">
+    <span class="filter-label">Filtrar:</span>
+    <input class="form-input" placeholder="Buscar folio o establecimiento..." id="filtro-doc" oninput="filtrarDocumentos('${modo}')">
+    <select class="form-select" id="filtro-urgencia" onchange="filtrarDocumentos('${modo}')">
+      <option value="">Urgencia</option><option value="urgente">Urgente</option><option value="convencional">Convencional</option><option value="retraso">Con retraso</option>
+    </select>
+    <select class="form-select" id="filtro-materia" onchange="filtrarDocumentos('${modo}')">
+      <option value="">Materia</option><option value="PS">PS</option><option value="AS">AS</option><option value="MS">MS</option><option value="SS">SS</option><option value="TS">TS</option>
+    </select>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Documentos</span>
+      <span class="badge badge-gray">${docs.length} registros</span>
+    </div>
+    <table id="tabla-docs">
+      <thead><tr><th>Folio</th><th>Establecimiento</th><th>Materia</th><th>Urgencia</th><th>Estatus</th><th>Fecha</th><th>Acciones</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+function filtrarDocumentos(modo){
+  const txt=(document.getElementById('filtro-doc')?.value||'').toLowerCase();
+  const urg=document.getElementById('filtro-urgencia')?.value||'';
+  const mat=document.getElementById('filtro-materia')?.value||'';
+  const docs=STORE.documentos.filter(d=>
+    (!txt||(d.folio+d.establecimiento).toLowerCase().includes(txt))&&
+    (!urg||d.urgencia===urg)&&(!mat||d.materia===mat)
+  );
+  const rows=docs.map(d=>`<tr>
+    <td><span style="font-family:var(--font-display);font-weight:700;color:var(--brand-darker)">${d.folio}</span></td>
+    <td><strong>${d.establecimiento}</strong></td>
+    <td><span class="badge badge-blue">${d.materia}</span></td>
+    <td><span style="display:inline-flex;align-items:center;gap:.35rem;font-size:.8rem"><span class="urgency-dot dot-${d.urgencia}"></span>${d.urgencia}</span></td>
+    <td><span class="badge ${estatusBadge(d.estatus)}">${d.estatus.replace('_',' ')}</span></td>
+    <td style="color:var(--ink-muted)">${d.fecha}</td>
+    <td><div class="btn-group">${accionesPorModo(d,modo)}</div></td>
+  </tr>`).join('');
+  document.querySelector('#tabla-docs tbody').innerHTML=rows||'<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:2rem">Sin resultados</td></tr>';
+}
+
+function accionesPorModo(d,modo){
+  let btns='';
+  btns+=`<button class="btn btn-outline btn-sm" onclick="verDetalleDoc('${d.id}')">👁️ Ver</button>`;
+  if(modo==='entradas'){
+    btns+=`<button class="btn btn-outline btn-sm" onclick="openModalEditarDoc('${d.id}')">✏️ Editar</button>`;
+    btns+=`<button class="btn btn-primary btn-sm" onclick="openModalPreAsignar('${d.id}')">📤 Turnar</button>`;
+  }else if(modo==='gerente'||modo==='subdir'||modo==='dir'){
+    if(d.estatus==='en_gerencia'||d.estatus==='pendiente'){
+      btns+=`<button class="btn btn-success btn-sm" onclick="aceptarDoc('${d.id}')">✅ Aceptar</button>`;
+      btns+=`<button class="btn btn-danger btn-sm" onclick="rechazarDoc('${d.id}')">❌ Rechazar</button>`;
+    }else if(d.estatus==='en_dictamen'){
+      btns+=`<button class="btn btn-warning btn-sm" onclick="openModalFirmar('${d.id}')">✍️ Firmar</button>`;
+    }
+  }else if(modo==='dictamen'){
+    if(d.estatus==='en_dictamen'||d.estatus==='pendiente'){
+      btns+=`<button class="btn btn-success btn-sm" onclick="openModalDictaminar('${d.id}')">⚖️ Dictaminar</button>`;
+    }
+  }
+  return btns;
+}
+
+function estatusBadge(e){
+  const m={pendiente:'badge-amber',en_gerencia:'badge-blue',en_dictamen:'badge-purple',firmado:'badge-green',enviado:'badge-green',rechazado:'badge-red',archivado:'badge-gray'};
+  return m[e]||'badge-gray';
+}
+
+function openModalNuevoDocumento(){
+  openModal('Registrar Nuevo Documento / Muestra / Etiqueta',`
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Establecimiento / Razón Social <span>*</span></label><input class="form-input" id="nd-estab" placeholder="Nombre del establecimiento"></div>
+      <div class="form-group"><label class="form-label">Tipo de documento <span>*</span></label>
+        <select class="form-select" id="nd-tipo"><option>Dictamen</option><option>Oficio</option><option>Memorándum</option><option>Programación</option><option>Muestra</option><option>Etiqueta</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Materia <span>*</span></label>
+        <select class="form-select" id="nd-materia">
+          <option value="PS">PS - Productos y Servicios</option><option value="AS">AS - Servicios de Salud</option>
+          <option value="MS">MS - Insumos para la Salud</option><option value="SS">SS - Salud Ambiental</option><option value="TS">TS - Tercero Autorizado</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Urgencia</label>
+        <select class="form-select" id="nd-urgencia"><option value="convencional">Convencional</option><option value="urgente">Urgente</option><option value="retraso">Con retraso</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Descripción / Antecedentes</label><textarea class="form-textarea" id="nd-desc" placeholder="Descripción del documento..."></textarea></div>
+    <div class="form-group"><label class="form-label">Adjuntar archivo (Word/PDF)</label><input type="file" class="form-input" accept=".pdf,.doc,.docx" id="nd-archivo"></div>
+  `,()=>{
+    const estab=document.getElementById('nd-estab').value;
+    const tipo=document.getElementById('nd-tipo').value;
+    const materia=document.getElementById('nd-materia').value;
+    const urgencia=document.getElementById('nd-urgencia').value;
+    const desc=document.getElementById('nd-desc').value;
+    if(!estab){showToast('El establecimiento es requerido','error');return;}
+    const id='DOC-'+String(STORE.documentos.length+1).padStart(3,'0');
+    const folio='DEDS-2024-'+String(STORE.documentos.length+1).padStart(3,'0');
+    STORE.documentos.push({id,folio,establecimiento:estab,tipo,materia,urgencia,estatus:'pendiente',dictaminador:null,gerente:null,fecha:new Date().toISOString().split('T')[0],origen:'DEDS',descripcion:desc});
+    closeModal();showToast('Documento '+folio+' registrado exitosamente','success');showPage('gestion_entradas');
+  },'Registrar Documento');
+}
+
+function openModalEditarDoc(id){
+  const d=STORE.documentos.find(x=>x.id===id);if(!d)return;
+  openModal('Modificar Documento: '+d.folio,`
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Establecimiento</label><input class="form-input" id="ed-estab" value="${d.establecimiento}"></div>
+      <div class="form-group"><label class="form-label">Materia</label>
+        <select class="form-select" id="ed-materia">
+          <option value="PS" ${d.materia==='PS'?'selected':''}>PS</option><option value="AS" ${d.materia==='AS'?'selected':''}>AS</option>
+          <option value="MS" ${d.materia==='MS'?'selected':''}>MS</option><option value="SS" ${d.materia==='SS'?'selected':''}>SS</option><option value="TS" ${d.materia==='TS'?'selected':''}>TS</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Urgencia</label>
+      <select class="form-select" id="ed-urgencia">
+        <option value="convencional" ${d.urgencia==='convencional'?'selected':''}>Convencional</option>
+        <option value="urgente" ${d.urgencia==='urgente'?'selected':''}>Urgente</option>
+        <option value="retraso" ${d.urgencia==='retraso'?'selected':''}>Con retraso</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Descripción</label><textarea class="form-textarea" id="ed-desc">${d.descripcion||''}</textarea></div>
+  `,()=>{
+    d.establecimiento=document.getElementById('ed-estab').value;
+    d.materia=document.getElementById('ed-materia').value;
+    d.urgencia=document.getElementById('ed-urgencia').value;
+    d.descripcion=document.getElementById('ed-desc').value;
+    closeModal();showToast('Documento actualizado','success');showPage('gestion_entradas');
+  },'Guardar Cambios');
+}
+
+function openModalPreAsignar(id){
+  const d=STORE.documentos.find(x=>x.id===id);if(!d)return;
+  const gerentes=STORE.usuarios.filter(u=>['gerente','subdireccion','direccion'].includes(u.perfil)&&u.estatus==='activo');
+  openModal('Pre-Asignar y Turnar: '+d.folio,`
+    <div class="alert alert-info">📤 Pre-asigne el documento a Gerencia, Subdirección o Dirección para su revisión.</div>
+    <div class="form-group"><label class="form-label">Asignar a <span>*</span></label>
+      <select class="form-select" id="pa-usuario">
+        <option value="">-- Seleccione usuario --</option>
+        ${gerentes.map(g=>`<option value="${g.nombre}">${g.nombre} — ${PROFILES[g.perfil]?.label}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Urgencia del turno</label>
+      <select class="form-select" id="pa-urgencia">
+        <option value="convencional">Convencional</option><option value="urgente">Urgente</option><option value="retraso">Con retraso</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Observaciones</label><textarea class="form-textarea" id="pa-obs" placeholder="Instrucciones o notas..."></textarea></div>
+  `,()=>{
+    const usr=document.getElementById('pa-usuario').value;
+    const urg=document.getElementById('pa-urgencia').value;
+    if(!usr){showToast('Seleccione un usuario','error');return;}
+    d.gerente=usr;d.urgencia=urg;d.estatus='en_gerencia';
+    closeModal();showToast('Documento pre-asignado a '+usr,'success');showPage('gestion_entradas');
+  },'Turnar Documento');
+}
+
+function verDetalleDoc(id){
+  const d=STORE.documentos.find(x=>x.id===id);if(!d)return;
+  openModal('Detalle: '+d.folio,`
+    <div class="steps">
+      <div class="step ${['pendiente'].includes(d.estatus)?'active':'done'}">1. Ingreso</div>
+      <div class="step ${d.estatus==='en_gerencia'?'active':['en_dictamen','firmado','enviado'].includes(d.estatus)?'done':''}">2. Gerencia</div>
+      <div class="step ${d.estatus==='en_dictamen'?'active':['firmado','enviado'].includes(d.estatus)?'done':''}">3. Dictamen</div>
+      <div class="step ${d.estatus==='firmado'?'active':d.estatus==='enviado'?'done':''}">4. Firmado</div>
+      <div class="step ${d.estatus==='enviado'?'active':''}">5. Enviado</div>
+    </div>
+    <div class="form-row">
+      <div><div class="form-label">Folio</div><p style="font-size:.9rem;font-weight:700;color:var(--brand-darker)">${d.folio}</p></div>
+      <div><div class="form-label">Establecimiento</div><p>${d.establecimiento}</p></div>
+    </div>
+    <div class="form-row" style="margin-top:.75rem">
+      <div><div class="form-label">Materia</div><p><span class="badge badge-blue">${d.materia}</span></p></div>
+      <div><div class="form-label">Tipo</div><p>${d.tipo}</p></div>
+    </div>
+    <div class="form-row" style="margin-top:.75rem">
+      <div><div class="form-label">Urgencia</div><p><span style="display:inline-flex;align-items:center;gap:.35rem"><span class="urgency-dot dot-${d.urgencia}"></span>${d.urgencia}</span></p></div>
+      <div><div class="form-label">Estatus</div><p><span class="badge ${estatusBadge(d.estatus)}">${d.estatus.replace('_',' ')}</span></p></div>
+    </div>
+    <div class="form-row" style="margin-top:.75rem">
+      <div><div class="form-label">Dictaminador</div><p>${d.dictaminador||'Sin asignar'}</p></div>
+      <div><div class="form-label">Gerente</div><p>${d.gerente||'Sin asignar'}</p></div>
+    </div>
+    <div style="margin-top:.75rem"><div class="form-label">Descripción</div><p style="font-size:.84rem;color:#374151;margin-top:.3rem">${d.descripcion||'—'}</p></div>
+    <div style="margin-top:1rem"><div class="form-label" style="margin-bottom:.6rem">Historial</div>
+    <div class="timeline">
+      <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-time">${d.fecha}</div><div class="timeline-text">Documento registrado por Entradas</div></div>
+      ${d.gerente?`<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-time">${d.fecha}</div><div class="timeline-text">Pre-asignado a <span class="timeline-user">${d.gerente}</span></div></div>`:''}
+      ${d.dictaminador?`<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-time">${d.fecha}</div><div class="timeline-text">Asignado a dictaminador <span class="timeline-user">${d.dictaminador}</span></div></div>`:''}
+    </div></div>
+  `,'','',' ');
+}
+
+function renderDictamenLista(filtroUrgencia){
+  const p=STORE.currentUser.perfil;
+  let docs=STORE.documentos;
+  if(p==='dictaminador') docs=docs.filter(d=>d.estatus==='en_dictamen'||d.estatus==='pendiente');
+  if(filtroUrgencia) docs=docs.filter(d=>d.urgencia===filtroUrgencia);
+  return`<div class="page-header">
+    <div><div class="page-title">Mis Documentos — Dictamen</div><div class="page-sub">Documentos asignados para dictaminar</div></div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card blue"><div class="stat-icon">📋</div><div class="stat-label">Pendientes</div><div class="stat-value">${docs.filter(d=>d.estatus==='pendiente').length}</div></div>
+    <div class="stat-card amber"><div class="stat-icon">⚙️</div><div class="stat-label">En proceso</div><div class="stat-value">${docs.filter(d=>d.estatus==='en_dictamen').length}</div></div>
+    <div class="stat-card red"><div class="stat-icon">⚡</div><div class="stat-label">Urgentes</div><div class="stat-value">${docs.filter(d=>d.urgencia==='urgente').length}</div></div>
+    <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-label">Completados</div><div class="stat-value">${docs.filter(d=>d.estatus==='firmado'||d.estatus==='enviado').length}</div></div>
+  </div>
+  ${renderTablaDocumentos(docs,'dictamen')}`;
+}
+
+function openModalDictaminar(id){
+  const d=STORE.documentos.find(x=>x.id===id);if(!d)return;
+  openModal('Dictaminar: '+d.folio,`
+    <div class="alert alert-info">📋 Registre el resultado del dictamen y el documento emitido.</div>
+    <div class="tab-group">
+      <button class="tab-btn active" onclick="switchTab(this,'tab-dictamen')">Dictamen</button>
+      <button class="tab-btn" onclick="switchTab(this,'tab-laboratorio')">Laboratorio</button>
+      <button class="tab-btn" onclick="switchTab(this,'tab-documentos')">Documentos</button>
+    </div>
+    <div id="tab-dictamen">
+      <div class="form-group"><label class="form-label">Resultado del dictamen <span>*</span></label>
+        <select class="form-select" id="dict-resultado">
+          <option value="">-- Seleccione --</option>
+          <option value="Dictamen favorable">Dictamen favorable</option>
+          <option value="Dictamen desfavorable">Dictamen desfavorable</option>
+          <option value="Medida de seguridad sanitaria">Medida de seguridad sanitaria</option>
+          <option value="Pendiente de información">Pendiente de información</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Tipo de documento emitido</label>
+        <select class="form-select" id="dict-tipo-doc">
+          <option>Oficio de Dictamen</option><option>Oficio</option><option>Memorándum</option><option>Programación</option>
+          <option>Dictamen Técnico</option><option>Dictamen Informativo</option><option>Conocimiento</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Observaciones</label><textarea class="form-textarea" id="dict-obs" placeholder="Fundamentos y motivación del dictamen..."></textarea></div>
+      <div class="form-group"><label class="form-label">Asignar para revisión/firma a</label>
+        <select class="form-select" id="dict-asignar">
+          <option value="">-- Seleccione --</option>
+          ${STORE.usuarios.filter(u=>['gerente','subdireccion','direccion'].includes(u.perfil)&&u.estatus==='activo').map(u=>`<option value="${u.nombre}">${u.nombre} — ${PROFILES[u.perfil]?.label}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Urgencia</label>
+        <select class="form-select" id="dict-urgencia"><option value="convencional">Convencional</option><option value="urgente">Urgente</option><option value="retraso">Con retraso</option></select>
+      </div>
+    </div>
+    <div id="tab-laboratorio" style="display:none">
+      <div class="form-group"><label class="form-label">Laboratorio que realizó el análisis</label><input class="form-input" id="dict-lab" placeholder="Nombre del laboratorio"></div>
+      <div class="form-group"><label class="form-label">Número de análisis</label><input class="form-input" id="dict-num-anal" placeholder="No. de análisis o folio"></div>
+      <div class="form-group"><label class="form-label">Resultados</label><textarea class="form-textarea" id="dict-resultados" placeholder="Resultados del análisis de laboratorio..."></textarea></div>
+    </div>
+    <div id="tab-documentos" style="display:none">
+      <div class="form-group"><label class="form-label">Adjuntar archivo</label><input type="file" class="form-input" accept=".pdf,.doc,.docx"></div>
+      <p style="font-size:.79rem;color:var(--ink-muted);margin-top:.5rem">Adjunte el Dictamen Técnico, Oficio o Memorándum en formato PDF o Word.</p>
+    </div>
+  `,()=>{
+    const res=document.getElementById('dict-resultado').value;
+    if(!res){showToast('Seleccione un resultado','error');return;}
+    d.estatus='firmado';d.urgencia=document.getElementById('dict-urgencia').value;
+    const asignar=document.getElementById('dict-asignar').value;
+    if(asignar) d.gerente=asignar;
+    closeModal();showToast('Dictamen emitido para '+d.folio,'success');showPage('dictamen_lista');
+  },'Emitir Dictamen');
+}
+
+function renderGestionGerente(){
+  const docs=STORE.documentos.filter(d=>['en_gerencia','pendiente'].includes(d.estatus));
+  return`<div class="page-header">
+    <div><div class="page-title">Validar y Evaluar Documentos — Gerencia</div><div class="page-sub">Aceptar, asignar dictaminador o rechazar documentos recibidos</div></div>
+  </div>
+  ${renderTablaDocumentos(docs,'gerente')}`;
+}
+
+function aceptarDoc(id){
+  const d=STORE.documentos.find(x=>x.id===id);if(!d)return;
+  openModal('Aceptar y Asignar Dictaminador: '+d.folio,`
+    <div class="alert alert-success">✅ Aceptando documento de ${d.establecimiento}</div>
+    <div class="form-group"><label class="form-label">Asignar a Dictaminador <span>*</span></label>
+      <select class="form-select" id="ad-dict">
+        <option value="">-- Seleccione dictaminador --</option>
+        ${STORE.usuarios.filter(u=>u.perfil==='dictaminador'&&u.estatus==='activo').map(u=>`<option value="${u.nombre}">${u.nombre} — ${u.area}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Urgencia</label>
+      <select class="form-select" id="ad-urg"><option value="convencional">Convencional</option><option value="urgente">Urgente</option><option value="retraso">Con retraso</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Observaciones</label><textarea class="form-textarea" id="ad-obs" placeholder="Instrucciones para el dictaminador..."></textarea></div>
+  `,()=>{
+    const dict=document.getElementById('ad-dict').value;
+    if(!dict){showToast('Seleccione un dictaminador','error');return;}
+    d.dictaminador=dict;d.estatus='en_dictamen';d.urgencia=document.getElementById('ad-urg').value;
+    closeModal();showToast('Documento asignado a '+dict,'success');showPage('gestion_gerente');
+  },'Aceptar y Asignar');
+}
+
+function rechazarDoc(id){
+  const d=STORE.documentos.find(x=>x.id===id);if(!d)return;
+  openModal('Rechazar Documento: '+d.folio,`
+    <div class="alert alert-danger">❌ El documento será devuelto a Entradas para corrección.</div>
+    <div class="form-group"><label class="form-label">Motivo del rechazo <span>*</span></label>
+      <select class="form-select" id="rj-motivo">
+        <option value="">-- Seleccione --</option>
+        <option>Documentación incompleta</option><option>Información incorrecta</option>
+        <option>No corresponde al área</option><option>Duplicado</option><option>Otro</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Observaciones</label><textarea class="form-textarea" id="rj-obs" placeholder="Descripción del motivo..."></textarea></div>
+  `,()=>{
+    const mot=document.getElementById('rj-motivo').value;
+    if(!mot){showToast('Seleccione motivo','error');return;}
+    d.estatus='rechazado';
+    closeModal();showToast('Documento devuelto a Entradas','success');showPage('gestion_gerente');
+  },'Confirmar Rechazo','btn-danger');
+}
+
+function openModalFirmar(id){
+  const d=STORE.documentos.find(x=>x.id===id);if(!d)return;
+  openModal('Firmar / Rubricar Documento: '+d.folio,`
+    <div class="alert alert-info">✍️ Seleccione la acción a realizar sobre este documento.</div>
+    <div class="form-group"><label class="form-label">Acción</label>
+      <select class="form-select" id="fir-accion">
+        <option value="rubricar">Rubricar y asignar siguiente</option>
+        <option value="firmar">Firmar definitivamente</option>
+        <option value="devolver">Devolver para corrección</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Asignar a</label>
+      <select class="form-select" id="fir-asignar">
+        <option value="">-- Seleccione --</option>
+        ${STORE.usuarios.filter(u=>['subdireccion','direccion','salidas'].includes(u.perfil)&&u.estatus==='activo').map(u=>`<option value="${u.nombre}">${u.nombre} — ${PROFILES[u.perfil]?.label}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Urgencia</label>
+      <select class="form-select" id="fir-urg"><option value="convencional">Convencional</option><option value="urgente">Urgente</option></select>
+    </div>
+  `,()=>{
+    const accion=document.getElementById('fir-accion').value;
+    if(accion==='firmar') d.estatus='firmado';
+    else if(accion==='rubricar') d.estatus='en_gerencia';
+    else d.estatus='en_dictamen';
+    closeModal();showToast('Acción "'+accion+'" realizada sobre '+d.folio,'success');showPage('gestion_gerente');
+  },'Confirmar');
+}
+
+function renderGestionSubdir(){
+  const docs=STORE.documentos.filter(d=>['en_gerencia','firmado'].includes(d.estatus));
+  return`<div class="page-header">
+    <div><div class="page-title">Documentos — Subdirección</div><div class="page-sub">Validar, rubricar, firmar y asignar documentos</div></div>
+  </div>
+  ${renderTablaDocumentos(docs,'subdir')}`;
+}
+
+function renderGestionDir(){
+  const docs=STORE.documentos;
+  return`<div class="page-header">
+    <div><div class="page-title">Documentos — Dirección Ejecutiva</div><div class="page-sub">Vista global de todos los documentos. Validar, firmar y reasignar.</div></div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card blue"><div class="stat-icon">📊</div><div class="stat-label">Total Sistema</div><div class="stat-value">${docs.length}</div></div>
+    <div class="stat-card amber"><div class="stat-icon">⚙️</div><div class="stat-label">En Proceso</div><div class="stat-value">${docs.filter(d=>['en_gerencia','en_dictamen'].includes(d.estatus)).length}</div></div>
+    <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-label">Completados</div><div class="stat-value">${docs.filter(d=>['firmado','enviado'].includes(d.estatus)).length}</div></div>
+    <div class="stat-card red"><div class="stat-icon">❌</div><div class="stat-label">Rechazados</div><div class="stat-value">${docs.filter(d=>d.estatus==='rechazado').length}</div></div>
+  </div>
+  ${renderTablaDocumentos(docs,'dir')}`;
+}
+
+function renderAsignacionDictaminador(){
+  return`<div class="page-header">
+    <div><div class="page-title">Asignación de Dictaminadores</div><div class="page-sub">Asignar o reasignar documentos a dictaminadores</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Documentos en espera de asignación</span></div>
+    <table><thead><tr><th>Folio</th><th>Establecimiento</th><th>Materia</th><th>Dictaminador Actual</th><th>Acción</th></tr></thead>
+    <tbody>
+    ${STORE.documentos.map(d=>`<tr>
+      <td><strong>${d.folio}</strong></td><td>${d.establecimiento}</td>
+      <td><span class="badge badge-blue">${d.materia}</span></td>
+      <td>${d.dictaminador||'<span style="color:#94a3b8">Sin asignar</span>'}</td>
+      <td><button class="btn btn-primary btn-sm" onclick="aceptarDoc('${d.id}')">Asignar/Reasignar</button></td>
+    </tr>`).join('')}
+    </tbody></table>
+  </div>`;
+}
+
+function renderSalidasLista(){
+  const docs=STORE.documentos.filter(d=>['firmado','enviado'].includes(d.estatus));
+  return`<div class="page-header">
+    <div><div class="page-title">Evaluación y Envío de Documentos — Salidas</div><div class="page-sub">Registrar recepción y envío de documentos a usuarios solicitantes</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Documentos por Procesar</span><span class="badge badge-blue">${docs.length}</span></div>
+    <table><thead><tr><th>Folio</th><th>Establecimiento</th><th>Estatus</th><th>Acciones</th></tr></thead>
+    <tbody>
+    ${docs.map(d=>`<tr>
+      <td><strong>${d.folio}</strong></td><td>${d.establecimiento}</td>
+      <td><span class="badge ${estatusBadge(d.estatus)}">${d.estatus}</span></td>
+      <td><div class="btn-group">
+        <button class="btn btn-success btn-sm" onclick="openModalRegistrarEnvio('${d.id}')">📮 Envío</button>
+        <button class="btn btn-outline btn-sm" onclick="openModalAcuse('${d.id}')">📋 Acuse</button>
+        <button class="btn btn-primary btn-sm" onclick="enviarAArchivo('${d.id}')">🗄️ Archivo</button>
+      </div></td>
+    </tr>`).join('')}
+    </tbody></table>
+  </div>`;
+}
+
+function openModalRegistrarEnvio(id){
+  const d=STORE.documentos.find(x=>x.id===id);if(!d)return;
+  openModal('Registrar Envío: '+d.folio,`
+    <div class="form-group"><label class="form-label">Medio de envío <span>*</span></label>
+      <select class="form-select" id="env-medio" onchange="toggleEnvioMedio()">
+        <option value="">-- Seleccione --</option>
+        <option value="sepomex">Correo Postal Mexicano (SEPOMEX)</option>
+        <option value="email">Correo electrónico</option>
+        <option value="personalizada">Entrega personalizada</option>
+        <option value="ventanilla">Entrega en ventanilla CIS</option>
+      </select>
+    </div>
+    <div id="env-sepomex" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Número de guía</label><input class="form-input" id="env-guia" placeholder="Número de guía SEPOMEX"></div>
+        <div class="form-group"><label class="form-label">Número de rastreo</label><input class="form-input" id="env-rastreo" placeholder="Número de rastreo"></div>
+      </div>
+    </div>
+    <div id="env-email-field" style="display:none">
+      <div class="form-group"><label class="form-label">Correo destino</label><input class="form-input" id="env-email" type="email" placeholder="destinatario@empresa.com"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Fecha de envío</label><input class="form-input" id="env-fecha" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+    <div class="form-group"><label class="form-label">Nombre del receptor</label><input class="form-input" id="env-receptor" placeholder="Nombre de quien recibe"></div>
+    <div class="form-group"><label class="form-label">Observaciones</label><textarea class="form-textarea" id="env-obs" placeholder="Notas adicionales..."></textarea></div>
+  `,()=>{
+    const medio=document.getElementById('env-medio').value;
+    if(!medio){showToast('Seleccione un medio de envío','error');return;}
+    d.estatus='enviado';
+    closeModal();showToast('Envío registrado para '+d.folio,'success');showPage('salidas_lista');
+  },'Registrar Envío');
+}
+
+function toggleEnvioMedio(){
+  const m=document.getElementById('env-medio').value;
+  document.getElementById('env-sepomex').style.display=m==='sepomex'?'block':'none';
+  document.getElementById('env-email-field').style.display=m==='email'?'block':'none';
+}
+
+function openModalAcuse(id){
+  const d=STORE.documentos.find(x=>x.id===id);if(!d)return;
+  openModal('Registrar Acuse: '+d.folio,`
+    <div class="form-group"><label class="form-label">Nombre de quien recibe</label><input class="form-input" id="acu-nombre" placeholder="Nombre completo"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Fecha de recepción</label><input class="form-input" id="acu-fecha" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+      <div class="form-group"><label class="form-label">Hora</label><input class="form-input" id="acu-hora" type="time"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Observaciones</label><textarea class="form-textarea" id="acu-obs"></textarea></div>
+  `,()=>{closeModal();showToast('Acuse registrado para '+d.folio,'success');},'Registrar Acuse');
+}
+
+function enviarAArchivo(id){
+  const d=STORE.documentos.find(x=>x.id===id);if(!d)return;
+  if(STORE.expedientesArchivo.find(e=>e.folio===d.folio)){showToast('Ya existe en Archivo','error');return;}
+  STORE.expedientesArchivo.push({id:'ARC-'+String(STORE.expedientesArchivo.length+1).padStart(3,'0'),folio:d.folio,establecimiento:d.establecimiento,ubicacion:'',fechaIngreso:new Date().toISOString().split('T')[0],estatus:'en_transito',prestado:false});
+  d.estatus='archivado';
+  showToast('Expediente enviado a Archivo','success');showPage('salidas_lista');
+}
+
+function renderSalidasEnvio(){
+  return`<div class="page-header"><div class="page-title">Registrar Envíos</div></div>
+  <div class="card card-body"><p style="color:var(--ink-muted);font-size:.85rem">Seleccione un documento desde la lista principal para registrar su envío.</p>
+  <button class="btn btn-primary" style="margin-top:.75rem" onclick="showPage('salidas_lista')">← Ver Documentos</button></div>`;
+}
+function renderSalidasAcuses(){
+  return`<div class="page-header"><div class="page-title">Registro de Acuses</div></div>
+  <div class="card card-body"><p style="color:var(--ink-muted);font-size:.85rem">Los acuses se registran desde la lista principal de documentos.</p>
+  <button class="btn btn-primary" style="margin-top:.75rem" onclick="showPage('salidas_lista')">← Ver Documentos</button></div>`;
+}
+
+function renderArchivoLista(){
+  return`<div class="page-header">
+    <div><div class="page-title">Archivo de Expedientes</div><div class="page-sub">Recepción, registro y resguardo de expedientes</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Expedientes en Archivo</span>
+      <span class="badge badge-blue">${STORE.expedientesArchivo.length} registros</span>
+    </div>
+    <table><thead><tr><th>ID</th><th>Folio</th><th>Establecimiento</th><th>Ubicación</th><th>Fecha Ingreso</th><th>Estatus</th><th>Acciones</th></tr></thead>
+    <tbody>
+    ${STORE.expedientesArchivo.map(e=>`<tr>
+      <td><strong>${e.id}</strong></td><td>${e.folio}</td><td>${e.establecimiento}</td>
+      <td>${e.ubicacion||'<span style="color:#ef4444;font-size:.78rem">Sin asignar</span>'}</td>
+      <td style="color:var(--ink-muted)">${e.fechaIngreso}</td>
+      <td><span class="badge ${e.estatus==='resguardado'?'badge-green':e.estatus==='en_transito'?'badge-amber':'badge-blue'}">${e.estatus}</span></td>
+      <td><div class="btn-group">
+        <button class="btn btn-outline btn-sm" onclick="openModalRegistrarUbicacion('${e.id}')">📍 Ubicación</button>
+        <button class="btn btn-primary btn-sm" onclick="openModalPrestamo('${e.id}')">📤 Préstamo</button>
+      </div></td>
+    </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:2rem">No hay expedientes en archivo</td></tr>'}
+    </tbody></table>
+  </div>`;
+}
+
+function openModalRegistrarUbicacion(id){
+  const e=STORE.expedientesArchivo.find(x=>x.id===id);if(!e)return;
+  openModal('Registrar Ubicación: '+e.folio,`
+    <div class="form-group"><label class="form-label">Ubicación física <span>*</span></label>
+      <input class="form-input" id="ub-loc" value="${e.ubicacion}" placeholder="Ej: Estante A-3, Caja 12">
+    </div>
+    <div class="form-group"><label class="form-label">Observaciones</label><textarea class="form-textarea" id="ub-obs"></textarea></div>
+  `,()=>{
+    e.ubicacion=document.getElementById('ub-loc').value;
+    e.estatus='resguardado';
+    closeModal();showToast('Ubicación registrada','success');showPage('archivo_lista');
+  },'Guardar Ubicación');
+}
+
+function openModalPrestamo(id){
+  const e=STORE.expedientesArchivo.find(x=>x.id===id);if(!e)return;
+  openModal('Registrar Préstamo: '+e.folio,`
+    <div class="form-group"><label class="form-label">Solicitante <span>*</span></label>
+      <select class="form-select" id="pr-sol">
+        <option value="">-- Seleccione --</option>
+        ${STORE.usuarios.filter(u=>['dictaminador','gerente','subdireccion','direccion'].includes(u.perfil)).map(u=>`<option value="${u.nombre}">${u.nombre} — ${PROFILES[u.perfil]?.label}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Fecha préstamo</label><input class="form-input" type="date" id="pr-fecha" value="${new Date().toISOString().split('T')[0]}"></div>
+      <div class="form-group"><label class="form-label">Fecha devolución estimada</label><input class="form-input" type="date" id="pr-fechadev"></div>
+    </div>
+  `,()=>{
+    const sol=document.getElementById('pr-sol').value;
+    if(!sol){showToast('Seleccione solicitante','error');return;}
+    e.prestado=true;e.prestadoA=sol;e.estatus='prestado';
+    closeModal();showToast('Préstamo registrado a '+sol,'success');showPage('archivo_lista');
+  },'Registrar Préstamo');
+}
+
+function renderArchivoPrestamo(){
+  const prestados=STORE.expedientesArchivo.filter(e=>e.prestado);
+  return`<div class="page-header"><div class="page-title">Expedientes en Préstamo</div></div>
+  <div class="card">
+  ${prestados.length?`<table><thead><tr><th>Folio</th><th>Prestado a</th><th>Estatus</th><th>Acción</th></tr></thead><tbody>
+  ${prestados.map(e=>`<tr><td>${e.folio}</td><td>${e.prestadoA}</td><td><span class="badge badge-amber">En préstamo</span></td>
+  <td><button class="btn btn-success btn-sm" onclick="devolverExpediente('${e.id}')">✅ Devolver</button></td></tr>`).join('')}
+  </tbody></table>`:
+  '<div class="empty-state"><div class="empty-icon">📚</div><div class="empty-text">Sin expedientes en préstamo</div></div>'}
+  </div>`;
+}
+
+function devolverExpediente(id){
+  const e=STORE.expedientesArchivo.find(x=>x.id===id);
+  e.prestado=false;e.prestadoA=null;e.estatus='resguardado';
+  showToast('Expediente devuelto al archivo','success');showPage('archivo_prestamo');
+}
+
+function renderSersRegistro(){
+  return`<div class="page-header">
+    <div><div class="page-title">Registro de Expedientes Técnicos — SERS</div><div class="page-sub">Registro inicial de expedientes técnicos recibidos</div></div>
+    <button class="btn btn-primary" onclick="openModalNuevoExpedienteSERS()">+ Nuevo Expediente</button>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card blue"><div class="stat-icon">📂</div><div class="stat-label">Total Expedientes</div><div class="stat-value">${STORE.expedientes.length}</div></div>
+    <div class="stat-card amber"><div class="stat-icon">🔍</div><div class="stat-label">En Revisión</div><div class="stat-value">${STORE.expedientes.filter(e=>e.estatus==='en_revision').length}</div></div>
+    <div class="stat-card purple" style="--purple:#6d28d9"><div class="stat-icon" style="background:var(--purple-light);color:var(--purple)">⚖️</div><div class="stat-label" style="color:var(--ink-muted)">En Dictamen</div><div class="stat-value" style="color:var(--purple)">${STORE.expedientes.filter(e=>e.estatus==='en_dictamen').length}</div></div>
+    <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-label">Resueltos</div><div class="stat-value">${STORE.expedientes.filter(e=>e.estatus==='resuelto').length}</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Expedientes Técnicos</span><span class="badge badge-gray">${STORE.expedientes.length} total</span></div>
+    <table><thead><tr><th>ID</th><th>Razón Social</th><th>Área Origen</th><th>Materia</th><th>Fecha Ingreso</th><th>Estatus</th><th>Acciones</th></tr></thead>
+    <tbody>
+    ${STORE.expedientes.map(e=>`<tr>
+      <td><span style="font-family:var(--font-display);font-weight:700;color:var(--brand-darker)">${e.id}</span></td>
+      <td><strong>${e.razonSocial}</strong></td>
+      <td><span class="badge badge-gray">${e.area}</span></td>
+      <td><span class="badge badge-blue">${e.materia}</span></td>
+      <td style="color:var(--ink-muted)">${e.fechaIngreso}</td>
+      <td><span class="badge ${sersEstatusBadge(e.estatus)}">${e.estatus.replace('_',' ')}</span></td>
+      <td><div class="btn-group">
+        <button class="btn btn-outline btn-sm" onclick="verDetalleExpediente('${e.id}')">👁️ Ver</button>
+        <button class="btn btn-primary btn-sm" onclick="openModalEditarExpediente('${e.id}')">✏️ Editar</button>
+      </div></td>
+    </tr>`).join('')}
+    </tbody></table>
+  </div>`;
+}
+
+function sersEstatusBadge(e){
+  const m={nuevo:'badge-gray',en_revision:'badge-amber',en_dictamen:'badge-purple',resuelto:'badge-green',devuelto:'badge-red'};
+  return m[e]||'badge-gray';
+}
+
+function openModalNuevoExpedienteSERS(){
+  openModal('Registrar Expediente Técnico',`
+    <div class="form-group"><label class="form-label">Área de procedencia <span>*</span></label>
+      <select class="form-select" id="ne-area" onchange="actualizarCamposArea()">
+        <option value="">-- Seleccione --</option>
+        <option value="DEDS">DICTAMEN-VIGILANCIA (DEDS o DESV)</option>
+        <option value="CAS">AUTORIZACIONES (CAS)</option>
+        <option value="DESVS-M">VIGILANCIA-MONITOREO (DESVS-M)</option>
+      </select>
+    </div>
+    <div id="campos-area">
+      <div class="form-group"><label class="form-label">Razón Social <span>*</span></label><input class="form-input" id="ne-razon" placeholder="Nombre del establecimiento"></div>
+      <div class="form-group"><label class="form-label">Núm. documento (memorándum/volante/oficio)</label><input class="form-input" id="ne-numdoc" placeholder="Número del documento"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Fecha ingreso a SERS <span>*</span></label><input class="form-input" id="ne-fechaing" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+        <div class="form-group"><label class="form-label">Materia</label>
+          <select class="form-select" id="ne-materia">
+            <option value="PS">PS - Productos y Servicios</option><option value="AS">AS - Servicios de Salud</option>
+            <option value="MS">MS - Insumos para la Salud</option><option value="P">P - Publicidad</option>
+          </select>
+        </div>
+      </div>
+      <div id="campos-acta">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Núm. Acta de Verificación</label><input class="form-input" id="ne-acta" placeholder="ACT-2024-..."></div>
+          <div class="form-group"><label class="form-label">Núm. Orden de Verificación</label><input class="form-input" id="ne-orden" placeholder="ORD-2024-..."></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Fecha del Acta</label><input class="form-input" id="ne-fechaacta" type="date"></div>
+          <div class="form-group"><label class="form-label">Fecha de Orden</label><input class="form-input" id="ne-fechaorden" type="date"></div>
+        </div>
+      </div>
+    </div>
+  `,()=>{
+    const razon=document.getElementById('ne-razon')?.value;
+    const area=document.getElementById('ne-area').value;
+    const fechaing=document.getElementById('ne-fechaing')?.value;
+    const materia=document.getElementById('ne-materia')?.value||'PS';
+    if(!razon||!area||!fechaing){showToast('Complete los campos requeridos','error');return;}
+    const id='SERS-'+String(STORE.expedientes.length+1).padStart(3,'0');
+    STORE.expedientes.push({id,razonSocial:razon,area,materia,numActa:document.getElementById('ne-acta')?.value,numOrden:document.getElementById('ne-orden')?.value,fechaActa:document.getElementById('ne-fechaacta')?.value,fechaIngreso:fechaing,estatus:'nuevo',asignadoA:null,resolucion:null,sancion:null});
+    closeModal();showToast('Expediente '+id+' registrado','success');showPage('sers_registro');
+  },'Registrar Expediente');
+}
+
+function actualizarCamposArea(){
+  const area=document.getElementById('ne-area').value;
+  document.getElementById('campos-acta').style.display=area==='DESVS-M'?'none':'block';
+}
+
+function verDetalleExpediente(id){
+  const e=STORE.expedientes.find(x=>x.id===id);if(!e)return;
+  openModal('Detalle Expediente: '+e.id,`
+    <div class="steps">
+      <div class="step done">1. Registro ET</div>
+      <div class="step ${e.estatus==='en_revision'?'active':['en_dictamen','resuelto'].includes(e.estatus)?'done':''}">2. Revisión SERS</div>
+      <div class="step ${e.estatus==='en_dictamen'?'active':e.estatus==='resuelto'?'done':''}">3. Dictamen Jur.</div>
+      <div class="step ${e.estatus==='resuelto'?'active':''}">4. Resuelto</div>
+    </div>
+    <div class="form-row">
+      <div><div class="form-label">ID Expediente</div><p style="font-weight:700;color:var(--brand-darker)">${e.id}</p></div>
+      <div><div class="form-label">Razón Social</div><p>${e.razonSocial}</p></div>
+    </div>
+    <div class="form-row" style="margin-top:.75rem">
+      <div><div class="form-label">Área Origen</div><p><span class="badge badge-gray">${e.area}</span></p></div>
+      <div><div class="form-label">Materia</div><p><span class="badge badge-blue">${e.materia}</span></p></div>
+    </div>
+    <div class="form-row" style="margin-top:.75rem">
+      <div><div class="form-label">Núm. Acta</div><p>${e.numActa||'—'}</p></div>
+      <div><div class="form-label">Fecha Ingreso SERS</div><p>${e.fechaIngreso}</p></div>
+    </div>
+    <div class="form-row" style="margin-top:.75rem">
+      <div><div class="form-label">Estatus</div><p><span class="badge ${sersEstatusBadge(e.estatus)}">${e.estatus.replace('_',' ')}</span></p></div>
+      <div><div class="form-label">Asignado a</div><p>${e.asignadoA||'Sin asignar'}</p></div>
+    </div>
+    ${e.resolucion?`<div style="margin-top:.75rem"><div class="form-label">Resolución</div><p>${e.resolucion} — <strong>${e.sancion||'N/A'}</strong></p></div>`:''}
+  `,'','',' ');
+}
+
+function openModalEditarExpediente(id){
+  const e=STORE.expedientes.find(x=>x.id===id);if(!e)return;
+  openModal('Editar Expediente: '+e.id,`
+    <div class="form-group"><label class="form-label">Razón Social</label><input class="form-input" id="ee-razon" value="${e.razonSocial}"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Materia</label>
+        <select class="form-select" id="ee-materia">
+          <option value="PS" ${e.materia==='PS'?'selected':''}>PS</option><option value="AS" ${e.materia==='AS'?'selected':''}>AS</option>
+          <option value="MS" ${e.materia==='MS'?'selected':''}>MS</option><option value="P" ${e.materia==='P'?'selected':''}>P</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Estatus</label>
+        <select class="form-select" id="ee-estatus">
+          <option value="nuevo" ${e.estatus==='nuevo'?'selected':''}>Nuevo</option>
+          <option value="en_revision" ${e.estatus==='en_revision'?'selected':''}>En revisión</option>
+          <option value="en_dictamen" ${e.estatus==='en_dictamen'?'selected':''}>En dictamen</option>
+          <option value="resuelto" ${e.estatus==='resuelto'?'selected':''}>Resuelto</option>
+          <option value="devuelto" ${e.estatus==='devuelto'?'selected':''}>Devuelto</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Núm. Acta de Verificación</label><input class="form-input" id="ee-acta" value="${e.numActa||''}"></div>
+    <div class="form-group"><label class="form-label">Resolución (si aplica)</label><input class="form-input" id="ee-res" value="${e.resolucion||''}"></div>
+    <div class="form-group"><label class="form-label">Sanción (si aplica)</label>
+      <select class="form-select" id="ee-sancion">
+        <option value="">Sin sanción</option><option value="multa">Multa</option><option value="amonestacion">Amonestación</option>
+        <option value="clausura">Clausura</option><option value="arresto">Arresto</option>
+      </select>
+    </div>
+  `,()=>{
+    e.razonSocial=document.getElementById('ee-razon').value;
+    e.materia=document.getElementById('ee-materia').value;
+    e.estatus=document.getElementById('ee-estatus').value;
+    e.numActa=document.getElementById('ee-acta').value;
+    e.resolucion=document.getElementById('ee-res').value||null;
+    e.sancion=document.getElementById('ee-sancion').value||null;
+    closeModal();showToast('Expediente actualizado','success');showPage('sers_registro');
+  },'Guardar Cambios');
+}
+
+function renderSersAdminGestion(){return renderSersRegistro();}
+
+function renderSersRevision(){
+  const exps=STORE.expedientes.filter(e=>['nuevo','en_revision'].includes(e.estatus));
+  return`<div class="page-header">
+    <div><div class="page-title">Revisión de Expedientes Técnicos — SERS</div><div class="page-sub">Decidir si procede o no la recepción del expediente y asignar dictaminador jurídico</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Expedientes por Revisar</span><span class="badge badge-amber">${exps.length}</span></div>
+    <table><thead><tr><th>ID</th><th>Razón Social</th><th>Materia</th><th>Fecha Ingreso</th><th>Estatus</th><th>Acciones</th></tr></thead>
+    <tbody>
+    ${exps.map(e=>`<tr>
+      <td><strong>${e.id}</strong></td><td>${e.razonSocial}</td>
+      <td><span class="badge badge-blue">${e.materia}</span></td>
+      <td style="color:var(--ink-muted)">${e.fechaIngreso}</td>
+      <td><span class="badge ${sersEstatusBadge(e.estatus)}">${e.estatus.replace('_',' ')}</span></td>
+      <td><div class="btn-group">
+        <button class="btn btn-success btn-sm" onclick="openModalProcederExpediente('${e.id}')">✅ Proceder</button>
+        <button class="btn btn-danger btn-sm" onclick="openModalDevolverExpediente('${e.id}')">↩️ Devolver</button>
+      </div></td>
+    </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:2rem">Sin expedientes pendientes</td></tr>'}
+    </tbody></table>
+  </div>`;
+}
+
+function openModalProcederExpediente(id){
+  const e=STORE.expedientes.find(x=>x.id===id);if(!e)return;
+  const djs=STORE.usuarios.filter(u=>u.perfil==='sers_dj'&&u.estatus==='activo');
+  openModal('Proceder: '+e.id,`
+    <div class="alert alert-success">✅ Aceptando expediente para inicio de procedimiento sancionador.</div>
+    <div class="form-group"><label class="form-label">Asignar a Dictaminador Jurídico <span>*</span></label>
+      <select class="form-select" id="pe-dj">
+        <option value="">-- Seleccione --</option>
+        ${djs.map(u=>`<option value="${u.nombre}">${u.nombre}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Materia confirmada</label>
+      <select class="form-select" id="pe-mat">
+        <option value="PS" ${e.materia==='PS'?'selected':''}>PS</option><option value="AS" ${e.materia==='AS'?'selected':''}>AS</option>
+        <option value="MS" ${e.materia==='MS'?'selected':''}>MS</option><option value="P" ${e.materia==='P'?'selected':''}>P</option>
+      </select>
+    </div>
+  `,()=>{
+    const dj=document.getElementById('pe-dj').value;
+    if(!dj){showToast('Asigne un dictaminador jurídico','error');return;}
+    e.estatus='en_dictamen';e.asignadoA=dj;e.materia=document.getElementById('pe-mat').value;
+    closeModal();showToast('Expediente asignado a '+dj,'success');showPage('sers_revision');
+  },'Confirmar y Asignar');
+}
+
+function openModalDevolverExpediente(id){
+  const e=STORE.expedientes.find(x=>x.id===id);if(!e)return;
+  openModal('Devolver Expediente: '+e.id,`
+    <div class="alert alert-danger">↩️ El expediente será devuelto al área técnica.</div>
+    <div class="form-group"><label class="form-label">Número de Memorándum de devolución</label><input class="form-input" id="de-memo" placeholder="MEMO-2024-..."></div>
+    <div class="form-group"><label class="form-label">Observaciones / Motivo <span>*</span></label><textarea class="form-textarea" id="de-obs" placeholder="Motivo de devolución..."></textarea></div>
+  `,()=>{
+    const obs=document.getElementById('de-obs').value;
+    if(!obs){showToast('Ingrese el motivo','error');return;}
+    e.estatus='devuelto';
+    closeModal();showToast('Expediente devuelto al área técnica','success');showPage('sers_revision');
+  },'Confirmar Devolución','btn-danger');
+}
+
+function renderSersFirma(){
+  return`<div class="page-header"><div class="page-title">Documentos por Firmar — SERS</div></div>
+  <div class="card">
+  <table><thead><tr><th>ID Resolución</th><th>Razón Social</th><th>Estatus Resolución</th><th>Acciones</th></tr></thead>
+  <tbody>
+  ${STORE.resoluciones.map(r=>{
+    const exp=STORE.expedientes.find(e=>e.id===r.expedienteId);
+    return`<tr>
+      <td><strong>${r.id}</strong></td><td>${exp?.razonSocial||'—'}</td>
+      <td><span class="badge ${r.firmado?'badge-green':'badge-amber'}">${r.estatus.replace('_',' ')}</span></td>
+      <td><div class="btn-group">
+        ${!r.firmado?`<button class="btn btn-success btn-sm" onclick="firmarResolucion('${r.id}')">✍️ Firmar</button>`:''}
+        <button class="btn btn-outline btn-sm" onclick="verResolucion('${r.id}')">👁️ Ver</button>
+      </div></td>
+    </tr>`;
+  }).join('')}
+  </tbody></table>
+  </div>`;
+}
+
+function firmarResolucion(id){
+  const r=STORE.resoluciones.find(x=>x.id===id);if(!r)return;
+  r.firmado=true;r.rubricado=true;r.estatus='firmada';
+  showToast('Resolución '+id+' firmada y enviada al COS','success');showPage('sers_firma');
+}
+
+function renderSersVisita(){
+  return`<div class="page-header"><div class="page-title">Solicitud de Visita de Verificación</div></div>
+  <div class="card card-body">
+  <div class="form-group"><label class="form-label">Expediente relacionado</label>
+    <select class="form-select" id="sv-exp">
+      ${STORE.expedientes.filter(e=>e.estatus==='resuelto').map(e=>`<option value="${e.id}">${e.id} — ${e.razonSocial}</option>`).join('')}
+    </select>
+  </div>
+  <div class="form-group"><label class="form-label">Número de memorándum de solicitud</label><input class="form-input" placeholder="MEMO-2024-..."></div>
+  <div class="form-group"><label class="form-label">Fecha de solicitud</label><input class="form-input" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+  <div class="form-group"><label class="form-label">Instrucciones</label><textarea class="form-textarea" placeholder="Instrucciones para la visita de verificación..."></textarea></div>
+  <button class="btn btn-primary" onclick="showToast('Solicitud de visita enviada','success')">📤 Enviar Solicitud</button>
+  </div>`;
+}
+
+function renderSersAnalisis(){
+  const todos=STORE.expedientes.filter(e=>e.estatus==='en_dictamen');
+  return`<div class="page-header">
+    <div><div class="page-title">Análisis de Expedientes Técnicos</div><div class="page-sub">Decidir si iniciar o devolver el procedimiento</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Expedientes Asignados</span><span class="badge badge-purple">${todos.length}</span></div>
+    <table><thead><tr><th>ID</th><th>Razón Social</th><th>Materia</th><th>Asignado a</th><th>Acciones</th></tr></thead>
+    <tbody>
+    ${todos.map(e=>`<tr>
+      <td><strong>${e.id}</strong></td><td>${e.razonSocial}</td>
+      <td><span class="badge badge-blue">${e.materia}</span></td>
+      <td>${e.asignadoA}</td>
+      <td><div class="btn-group">
+        <button class="btn btn-success btn-sm" onclick="openModalIniciarProcedimiento('${e.id}')">✅ Iniciar</button>
+        <button class="btn btn-danger btn-sm" onclick="openModalDevolverAT('${e.id}')">↩️ Devolver</button>
+      </div></td>
+    </tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:2rem">Sin expedientes asignados</td></tr>'}
+    </tbody></table>
+  </div>`;
+}
+
+function openModalIniciarProcedimiento(id){
+  const e=STORE.expedientes.find(x=>x.id===id);if(!e)return;
+  const pas=STORE.usuarios.filter(u=>u.perfil==='sers_pa'&&u.estatus==='activo');
+  openModal('Iniciar Procedimiento: '+e.id,`
+    <div class="alert alert-success">✅ Se iniciará el procedimiento sancionador para ${e.razonSocial}</div>
+    <div class="form-group"><label class="form-label">Materia asignada (no editable)</label>
+      <input class="form-input" value="${e.materia}" disabled style="background:#f4f7f9;color:var(--ink-muted)">
+    </div>
+    <div class="form-group"><label class="form-label">Asignar Personal Administrativo <span>*</span></label>
+      <select class="form-select" id="ip-pa">
+        <option value="">-- Seleccione --</option>
+        ${pas.map(u=>`<option value="${u.nombre}">${u.nombre}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Turnar expediente a área técnica</label>
+      <select class="form-select" id="ip-turnar"><option value="si">Sí, turnar</option><option value="no">No por ahora</option></select>
+    </div>
+  `,()=>{
+    const pa=document.getElementById('ip-pa').value;
+    if(!pa){showToast('Seleccione personal administrativo','error');return;}
+    closeModal();showToast('Procedimiento iniciado, expediente administrativo por crear','success');showPage('sers_analisis');
+  },'Iniciar Procedimiento');
+}
+
+function openModalDevolverAT(id){
+  const e=STORE.expedientes.find(x=>x.id===id);if(!e)return;
+  openModal('Devolver al Área Técnica: '+e.id,`
+    <div class="form-group"><label class="form-label">Número de Memorándum</label><input class="form-input" placeholder="MEMO-2024-..."></div>
+    <div class="form-group"><label class="form-label">Observaciones <span>*</span></label><textarea class="form-textarea" id="dat-obs" placeholder="Motivo de devolución..."></textarea></div>
+  `,()=>{
+    e.estatus='devuelto';
+    closeModal();showToast('Expediente devuelto al área técnica','success');showPage('sers_analisis');
+  },'Devolver','btn-danger');
+}
+
+function renderSersEval(){
+  return`<div class="page-header"><div class="page-title">Evaluación del Expediente Administrativo</div></div>
+  <div class="card card-body">
+  <div class="alert alert-info">📋 Registre la información de las constancias que integra al expediente administrativo.</div>
+  <div class="form-group"><label class="form-label">Seleccionar Expediente</label>
+    <select class="form-select" id="se-exp">
+      ${STORE.expedientes.map(e=>`<option value="${e.id}">${e.id} — ${e.razonSocial}</option>`).join('')}
+    </select>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label class="form-label">Número de citatorio</label><input class="form-input" placeholder="CIT-2024-..."></div>
+    <div class="form-group"><label class="form-label">Fecha de citatorio</label><input class="form-input" type="date"></div>
+  </div>
+  <div class="form-group"><label class="form-label">Días otorgados de garantía de audiencia (5–30 días naturales)</label>
+    <input class="form-input" type="number" min="5" max="30" placeholder="Número de días">
+  </div>
+  <div class="form-group"><label class="form-label">Asignar al Subdirector para revisión</label>
+    <select class="form-select">
+      <option value="">-- Seleccione --</option>
+      ${STORE.usuarios.filter(u=>u.perfil==='sers'&&u.estatus==='activo').map(u=>`<option>${u.nombre}</option>`).join('')}
+    </select>
+  </div>
+  <button class="btn btn-primary" onclick="showToast('Expediente administrativo evaluado y turnado','success')">📤 Turnar al Subdirector</button>
+  </div>`;
+}
+
+function renderSersResolucion(){
+  return`<div class="page-header"><div class="page-title">Gestión de Resoluciones — Dict. Jurídico</div></div>
+  <div class="card card-body">
+  <table><thead><tr><th>ID Resolución</th><th>Expediente</th><th>Estatus</th><th>Acciones</th></tr></thead>
+  <tbody>
+  ${STORE.resoluciones.map(r=>{
+    const exp=STORE.expedientes.find(e=>e.id===r.expedienteId);
+    return`<tr>
+      <td><strong>${r.id}</strong></td><td>${exp?.razonSocial||'—'}</td>
+      <td><span class="badge ${r.firmado?'badge-green':'badge-amber'}">${r.estatus.replace('_',' ')}</span></td>
+      <td><div class="btn-group">
+        <button class="btn btn-outline btn-sm" onclick="verResolucion('${r.id}')">👁️ Ver</button>
+        ${r.observaciones?`<button class="btn btn-warning btn-sm" onclick="showToast('Corrigiendo observaciones...','success')">✏️ Corregir</button>`:''}
+      </div></td>
+    </tr>`;
+  }).join('')}
+  <tr><td colspan="4" style="padding:.75rem">
+    <button class="btn btn-primary" onclick="openModalNuevaResolucion()">+ Nueva Resolución</button>
+  </td></tr>
+  </tbody></table>
+  </div>`;
+}
+
+function openModalNuevaResolucion(){
+  openModal('Emitir Resolución',`
+    <div class="form-group"><label class="form-label">Expediente relacionado <span>*</span></label>
+      <select class="form-select" id="nr-exp">
+        ${STORE.expedientes.map(e=>`<option value="${e.id}">${e.id} — ${e.razonSocial}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Tipo de documento</label>
+      <select class="form-select" id="nr-tipo"><option>Acuerdo</option><option>Resolución Definitiva</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Texto de la resolución <span>*</span></label>
+      <textarea class="form-textarea" id="nr-texto" placeholder="Redacte la resolución..." style="min-height:120px"></textarea>
+    </div>
+  `,()=>{
+    const expId=document.getElementById('nr-exp').value;
+    const texto=document.getElementById('nr-texto').value;
+    if(!texto){showToast('Ingrese el texto de la resolución','error');return;}
+    const id='RES-2024-'+String(STORE.resoluciones.length+1).padStart(3,'0');
+    STORE.resoluciones.push({id,expedienteId:expId,texto,rubricado:false,firmado:false,observaciones:null,estatus:'pendiente_revision'});
+    const exp=STORE.expedientes.find(e=>e.id===expId);
+    if(exp) exp.resolucion=id;
+    closeModal();showToast('Resolución '+id+' emitida','success');showPage('sers_resolucion');
+  },'Emitir Resolución');
+}
+
+function renderSersArchivo(){
+  return`<div class="page-header"><div class="page-title">Archivo de Expedientes SERS</div></div>
+  <div class="card card-body">
+  <table><thead><tr><th>ID</th><th>Razón Social</th><th>Resolución</th><th>Sanción</th><th>Acción</th></tr></thead>
+  <tbody>
+  ${STORE.expedientes.filter(e=>e.estatus==='resuelto').map(e=>`<tr>
+    <td><strong>${e.id}</strong></td><td>${e.razonSocial}</td>
+    <td>${e.resolucion||'—'}</td>
+    <td>${e.sancion?`<span class="badge badge-red">${e.sancion}</span>`:'—'}</td>
+    <td><button class="btn btn-success btn-sm" onclick="showToast('Expediente archivado','success')">🗄️ Archivar</button></td>
+  </tr>`).join('')||'<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:2rem">Sin expedientes resueltos</td></tr>'}
+  </tbody></table>
+  </div>`;
+}
+
+function renderCosResoluciones(){
+  return`<div class="page-header">
+    <div><div class="page-title">Resoluciones Rubricadas — COS</div><div class="page-sub">Revisar, emitir observaciones o firmar resoluciones</div></div>
+  </div>
+  <div class="tab-group">
+    <button class="tab-btn active" onclick="switchTab(this,'cos-tab-rev')">Por Revisar</button>
+    <button class="tab-btn" onclick="switchTab(this,'cos-tab-obs')">Con Observaciones</button>
+    <button class="tab-btn" onclick="switchTab(this,'cos-tab-firm')">Firmadas</button>
+  </div>
+  <div id="cos-tab-rev">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Resoluciones Pendientes de Revisión</span></div>
+      <table><thead><tr><th>ID</th><th>Expediente</th><th>Rubricado</th><th>Firmado</th><th>Acciones</th></tr></thead>
+      <tbody>
+      ${STORE.resoluciones.filter(r=>r.rubricado&&!r.firmado).map(r=>{
+        const exp=STORE.expedientes.find(e=>e.id===r.expedienteId);
+        return`<tr>
+          <td><strong>${r.id}</strong></td><td>${exp?.razonSocial||'—'}</td>
+          <td><span class="badge badge-green">✅ Sí</span></td>
+          <td><span class="badge badge-amber">Pendiente</span></td>
+          <td><div class="btn-group">
+            <button class="btn btn-success btn-sm" onclick="openModalFirmarCOS('${r.id}')">✍️ Firmar</button>
+            <button class="btn btn-warning btn-sm" onclick="openModalObservacionCOS('${r.id}')">📝 Observación</button>
+            <button class="btn btn-outline btn-sm" onclick="verResolucion('${r.id}')">👁️ Ver</button>
+          </div></td>
+        </tr>`;
+      }).join('')||'<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:2rem">Sin resoluciones pendientes</td></tr>'}
+      </tbody></table>
+    </div>
+  </div>
+  <div id="cos-tab-obs" style="display:none">
+    <div class="card card-body">
+    ${STORE.resoluciones.filter(r=>r.observaciones).map(r=>`
+      <div style="padding:.85rem;border:1px solid #fcd34d;border-radius:10px;margin-bottom:.75rem;background:#fffbeb">
+        <strong>${r.id}</strong> — <span style="color:#92400e">${r.observaciones}</span>
+      </div>
+    `).join('')||'<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Sin resoluciones con observaciones</div></div>'}
+    </div>
+  </div>
+  <div id="cos-tab-firm" style="display:none">
+    <div class="card card-body">
+    <table><thead><tr><th>ID</th><th>Expediente</th><th>¿Clausura?</th><th>Acción</th></tr></thead>
+    <tbody>
+    ${STORE.resoluciones.filter(r=>r.firmado).map(r=>{
+      const exp=STORE.expedientes.find(e=>e.id===r.expedienteId);
+      return`<tr>
+        <td><strong>${r.id}</strong></td><td>${exp?.razonSocial||'—'}</td>
+        <td><span class="badge ${r.procederClausura?'badge-red':'badge-green'}">${r.procederClausura?'Sí — Clausura':'No'}</span></td>
+        <td>${r.procederClausura?`<button class="btn btn-warning btn-sm" onclick="showPage('cos_clausuras')">🔒 Instruir Visita</button>`:
+          `<button class="btn btn-primary btn-sm" onclick="showToast('Resolución turnada para trámite','success')">📤 Turnar</button>`}
+        </td>
+      </tr>`;
+    }).join('')||'<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:2rem">Sin resoluciones firmadas</td></tr>'}
+    </tbody></table>
+    </div>
+  </div>`;
+}
+
+function openModalFirmarCOS(id){
+  const r=STORE.resoluciones.find(x=>x.id===id);if(!r)return;
+  const exp=STORE.expedientes.find(e=>e.id===r.expedienteId);
+  openModal('Firmar Resolución: '+id,`
+    <div class="alert alert-info">📄 Revise el contenido de la resolución antes de firmar.</div>
+    <div style="padding:.95rem;border-radius:10px;background:#f4f7f9;border:1px solid var(--border);margin-bottom:1rem">
+      <p style="font-size:.84rem;color:#374151;line-height:1.6">${r.texto}</p>
+    </div>
+    <div class="form-group"><label class="form-label">¿Proceder a clausura?</label>
+      <select class="form-select" id="fc-clausura">
+        <option value="no">No — Turnar para trámite y notificación</option>
+        <option value="si">Sí — Instruir visita de verificación para ejecutar sanción</option>
+      </select>
+    </div>
+  `,()=>{
+    r.firmado=true;r.estatus='firmada';
+    r.procederClausura=document.getElementById('fc-clausura').value==='si';
+    if(exp) exp.estatus='resuelto';
+    closeModal();showToast('Resolución '+id+' firmada','success');showPage('cos_resoluciones');
+  },'Firmar Resolución');
+}
+
+function openModalObservacionCOS(id){
+  const r=STORE.resoluciones.find(x=>x.id===id);if(!r)return;
+  openModal('Emitir Observación: '+id,`
+    <div class="form-group"><label class="form-label">Observación <span>*</span></label>
+      <textarea class="form-textarea" id="ob-texto" placeholder="Describa la observación o corrección requerida..." style="min-height:100px"></textarea>
+    </div>
+  `,()=>{
+    const obs=document.getElementById('ob-texto').value;
+    if(!obs){showToast('Ingrese la observación','error');return;}
+    r.observaciones=obs;r.estatus='con_observaciones';
+    closeModal();showToast('Observación emitida al Dictaminador Jurídico','success');showPage('cos_resoluciones');
+  },'Emitir Observación');
+}
+
+function verResolucion(id){
+  const r=STORE.resoluciones.find(x=>x.id===id);if(!r)return;
+  const exp=STORE.expedientes.find(e=>e.id===r.expedienteId);
+  openModal('Resolución: '+id,`
+    <div class="form-row">
+      <div><div class="form-label">ID</div><p style="font-weight:700;color:var(--brand-darker)">${r.id}</p></div>
+      <div><div class="form-label">Estatus</div><p><span class="badge ${r.firmado?'badge-green':'badge-amber'}">${r.estatus.replace('_',' ')}</span></p></div>
+    </div>
+    <div class="form-row" style="margin-top:.75rem">
+      <div><div class="form-label">Rubricado</div><p>${r.rubricado?'✅ Sí':'❌ No'}</p></div>
+      <div><div class="form-label">Firmado</div><p>${r.firmado?'✅ Sí':'❌ No'}</p></div>
+    </div>
+    <div style="margin-top:.75rem"><div class="form-label">Expediente</div><p>${exp?.razonSocial||'—'} (${r.expedienteId})</p></div>
+    <div style="margin-top:1rem">
+      <div class="form-label">Texto</div>
+      <div style="padding:.95rem;background:#f4f7f9;border-radius:10px;border:1px solid var(--border);font-size:.84rem;color:#374151;margin-top:.4rem;line-height:1.6">${r.texto}</div>
+    </div>
+    ${r.observaciones?`<div class="alert alert-warning" style="margin-top:1rem">⚠️ Observación: ${r.observaciones}</div>`:''}
+  `,'','',' ');
+}
+
+function renderCosClausuras(){
+  const clausuras=STORE.resoluciones.filter(r=>r.firmado&&r.procederClausura);
+  return`<div class="page-header"><div class="page-title">Resoluciones con Clausura — COS</div></div>
+  <div class="card card-body">
+  ${clausuras.length?`<table><thead><tr><th>ID</th><th>Razón Social</th><th>Acción</th></tr></thead><tbody>
+  ${clausuras.map(r=>{
+    const exp=STORE.expedientes.find(e=>e.id===r.expedienteId);
+    return`<tr><td><strong>${r.id}</strong></td><td>${exp?.razonSocial||'—'}</td>
+    <td><button class="btn btn-warning btn-sm" onclick="showToast('Visita de verificación instruida','success')">🏥 Instruir Visita</button></td></tr>`;
+  }).join('')}</tbody></table>`:
+  '<div class="empty-state"><div class="empty-icon">🔒</div><div class="empty-text">No hay resoluciones con clausura</div></div>'}
+  </div>`;
+}
+
+function renderCosFirmadas(){
+  return`<div class="page-header"><div class="page-title">Resoluciones Firmadas — COS</div></div>
+  <div class="card card-body">
+  <table><thead><tr><th>ID</th><th>Razón Social</th><th>Clausura</th><th>Estado</th></tr></thead>
+  <tbody>
+  ${STORE.resoluciones.filter(r=>r.firmado).map(r=>{
+    const exp=STORE.expedientes.find(e=>e.id===r.expedienteId);
+    return`<tr><td><strong>${r.id}</strong></td><td>${exp?.razonSocial||'—'}</td>
+    <td>${r.procederClausura?'<span class="badge badge-red">Sí</span>':'<span class="badge badge-green">No</span>'}</td>
+    <td><span class="badge badge-green">Firmada</span></td></tr>`;
+  }).join('')||'<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:2rem">Sin resoluciones firmadas</td></tr>'}
+  </tbody></table>
+  </div>`;
+}
+
+function renderReportes(){
+  const docs=STORE.documentos;
+  const exps=STORE.expedientes;
+  return`<div class="page-header">
+    <div><div class="page-title">Reportes y Estadísticas</div><div class="page-sub">Estadísticas generales del sistema SURVICOS</div></div>
+    <button class="btn btn-outline" onclick="showToast('Exportando reporte...','success')">📊 Exportar</button>
+  </div>
+  <div class="tab-group">
+    <button class="tab-btn active" onclick="switchTab(this,'rpt-deds')">DEDS</button>
+    <button class="tab-btn" onclick="switchTab(this,'rpt-sers')">SERS</button>
+    <button class="tab-btn" onclick="switchTab(this,'rpt-usuarios')">Usuarios</button>
+  </div>
+  <div id="rpt-deds">
+    <div class="stats-row">
+      <div class="stat-card blue"><div class="stat-icon">📄</div><div class="stat-label">Total Documentos</div><div class="stat-value">${docs.length}</div></div>
+      <div class="stat-card amber"><div class="stat-icon">⏳</div><div class="stat-label">Pendientes</div><div class="stat-value">${docs.filter(d=>d.estatus==='pendiente').length}</div></div>
+      <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-label">Completados</div><div class="stat-value">${docs.filter(d=>['firmado','enviado'].includes(d.estatus)).length}</div></div>
+      <div class="stat-card red"><div class="stat-icon">❌</div><div class="stat-label">Rechazados</div><div class="stat-value">${docs.filter(d=>d.estatus==='rechazado').length}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card"><div class="card-header"><span class="card-title">Por Materia</span></div><div class="card-body">
+      ${['PS','AS','MS','SS','TS'].map(m=>{
+        const count=docs.filter(d=>d.materia===m).length;
+        const pct=docs.length?Math.round(count/docs.length*100):0;
+        return`<div style="margin-bottom:1rem">
+          <div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.4rem">
+            <span><span class="badge badge-blue">${m}</span></span><span style="font-weight:700;color:var(--ink)">${count} <span style="color:var(--ink-muted);font-weight:400">(${pct}%)</span></span>
+          </div>
+          <div style="background:#eef2f6;border-radius:4px;height:6px">
+            <div style="background:var(--blue-mid);width:${pct}%;height:6px;border-radius:4px;transition:width .5s"></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div></div>
+    <div class="card"><div class="card-header"><span class="card-title">Por Urgencia</span></div><div class="card-body">
+      ${[{k:'urgente',label:'Urgentes',color:'#dc2626'},{k:'convencional',label:'Convencionales',color:'#2563eb'},{k:'retraso',label:'Con Retraso',color:'#b45309'}].map(({k,label,color})=>{
+        const count=docs.filter(d=>d.urgencia===k).length;
+        const pct=docs.length?Math.round(count/docs.length*100):0;
+        return`<div style="margin-bottom:1rem">
+          <div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.4rem">
+            <span style="color:${color};font-weight:600">${label}</span><span style="font-weight:700;color:var(--ink)">${count} <span style="color:var(--ink-muted);font-weight:400">(${pct}%)</span></span>
+          </div>
+          <div style="background:#eef2f6;border-radius:4px;height:6px">
+            <div style="background:${color};width:${pct}%;height:6px;border-radius:4px"></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div></div>
+    </div>
+  </div>
+  <div id="rpt-sers" style="display:none">
+    <div class="stats-row">
+      <div class="stat-card blue"><div class="stat-icon">📂</div><div class="stat-label">Total Expedientes</div><div class="stat-value">${exps.length}</div></div>
+      <div class="stat-card amber"><div class="stat-icon">🔍</div><div class="stat-label">En Revisión</div><div class="stat-value">${exps.filter(e=>e.estatus==='en_revision').length}</div></div>
+      <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-label">Resueltos</div><div class="stat-value">${exps.filter(e=>e.estatus==='resuelto').length}</div></div>
+      <div class="stat-card red"><div class="stat-icon">↩️</div><div class="stat-label">Devueltos</div><div class="stat-value">${exps.filter(e=>e.estatus==='devuelto').length}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card"><div class="card-header"><span class="card-title">Expedientes por Materia</span></div><div class="card-body">
+      ${['PS','AS','MS','P'].map(m=>{
+        const count=exps.filter(e=>e.materia===m).length;
+        const pct=exps.length?Math.round(count/exps.length*100):0;
+        return`<div style="margin-bottom:1rem"><div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.4rem">
+          <span><span class="badge badge-purple">${m}</span></span><span style="font-weight:700">${count} <span style="color:var(--ink-muted);font-weight:400">(${pct}%)</span></span></div>
+          <div style="background:#eef2f6;border-radius:4px;height:6px"><div style="background:var(--purple);width:${pct}%;height:6px;border-radius:4px"></div></div>
+        </div>`;
+      }).join('')}
+    </div></div>
+    <div class="card"><div class="card-header"><span class="card-title">Resoluciones</span></div><div class="card-body">
+      <div class="stats-row" style="margin-bottom:0;grid-template-columns:1fr 1fr">
+        <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value" style="font-size:1.5rem">${STORE.resoluciones.length}</div></div>
+        <div class="stat-card green"><div class="stat-label">Firmadas</div><div class="stat-value" style="font-size:1.5rem">${STORE.resoluciones.filter(r=>r.firmado).length}</div></div>
+        <div class="stat-card amber"><div class="stat-label">Pendientes</div><div class="stat-value" style="font-size:1.5rem">${STORE.resoluciones.filter(r=>!r.firmado).length}</div></div>
+        <div class="stat-card red"><div class="stat-label">Clausuras</div><div class="stat-value" style="font-size:1.5rem">${STORE.resoluciones.filter(r=>r.procederClausura).length}</div></div>
+      </div>
+    </div></div>
+    </div>
+  </div>
+  <div id="rpt-usuarios" style="display:none">
+    <div class="stats-row">
+      <div class="stat-card blue"><div class="stat-icon">👥</div><div class="stat-label">Total Usuarios</div><div class="stat-value">${STORE.usuarios.length}</div></div>
+      <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-label">Activos</div><div class="stat-value">${STORE.usuarios.filter(u=>u.estatus==='activo').length}</div></div>
+      <div class="stat-card red"><div class="stat-icon">🚫</div><div class="stat-label">Inactivos</div><div class="stat-value">${STORE.usuarios.filter(u=>u.estatus==='inactivo').length}</div></div>
+    </div>
+    <div class="card"><div class="card-header"><span class="card-title">Usuarios por Perfil</span></div><div class="card-body">
+      ${Object.entries(PROFILES).map(([k,v])=>{
+        const count=STORE.usuarios.filter(u=>u.perfil===k).length;
+        return count?`<div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.83rem">
+          <span style="font-weight:500">${v.label}</span><span class="badge badge-blue">${count}</span></div>`:'';
+      }).join('')}
+    </div></div>
+  </div>`;
+}
+
+function renderNotificaciones(){
+  const unread=STORE.notificaciones.filter(n=>!n.leido).length;
+  return`<div class="page-header">
+    <div><div class="page-title">Notificaciones</div><div class="page-sub">${unread} sin leer</div></div>
+    <button class="btn btn-outline" onclick="marcarTodosLeidos()">✅ Marcar todas como leídas</button>
+  </div>
+  <div class="card">
+  ${STORE.notificaciones.map(n=>`
+    <div style="display:flex;align-items:center;gap:.9rem;padding:1rem 1.3rem;border-bottom:1px solid ${!n.leido?'#dbeafe':'var(--border)'};background:${!n.leido?'#f0f6ff':'transparent'};transition:background .15s">
+      <div style="width:9px;height:9px;border-radius:50%;background:${!n.leido?'#3b82f6':'#cbd5e1'};flex-shrink:0"></div>
+      <div style="flex:1">
+        <p style="font-size:.85rem;font-weight:${!n.leido?'600':'400'};color:${!n.leido?'var(--ink)':'var(--gray)'}">${n.texto}</p>
+        <p style="font-size:.72rem;color:#9cb0bc;margin-top:.18rem">${n.fecha}</p>
+      </div>
+      ${!n.leido?`<button class="btn btn-outline btn-sm" onclick="marcarLeido('${n.id}')">Leído</button>`:'<span style="font-size:.72rem;color:#9cb0bc">✓ leído</span>'}
+    </div>
+  `).join('')}
+  </div>`;
+}
+
+function marcarLeido(id){
+  const n=STORE.notificaciones.find(x=>x.id===id);
+  if(n) n.leido=true;
+  showPage('notificaciones_page');
+}
+function marcarTodosLeidos(){
+  STORE.notificaciones.forEach(n=>n.leido=true);
+  showPage('notificaciones_page');showToast('Todas marcadas como leídas','success');
+}
+
+// ===================== HELPERS =====================
+function switchTab(btn,tabId){
+  const parent=btn.parentElement;
+  parent.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const container=btn.closest('.page')||document.getElementById('content-area');
+  container.querySelectorAll('[id^="tab-"],[id^="cos-tab-"],[id^="rpt-"]').forEach(t=>t.style.display='none');
+  const el=document.getElementById(tabId);
+  if(el) el.style.display='block';
+}
+
+function openModal(title,body,onConfirm,confirmLabel='Confirmar',confirmClass='btn-primary'){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  const footer=document.getElementById('modal-footer');
+  footer.innerHTML='';
+  const cancelBtn=document.createElement('button');
+  cancelBtn.className='btn btn-outline';cancelBtn.textContent='Cancelar';
+  cancelBtn.onclick=closeModal;footer.appendChild(cancelBtn);
+  if(onConfirm&&onConfirm!=''){
+    const confBtn=document.createElement('button');
+    confBtn.className=`btn ${confirmClass}`;confBtn.textContent=confirmLabel;
+    confBtn.onclick=onConfirm;footer.appendChild(confBtn);
+  }
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+function closeModalOnOverlay(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
+
+function showToast(msg,type=''){
+  const container=document.getElementById('toast');
+  const el=document.createElement('div');
+  el.className=`toast-msg ${type}`;
+  el.innerHTML=(type==='success'?'✅ ':type==='error'?'❌ ':'ℹ️ ')+msg;
+  container.appendChild(el);
+  setTimeout(()=>el.remove(),3500);
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('login-screen').style.display!=='none')doLogin();});
+</script>
+</body>
+</html>
