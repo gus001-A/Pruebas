@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><title>VisitaSan - Gestión de visitas sanitarias</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f9f8;--sf:#fff;--ink:#23403b;--mu:#6b807b;--ln:#dde8e5;--nv:#fff;--ac:#2f8f81;--ac2:#e7f5f2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden}
+body{font:14px/1.45 "Public Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);display:flex;flex-direction:column}
+svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.nv{height:56px;flex:none;background:var(--nv);color:var(--ink);border-bottom:1px solid var(--ln);display:flex;align-items:center;gap:6px;padding:0 14px}
+.br{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;margin-right:14px;white-space:nowrap}
+.nl{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none}
+.nl button{display:flex;align-items:center;gap:7px;background:none;border:0;color:var(--mu);padding:8px 11px;border-radius:7px;font:inherit;font-weight:500;cursor:pointer;white-space:nowrap}
+.nl button:hover{background:var(--ac2);color:var(--ink)}.nl button.on{background:var(--ac2);color:var(--ac);box-shadow:inset 0 -2px var(--ac)}
+.rt{display:flex;align-items:center;gap:8px}
+.rt select{background:var(--bg);color:var(--ink);border:1px solid var(--ln);border-radius:7px;padding:6px 8px;font:inherit;max-width:190px}.rt option{color:#16302c}
+.ib0{position:relative;background:none;border:0;color:var(--ink);padding:7px;border-radius:7px;cursor:pointer}.ib0:hover{background:var(--ac2)}
+.bd{position:absolute;top:0;right:0;background:#d64a3f;color:#fff;font-size:10px;font-weight:700;border-radius:9px;min-width:16px;padding:0 4px;text-align:center}
+main{flex:1;min-height:0;padding:14px;overflow:hidden}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:10px;height:100%;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.tt{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--ln);flex:none;flex-wrap:wrap}
+.tt h2{margin:0;font-size:17px;flex:1;min-width:160px}.tt small{color:var(--mu);font-weight:400;font-size:12px;display:block}
+.sc{flex:1;min-height:0;overflow:auto}
+table{border-collapse:separate;border-spacing:0;width:100%;white-space:nowrap}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--ln);vertical-align:middle}
+thead th{position:sticky;top:0;background:var(--ac2);font-size:12px;font-weight:600;z-index:2;color:var(--ink)}
+tbody tr:hover{background:var(--ac2)}
+tfoot td{position:sticky;bottom:0;background:var(--sf);border-top:2px solid var(--ac);border-bottom:0;padding:7px 8px;z-index:2}
+tfoot input,tfoot select{width:100%;min-width:90px;padding:5px 7px;border:1px solid var(--ln);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit;font-size:12px}
+.tf{flex:none;display:flex;align-items:center;gap:10px;padding:7px 14px;font-size:12px;color:var(--mu);border-top:1px solid var(--ln)}
+small.s{display:block;color:var(--mu);font-size:11px}
+.ch{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.g{background:#e0f5ea;color:#1b6b43}.b{background:#e3eefb;color:#2a5a94}.w{background:#fdf1d3;color:#80540c}.r{background:#fbe3e0;color:#9a2a21}.n{background:#eaf0ee;color:#4d5f5b}
+.ib{display:inline-flex;align-items:center;gap:5px;background:none;border:1px solid var(--ln);color:var(--ink);border-radius:6px;padding:4px 9px 4px 7px;margin-right:4px;cursor:pointer;font:inherit;font-size:12px;font-weight:500}.ib svg.i{width:15px;height:15px}.ib:hover{background:var(--ac);color:#fff;border-color:var(--ac)}
+.bt{display:inline-flex;align-items:center;gap:6px;background:var(--ac);color:#fff;border:0;border-radius:7px;padding:8px 13px;font:inherit;font-weight:600;cursor:pointer}.bt.g2{background:none;color:var(--ink);border:1px solid var(--ln)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:14px;flex:none}
+.k{border:1px solid var(--ln);border-radius:9px;padding:10px 12px;display:flex;gap:10px;align-items:center}.k b{font-size:24px;line-height:1}.k span{font-size:12px;color:var(--mu)}
+.k .ic{background:var(--ac2);color:var(--ac);border-radius:8px;padding:8px}
+.dg{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1.4fr;gap:14px;padding:0 14px 14px}
+.pn{border:1px solid var(--ln);border-radius:9px;display:flex;flex-direction:column;min-height:0}.pn h3{margin:0;padding:10px 12px;font-size:14px;border-bottom:1px solid var(--ln)}.pn .sc{padding:8px 12px}
+.bar{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:12px}.bar i{display:block;height:10px;background:var(--ac);border-radius:5px;min-width:3px}.bar span:first-child{width:105px}
+.al{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid var(--ln);align-items:center}
+#m{position:fixed;inset:0;background:#23403b66;display:none;align-items:center;justify-content:center;z-index:20;padding:12px}#m.on{display:flex}
+.mb{background:var(--sf);border-radius:12px;width:min(480px,100%);max-height:92%;display:flex;flex-direction:column}.mb.w{width:min(760px,100%)}
+.mb h3{margin:0;padding:14px 16px;border-bottom:1px solid var(--ln)}.mc{padding:14px 16px;overflow:auto;flex:1}.mf{padding:12px 16px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--ln)}
+label{display:block;font-size:12px;font-weight:600;margin:10px 0 3px}
+.mc input,.mc select,.mc textarea{width:100%;padding:8px;border:1px solid var(--ln);border-radius:7px;background:var(--bg);color:var(--ink);font:inherit}
+.gr{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}.gr div{padding:4px 0;border-bottom:1px solid var(--ln)}.gr small{display:block;color:var(--mu);font-size:11px}
+.ck{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:8px 0;border-bottom:1px solid var(--ln)}.ck .rb{display:flex;gap:10px;font-size:12px}.ck label{display:inline-flex;gap:3px;margin:0;font-weight:500;align-items:center}.ck input[type=radio]{width:auto}.ck input[type=text]{grid-column:1/3}
+h4{margin:14px 0 4px;font-size:13px}
+#t{position:fixed;right:14px;bottom:14px;z-index:30;display:flex;flex-direction:column;gap:6px}#t div{background:#fff;color:var(--ink);border:1px solid var(--ac);padding:9px 14px;border-radius:8px;box-shadow:0 4px 14px #2f8f8133}#t .e{background:#fdecea;color:#8e1b13;border-color:#e8a29b}
+.lg{margin:auto;width:min(380px,92%);background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:24px}.lg h1{font-size:20px;margin:8px 0 0}.lg p{color:var(--mu);margin:2px 0 8px}
+.lg select,.lg input{width:100%;padding:9px;border:1px solid var(--ln);border-radius:7px;background:var(--bg);color:var(--ink);font:inherit}.lg .bt{width:100%;justify-content:center;margin-top:16px}
+@media(max-width:900px){.nl button span,.br span{display:none}.dg{grid-template-columns:1fr;overflow:auto}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="i-dash" viewBox="0 0 24 24"><path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h6"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></symbol>
+<symbol id="i-clip" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3h6v3H9zM9 14l2 2 4-4"/></symbol>
+<symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18M6 21h12M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/></symbol>
+<symbol id="i-build" viewBox="0 0 24 24"><path d="M4 21V5l8-2v18M12 9h8v12M7 9h2M7 13h2M7 17h2M15 13h2M15 17h2M2 21h20"/></symbol>
+<symbol id="i-hist" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 21a7 7 0 0 1 14 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a7 7 0 0 1 4 7"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+<symbol id="i-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+<symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+<symbol id="i-redo" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M3 6l1 1 2-2M3 12l1 1 2-2M3 18l1 1 2-2"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h12l-2 4 2 4H5"/></symbol>
+<symbol id="i-inbox" viewBox="0 0 24 24"><path d="M3 13l3-8h12l3 8v6H3zM3 13h5l1 3h6l1-3h5"/></symbol>
+</defs></svg>
+<div id="app" style="display:contents"></div><div id="m"></div><div id="t"></div>
+<script>
+const $=s=>document.querySelector(s),pad=(n,l=2)=>String(n).padStart(l,'0');
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fdt=d=>{d=new Date(d);return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+' '+pad(d.getHours())+':'+pad(d.getMinutes())};
+const fd=d=>d?fdt(d).slice(0,10):'-',nowI=()=>new Date().toISOString();
+const addD=(d,n)=>{d=new Date(d);d.setDate(d.getDate()+n);return d},diff=(a,b)=>Math.round((new Date(b).setHours(0,0,0,0)-new Date(a).setHours(0,0,0,0))/864e5);
+const ago=(n,h=9)=>{const d=new Date();d.setDate(d.getDate()-n);d.setHours(h,(n*13)%60,0,0);return d.toISOString()};
+const ic=n=>`<svg class="i"><use href="#i-${n}"/></svg>`;
+const CAT=['Agua potable y almacenamiento','Control de plagas','Higiene del personal','Manejo de residuos','Temperatura de refrigeración','Licencia sanitaria vigente'];
+const MED=['Sin medida','Suspender','Asegurar','Destruir','Liberar','Clausura'];
+const CAU=['No se encontró el establecimiento','Establecimiento cerrado','Negativa de acceso','Situación administrativa'];
+const RN={sa:'Super administrador',dir:'Director',prog:'Programador',aud:'Auditor',dic:'Dictaminador',est:'Usuario de establecimiento'};
+const TIPOS=['Restaurante','Hospital','Laboratorio','Farmacia','Clínica'],MUN=['Cuernavaca','Jiutepec','Cuautla','Temixco','Yautepec'];
+let U=[[1,'Ana Ruiz Salgado','aruiz','sa'],[2,'Roberto Mena Díaz','rmena','dir'],[3,'Claudia Torres Vega','ctorres','prog'],[4,'Luis Ortega Pineda','lortega','aud'],[5,'Marta Silva Cruz','msilva','aud'],[6,'Elena Paredes Gil','eparedes','dic'],[7,'Taquería La Esquina','taqesquina','est']].map(([id,n,l,r])=>({id,n,l,r,a:1,est:r==='est'?1:0,by:1,at:ago(150)}));
+const uname=id=>(U.find(u=>u.id==id)||{n:'Sistema'}).n;
+let E=[['Taquería La Esquina SA de CV','Taquería La Esquina','TLE010203AB1','Cuernavaca','Restaurante','Av. Morelos 120'],['Hospital San Rafael SC','Hospital San Rafael','HSR950101KT2','Jiutepec','Hospital','Blvd. Cuauhnáhuac 45'],['Laboratorios Clínicos del Sur','LabSur','LCS080808PQ3','Cuautla','Laboratorio','Calle 5 de Mayo 88'],['Farmacias Vida SA','Farmacia Vida','FVI120415RX4','Temixco','Farmacia','Av. Central 301'],['Clínica Familiar Yautepec','Clínica Familiar','CFY010610MN5','Yautepec','Clínica','Calle Hidalgo 12'],['Mariscos El Faro SA','El Faro','MEF070707LL6','Cuernavaca','Restaurante','Av. Plan de Ayala 910'],['Laboratorio Análisis Rápido','AnalisRápido','LAR150120HJ7','Jiutepec','Laboratorio','Calle Reforma 77'],['Hospital Angeles del Valle','Ángeles del Valle','HAV990909CD8','Cuernavaca','Hospital','Av. Universidad 500']].map((a,i)=>({id:i+1,rs:a[0],nc:a[1],rfc:a[2],mun:a[3],tipo:a[4],dom:a[5],tel:'777 1'+pad(i*37+100,3)+' 0'+pad(i+10),a:1,by:i%2?3:1,at:ago(160-i*9)}));
+const mk=s=>CAT.map((_,i)=>({v:(i+s)%5===0?'N':'C',obs:(i+s)%5===0?'Se detectó incumplimiento menor':''}));
+let O=[];
+function S(n,est,estado,prog,aud,x={}){O.push({id:n,folio:'COF-2026-'+pad(100+n,4),est,estado,by:n%2?2:3,at:ago((prog??30)+3,10),prog:prog!=null?ago(prog,9):null,aud,pby:prog!=null?3:0,pat:prog!=null?ago(prog,9):null,docs:[],...x})}
+const V=(p,s,i=1)=>({ini:ago(p-1,10),fin:ago(p-1,13),ch:mk(s),obs:'Visita sin incidentes mayores.'});
+S(1,1,'Cerrada',80,4,{vis:V(80,1),dic:{tipo:'Dictamen',res:'Favorable',medida:'Sin medida',txt:'Cumple.',by:6,at:ago(70)},cierre:ago(65)});
+S(2,2,'Dictaminada',40,5,{vis:V(40,5),dic:{tipo:'Dictamen',res:'Desfavorable',medida:'Clausura',txt:'Riesgo sanitario alto.',by:6,at:ago(30)}});
+S(3,3,'Visita realizada',20,4,{vis:V(20,2)});
+S(4,4,'En visita',9,5,{vis:{ini:ago(1,10),ch:CAT.map(()=>({v:'',obs:''})),obs:''}});
+S(5,5,'Programada',6,4);S(6,6,'Programada',9,5);S(7,7,'Autorizada',null,0);S(8,8,'En revisión',null,0);S(9,1,'Recibida',null,0);
+S(10,2,'No realizada',15,4,{vis:{causa:CAU[0],ch:[]}});
+S(11,3,'En dictamen',70,5,{vis:V(70,4),dby:6});S(12,5,'Programada',11,4);
+let L=[],me=null,cur='dash';
+const A={ver:'*',rev:'sa dir prog',aut:'sa dir',rec:'sa dir',prog:'sa prog',ini:'sa aud',cap:'sa aud',fin:'sa aud',nore:'sa aud',rdic:'sa dic',dic:'sa dic',cer:'sa dir',doc:'est'};
+const can=a=>A[a]==='*'||A[a].split(' ').includes(me.r);
+const NAV=[['dash','Dashboard','dash','sa dir prog aud dic est'],['ord','Órdenes','file','sa dir prog dic est'],['prog','Programación','cal','sa dir prog'],['vis','Visitas','clip','sa dir prog aud'],['dic','Dictámenes','scale','sa dir dic est'],['est','Establecimientos','build','sa dir prog'],['bit','Bitácora','hist','sa dir'],['usr','Usuarios','users','sa']];
+function log(m,a,rec,p,q){L.unshift({id:L.length+1,at:nowI(),u:me?me.n:'Sistema',r:me?RN[me.r]:'-',ip:'10.20.4.'+(20+(me?me.id:0)),m:({ord:'Órdenes',prog:'Programación',vis:'Visitas',dic:'Dictámenes',est:'Establecimientos',dash:'Dashboard'}[m]||m),a,rec:rec||'-',p:p||'-',q:q||'-'})}
+function toast(t,e){const d=document.createElement('div');d.textContent=t;if(e)d.className='e';$('#t').append(d);setTimeout(()=>d.remove(),3200)}
+function modal(t,b,ok,fn,w){$('#m').innerHTML=`<div class="mb${w?' w':''}"><h3>${t}</h3><div class="mc">${b}</div><div class="mf"><button class="bt g2" data-x>${ok?'Cancelar':'Cerrar'}</button>${ok?`<button class="bt" id="ok">${ok}</button>`:''}</div></div>`;$('#m').classList.add('on');if(ok)$('#ok').onclick=()=>{if(fn()!==false)closeM()}}
+const closeM=()=>$('#m').classList.remove('on');
+$('#m').addEventListener('click',e=>{if(e.target.id==='m'||e.target.closest('[data-x]'))closeM()});
+const stc={Recibida:'n','En revisión':'b',Autorizada:'b',Programada:'b','En visita':'w','Visita realizada':'g','En dictamen':'w',Dictaminada:'g',Cerrada:'n',Rechazada:'r','No realizada':'r'};
+const chip=(t,c)=>`<span class="ch ${c}">${esc(t)}</span>`,sch=s=>chip(s,stc[s]||'n');
+const alc={'En plazo':'g',Preventiva:'w',Prioritaria:'w','Incumplida':'r',Proceso:'w','Crítica':'r',Vencida:'r',Cumplido:'n'};
+function plz(o){if(!o.prog)return null;const d=diff(o.prog,new Date()),lv=addD(o.prog,10),lc=addD(o.prog,90);let l;
+if(['Cerrada','Rechazada'].includes(o.estado))l='Cumplido';
+else if(o.estado==='Programada')l=d>=10?'Incumplida':d>=8?'Prioritaria':d>=5?'Preventiva':'En plazo';
+else l=d>=90?'Vencida':d>=85?'Crítica':d>=75?'Prioritaria':d>=60?'Proceso':'En plazo';
+return{d,lv,lc,rv:10-d,rc:90-d,l}}
+const al=o=>{const p=plz(o);return p?chip(p.l,alc[p.l]):'-'};
+const rest=o=>{const p=plz(o);if(!p)return'-';return(o.estado==='Programada'?`Visita: ${p.rv} d<small class="s">Cierre: ${p.rc} d</small>`:`Cierre: ${p.rc} d`)};
+const sc=o=>{const c=(o.vis?.ch||[]).filter(x=>x.v==='C'||x.v==='N');return c.length?Math.round(c.filter(x=>x.v==='C').length/c.length*100)+'%':'-'};
+const scope=()=>O.filter(o=>me.r==='est'?o.est===me.est:me.r==='aud'&&cur==='vis'?o.aud===me.id:1);
+const en=id=>E.find(e=>e.id==id)||{};
+const by=(id,at)=>`<b style="font-weight:600">${esc(uname(id))}</b><small class="s">${fdt(at)}</small>`;
+const byv=(id,at)=>uname(id)+' '+fdt(at);
+/* tabla genérica con filtros al pie de cada columna */
+const F={};let TB=null;
+function tbl(key,title,sub,cols,rows,tools){F[key]=F[key]||{};TB={key,cols,rows};
+const head=cols.map(c=>`<th>${c.t}</th>`).join('');
+const foot=cols.map((c,i)=>c.f==='s'?`<td><select data-i="${i}"><option value="">Todos</option>${[...new Set(rows.map(c.v))].sort().map(x=>`<option${F[key][i]===x?' selected':''}>${esc(x)}</option>`).join('')}</select></td>`:c.f?`<td><input data-i="${i}" placeholder="Filtrar" value="${esc(F[key][i]||'')}"></td>`:'<td></td>').join('');
+$('#mn').innerHTML=`<section class="card"><div class="tt"><h2>${title}<small>${sub}</small></h2>${tools||''}</div><div class="sc"><table><thead><tr>${head}</tr></thead><tbody id="tb"></tbody><tfoot><tr>${foot}</tr></tfoot></table></div><div class="tf"><span id="cnt"></span><button class="bt g2" id="clr" style="padding:3px 9px;font-size:12px">${ic('x')}Limpiar filtros</button></div></section>`;
+$('#clr').onclick=()=>{F[key]={};tbl(key,title,sub,cols,rows,tools)};drawB()}
+function drawB(){const{key,cols,rows}=TB,f=F[key];const r=rows.filter(o=>cols.every((c,i)=>{const q=f[i];if(!q)return 1;const v=String(c.v(o));return c.f==='s'?v===q:v.toLowerCase().includes(q.toLowerCase())}));
+$('#tb').innerHTML=r.map(o=>'<tr>'+cols.map(c=>`<td>${c.r?c.r(o):esc(c.v(o))}</td>`).join('')+'</tr>').join('')||`<tr><td colspan="${cols.length}" style="padding:30px;text-align:center;color:var(--mu)">No hay registros con estos filtros.</td></tr>`;
+$('#cnt').textContent=r.length+' de '+rows.length+' registros'}
+document.addEventListener('input',e=>{const t=e.target.closest('tfoot [data-i]');if(t&&TB){F[TB.key][t.dataset.i]=t.value;drawB()}});
+const SL={ver:'Ver',vere:'Ver',rev:'Revisar',aut:'Autorizar',rec:'Rechazar',ini:'Iniciar',cap:'Capturar',fin:'Finalizar',nore:'No realizada',rdic:'Tomar',dic:'Dictaminar',cer:'Cerrar',doc:'Cargar doc'};
+const btn=(a,i,t,id)=>`<button class="ib" data-a="${a}" data-id="${id}" title="${t}" aria-label="${t}">${ic(i)}<span>${SL[a]||t}</span></button>`;
+const reg=(id,at)=>({t:'Registró',f:'t',v:o=>byv(id(o),at(o)),r:o=>by(id(o),at(o))});
+function oa(o){const s=o.estado,x=[btn('ver','eye','Ver expediente',o.id)],ad=(a,i,t,ok)=>{if(ok&&can(a)&&(me.r!=='aud'||o.aud===me.id))x.push(btn(a,i,t,o.id))};
+const rv=['Recibida','En revisión'].includes(s);
+ad('rev','search','Enviar a revisión',s==='Recibida');ad('aut','check','Autorizar',rv);ad('rec','x','Rechazar',rv);
+ad('prog',s==='Programada'?'redo':'cal',s==='Programada'?'Reprogramar':'Programar',['Autorizada','Programada'].includes(s));
+ad('ini','play','Iniciar visita',s==='Programada');ad('cap','list','Capturar lista de verificación',s==='En visita');ad('fin','flag','Finalizar visita',s==='En visita');
+ad('nore','ban','Marcar visita no realizada',['Programada','En visita'].includes(s));
+ad('rdic','inbox','Tomar para dictamen',['Visita realizada','No realizada'].includes(s));ad('dic','scale','Emitir dictamen',s==='En dictamen');
+ad('cer','lock','Cerrar expediente',s==='Dictaminada');ad('doc','up','Cargar documento',s!=='Cerrada');return x.join('')}
+const AC={t:'Acciones',v:()=>''};
+const C={fo:{t:'Folio',f:'t',v:o=>o.folio,r:o=>`<b>${o.folio}</b>`},es:{t:'Establecimiento',f:'t',v:o=>en(o.est).nc,r:o=>`${esc(en(o.est).nc)}<small class="s">${esc(en(o.est).tipo)}, ${esc(en(o.est).mun)}</small>`},
+st:{t:'Estatus',f:'s',v:o=>o.estado,r:o=>sch(o.estado)},al:{t:'Alerta de plazo',f:'s',v:o=>plz(o)?.l||'-',r:al},re:{t:'Plazo restante',v:o=>'',r:rest},
+au:{t:'Auditor',f:'s',v:o=>o.aud?uname(o.aud):'-'},ac:{t:'Acciones',v:()=>'',r:oa}};
+function view(){const r=[...O].reverse();
+if(cur==='dash')return dash();
+if(cur==='ord'){const t=['sa','dir','prog'].includes(me.r)&&me.r!=='prog'?`<button class="bt" data-a="nord">${ic('plus')}Registrar orden</button><button class="bt g2" data-a="lote">${ic('up')}Importar lote CSV</button>`:'';
+return tbl('ord','Órdenes de visita','Recepción, validación de folios y autorización',[C.fo,C.es,{t:'Tipo de establecimiento',f:'s',v:o=>en(o.est).tipo},C.st,reg(o=>o.by,o=>o.at),C.ac],scope().reverse(),t)}
+if(cur==='prog')return tbl('prog','Programación de visitas','Plazos: 10 días para visitar, 90 para concluir. La programación siempre es manual',[C.fo,C.es,{t:'Última visita',v:o=>{const l=O.filter(x=>x.est===o.est&&x.vis?.fin&&x!==o).map(x=>x.vis.fin).sort().pop();return l?fd(l):'Sin visitas'}},{t:'Programada',v:o=>o.prog?fd(o.prog):'Pendiente'},{t:'Lím. visita',v:o=>plz(o)?fd(plz(o).lv):'-'},{t:'Lím. cierre',v:o=>plz(o)?fd(plz(o).lc):'-'},C.re,C.al,C.st,C.au,reg(o=>o.pby||o.by,o=>o.pat||o.at),C.ac],r.filter(o=>['Autorizada','Programada'].includes(o.estado)||(o.prog&&!['Cerrada','Rechazada'].includes(o.estado))),can('prog')?`<button class="bt g2" data-a="recom">${ic('star')}Recomendaciones</button>`:'');
+if(cur==='vis')return tbl('vis','Visitas sanitarias','Ejecución, lista de verificación y calificación',[C.fo,C.es,{t:'Dirección',f:'t',v:o=>en(o.est).dom},C.au,{t:'Programada',v:o=>fd(o.prog)},{t:'Lím. visita',v:o=>plz(o)?fd(plz(o).lv):'-'},{t:'Inicio',v:o=>o.vis?.ini?fdt(o.vis.ini):'-'},{t:'Término',v:o=>o.vis?.fin?fdt(o.vis.fin):'-'},{t:'Calif.',v:sc},C.st,C.al,reg(o=>o.aud,o=>o.vis?.ini||o.pat),C.ac],scope().filter(o=>o.prog).reverse());
+if(cur==='dic')return tbl('dic','Dictámenes y medidas de seguridad','Revisión de resultados, dictamen y cierre',[C.fo,C.es,{t:'Tipo',f:'s',v:o=>o.dic?.tipo||'Pendiente'},{t:'Resultado',f:'s',v:o=>o.dic?.res||'-'},{t:'Medida',f:'s',v:o=>o.dic?.medida||'-'},{t:'Calif.',v:sc},C.st,C.re,C.al,reg(o=>o.dic?.by||o.dby||o.aud||o.by,o=>o.dic?.at||o.vis?.fin||o.at),C.ac],scope().filter(o=>['Visita realizada','No realizada','En dictamen','Dictaminada','Cerrada'].includes(o.estado)).reverse());
+if(cur==='est')return tbl('est','Establecimientos','Expediente electrónico',[{t:'RFC',f:'t',v:e=>e.rfc},{t:'Razón social',f:'t',v:e=>e.rs},{t:'Nombre comercial',f:'t',v:e=>e.nc},{t:'Tipo',f:'s',v:e=>e.tipo},{t:'Municipio',f:'s',v:e=>e.mun},{t:'Estatus',f:'s',v:e=>e.a?'Activo':'Inactivo',r:e=>chip(e.a?'Activo':'Inactivo',e.a?'g':'n')},{t:'Expedientes',v:e=>O.filter(o=>o.est===e.id).length},reg(e=>e.by,e=>e.at),{t:'Acciones',v:()=>'',r:e=>btn('vere','eye','Ver expediente',e.id)+btn('ede','edit','Editar',e.id)}],[...E].reverse(),`<button class="bt" data-a="ne">${ic('plus')}Nuevo establecimiento</button>`);
+if(cur==='bit')return tbl('bit','Bitácora y auditoría','Registro inalterable de operaciones. Use los filtros al pie de cada columna',[{t:'Fecha y hora',f:'t',v:l=>fdt(l.at)},{t:'Usuario',f:'s',v:l=>l.u},{t:'Rol',f:'s',v:l=>l.r},{t:'Módulo',f:'s',v:l=>l.m},{t:'Acción',f:'s',v:l=>l.a},{t:'Registro',f:'t',v:l=>l.rec},{t:'Estado anterior',f:'s',v:l=>l.p},{t:'Estado posterior',f:'s',v:l=>l.q},{t:'IP',f:'t',v:l=>l.ip}],L);
+if(cur==='usr')return tbl('usr','Usuarios, roles y permisos','Administración de accesos',[{t:'Usuario',f:'t',v:u=>u.l},{t:'Nombre',f:'t',v:u=>u.n},{t:'Rol',f:'s',v:u=>RN[u.r]},{t:'Estatus',f:'s',v:u=>u.a?'Activo':'Inactivo',r:u=>chip(u.a?'Activo':'Inactivo',u.a?'g':'r')},reg(u=>u.by,u=>u.at),{t:'Acciones',v:()=>'',r:u=>btn('tg',u.a?'ban':'check',u.a?'Desactivar':'Activar',u.id)}],[...U].reverse(),`<button class="bt" data-a="nu">${ic('plus')}Nuevo usuario</button>`)}
+const alerts=()=>scope().filter(o=>{const p=plz(o);return p&&!['En plazo','Cumplido'].includes(p.l)});
+function dash(){const R=scope(),c=s=>R.filter(o=>s.includes(o.estado)).length;
+const T=[['Órdenes recibidas',R.length,'file'],['Por autorizar',c(['Recibida','En revisión']),'shield'],['Por programar',c(['Autorizada']),'cal'],['Programadas',c(['Programada']),'cal'],['En visita',c(['En visita']),'play'],['Pendientes de dictamen',c(['Visita realizada','No realizada','En dictamen']),'scale'],['Alertas de plazo',alerts().length,'bell'],['Clausuras',R.filter(o=>o.dic?.medida==='Clausura').length,'ban'],['Concluidos',c(['Cerrada']),'lock']];
+const ST=['Recibida','En revisión','Autorizada','Programada','En visita','Visita realizada','En dictamen','Dictaminada','Cerrada','No realizada','Rechazada'],mx=Math.max(1,...ST.map(s=>c([s])));
+const a=alerts();$('#mn').innerHTML=`<section class="card"><div class="tt"><h2>Dashboard<small>Resumen para ${esc(RN[me.r])}, ${fdt(new Date())}</small></h2></div><div class="kp">${T.map(t=>`<div class="k"><span class="ic">${ic(t[2])}</span><div><b>${t[1]}</b><br><span>${t[0]}</span></div></div>`).join('')}</div>
+<div class="dg"><div class="pn"><h3>Expedientes por estatus</h3><div class="sc">${ST.map(s=>`<div class="bar"><span>${s}</span><i style="width:${c([s])/mx*60}%"></i><b>${c([s])}</b></div>`).join('')}</div></div>
+<div class="pn"><h3>Expedientes con alerta de plazo</h3><div class="sc">${a.map(o=>`<div class="al"><span><b>${o.folio}</b> ${esc(en(o.est).nc)}<small class="s">${rest(o).replace(/<[^>]+>/g,' ')}</small></span>${al(o)}</div>`).join('')||'<p style="color:var(--mu)">Sin alertas activas.</p>'}</div></div></div></section>`}
+/* acciones */
+const mv=(o,s,a)=>{const p=o.estado;o.estado=s;log(cur,a,o.folio,p,s);toast(a+': '+o.folio);go(cur)};
+const opt=(arr,sel)=>arr.map(x=>`<option${x===sel?' selected':''}>${esc(x)}</option>`).join('');
+const nextF=()=>'COF-2026-'+pad(Math.max(...O.map(o=>+o.folio.slice(-4)))+1,4);
+function addO(folio,est){if(O.some(o=>o.folio===folio))return false;O.push({id:O.length+1+Math.random(),folio,est,estado:'Recibida',by:me.id,at:nowI(),prog:null,aud:0,docs:[]});O[O.length-1].id=Math.max(...O.slice(0,-1).map(o=>o.id))+1;log('Órdenes','Importación',folio,'-','Recibida');return true}
+const H={
+ver(o){const p=plz(o),d=o.dic;modal('Expediente '+o.folio,`<div class="gr"><div><small>Establecimiento</small>${esc(en(o.est).rs)}</div><div><small>Estatus</small>${sch(o.estado)}</div><div><small>Domicilio</small>${esc(en(o.est).dom)}, ${esc(en(o.est).mun)}</div><div><small>Auditor</small>${o.aud?esc(uname(o.aud)):'-'}</div>
+<div><small>Programada</small>${o.prog?fd(o.prog):'-'}</div><div><small>Plazos de visita y cierre</small>${p?fd(p.lv)+' / '+fd(p.lc):'-'}</div><div><small>Días transcurridos</small>${p?p.d:'-'}</div><div><small>Alerta</small>${al(o)}</div><div><small>Registró la orden</small>${esc(uname(o.by))}, ${fdt(o.at)}</div><div><small>Calificación</small>${sc(o)}</div></div>
+${o.vis?.ch?.length?`<h4>Lista de verificación</h4>${o.vis.ch.map((x,i)=>`<div class="al"><span>${CAT[i]}<small class="s">${esc(x.obs)}</small></span>${chip({C:'Cumple',N:'No cumple',A:'No aplica','':'Sin captura'}[x.v],{C:'g',N:'r',A:'n','':'w'}[x.v])}</div>`).join('')}`:''}
+${o.vis?.causa?`<h4>Causa de no realización</h4>${esc(o.vis.causa)}`:''}
+${d?`<h4>${d.tipo}</h4>${d.res?esc(d.res)+', medida: ':''}${esc(d.medida||'-')}<br>${esc(d.txt)}<small class="s">${esc(uname(d.by))}, ${fdt(d.at)}</small>`:''}
+${o.docs.length?`<h4>Documentos</h4>${o.docs.map(x=>`<div class="al"><span>${esc(x.n)}</span><small class="s">${esc(uname(x.by))}, ${fdt(x.at)}</small></div>`).join('')}`:''}
+<h4>Movimientos</h4>${L.filter(l=>l.rec===o.folio).slice(0,8).map(l=>`<div class="al"><span>${esc(l.a)}<small class="s">${esc(l.u)}</small></span><small class="s">${fdt(l.at)}</small></div>`).join('')||'<small class="s">Sin movimientos recientes.</small>'}`,0,0,1);log(cur,'Consulta',o.folio)},
+rev:o=>mv(o,'En revisión','Revisión'),aut:o=>mv(o,'Autorizada','Autorización'),
+rec(o){modal('Rechazar '+o.folio,'<label>Motivo del rechazo</label><textarea id="f1" rows="3"></textarea>','Rechazar orden',()=>{if(!$('#f1').value.trim())return toast('Escriba el motivo',1)||false;o.motivo=$('#f1').value;mv(o,'Rechazada','Rechazo')})},
+prog(o){const re=o.estado==='Programada',t=new Date().toISOString().slice(0,10);modal((re?'Reprogramar ':'Programar ')+o.folio,`<label>Fecha de programación</label><input type="date" id="f1" min="${t}" value="${t}"><label>Auditor asignado</label><select id="f2">${U.filter(u=>u.r==='aud'&&u.a).map(u=>`<option value="${u.id}">${esc(u.n)}</option>`).join('')}</select>${re?'<label>Motivo de reprogramación</label><input id="f3">':''}<p style="color:var(--mu);font-size:12px">Visita en 10 días naturales y cierre en 90 desde la fecha elegida.</p>`,'Guardar programación',()=>{const v=$('#f1').value;if(!v||(re&&!$('#f3').value.trim()))return toast('Complete fecha'+(re?' y motivo':''),1)||false;o.prog=new Date(v+'T09:00').toISOString();o.aud=+$('#f2').value;o.pby=me.id;o.pat=nowI();const p=o.estado;o.estado='Programada';log('Programación',re?'Reprogramación':'Programación',o.folio,p,'Programada');toast('Visita programada');go(cur)})},
+ini(o){o.vis={ini:nowI(),ch:CAT.map(()=>({v:'',obs:''})),obs:''};mv(o,'En visita','Inicio de visita')},
+cap(o){modal('Lista de verificación '+o.folio,o.vis.ch.map((x,i)=>`<div class="ck"><b>${CAT[i]}</b><span class="rb">${[['C','Cumple'],['N','No cumple'],['A','No aplica']].map(r=>`<label><input type="radio" name="c${i}" value="${r[0]}"${x.v===r[0]?' checked':''}>${r[1]}</label>`).join('')}</span><input type="text" id="o${i}" placeholder="Observaciones" value="${esc(x.obs)}"></div>`).join(''),'Guardar captura',()=>{o.vis.ch.forEach((x,i)=>{x.v=(document.querySelector(`input[name=c${i}]:checked`)||{}).value||'';x.obs=$('#o'+i).value});log('Visitas','Captura',o.folio);toast('Captura guardada');go(cur)},1)},
+fin(o){if(o.vis.ch.some(x=>!x.v))return toast('Capture todos los puntos antes de finalizar',1);o.vis.fin=nowI();mv(o,'Visita realizada','Conclusión de visita')},
+nore(o){modal('Visita no realizada '+o.folio,'<label>Causa</label><select id="f1">'+opt(CAU)+'</select>','Registrar',()=>{o.vis={...(o.vis||{}),causa:$('#f1').value,ch:[]};mv(o,'No realizada','Visita no realizada')})},
+rdic:o=>{o.dby=me.id;mv(o,'En dictamen','Revisión para dictamen')},
+dic(o){const n=o.vis?.causa;modal(n?'Dictamen técnico informativo':'Emitir dictamen','Calificación: <b>'+sc(o)+'</b>'+(n?`<br>Causa: ${esc(n)}`:`<label>Resultado</label><select id="f1">${opt(['Favorable','Con observaciones','Desfavorable'])}</select><label>Medida de seguridad</label><select id="f2">${opt(MED)}</select>`)+'<label>Fundamento y observaciones</label><textarea id="f3" rows="3"></textarea>','Emitir',()=>{if(!$('#f3').value.trim())return toast('Escriba el fundamento',1)||false;o.dic={tipo:n?'Dictamen técnico informativo':'Dictamen',res:n?'':$('#f1').value,medida:n?'':$('#f2').value,txt:$('#f3').value,by:me.id,at:nowI()};mv(o,'Dictaminada','Dictamen')})},
+cer:o=>{o.cierre=nowI();mv(o,'Cerrada','Cierre del expediente')},
+doc(o){modal('Cargar documento','<label>Nombre del archivo</label><input id="f1" placeholder="licencia-sanitaria.pdf">','Cargar',()=>{const n=$('#f1').value.trim();if(!n)return toast('Indique el archivo',1)||false;o.docs.push({n,by:me.id,at:nowI()});log('Documentos','Carga',o.folio);toast('Documento cargado');go(cur)})},
+nord(){modal('Registrar orden','<label>Folio</label><input id="f1" value="'+nextF()+'"><label>Establecimiento</label><select id="f2">'+E.map(e=>`<option value="${e.id}">${esc(e.nc)}</option>`).join('')+'</select>','Registrar',()=>{if(!addO($('#f1').value.trim(),+$('#f2').value))return toast('Folio duplicado: ya existe en el sistema',1)||false;toast('Orden registrada');go(cur)})},
+lote(){let n=0,d=0;for(let i=0;i<3;i++)addO(nextF(),E[(i*3+O.length)%E.length].id)&&n++;addO(O[0].folio,1)||d++;toast(n+' órdenes importadas, '+d+' folio duplicado rechazado');go(cur)},
+recom(){const r=E.filter(e=>e.a).map(e=>{const v=O.filter(o=>o.est===e.id&&o.vis?.fin).map(o=>o.vis.fin).sort();return{e,n:v.length,d:v.length?diff(v[v.length-1],new Date()):999,l:v.pop()}}).sort((a,b)=>b.d-a.d).slice(0,6);
+modal('Establecimientos que requieren atención','<p style="color:var(--mu);font-size:12px;margin-top:0">Apoyo a la decisión. El sistema no programa visitas automáticamente.</p>'+r.map(x=>`<div class="al"><span><b>${esc(x.e.nc)}</b><small class="s">${x.e.tipo}, ${x.e.mun}. Visitas previas: ${x.n}</small></span><span>${x.l?'Última: '+fd(x.l)+' ('+x.d+' d)':chip('Sin visitas','w')}</span></div>`).join(''))},
+vere(e){modal('Expediente de '+esc(e.nc),`<div class="gr"><div><small>Razón social</small>${esc(e.rs)}</div><div><small>RFC</small>${e.rfc}</div><div><small>Domicilio</small>${esc(e.dom)}, ${e.mun}</div><div><small>Contacto</small>${e.tel}</div></div><h4>Historial</h4>${O.filter(o=>o.est===e.id).map(o=>`<div class="al"><span><b>${o.folio}</b><small class="s">${o.dic?esc(o.dic.res||o.dic.tipo)+', '+esc(o.dic.medida||''):'Sin dictamen'}</small></span>${sch(o.estado)}</div>`).join('')||'Sin órdenes.'}`,0,0,1);log('Establecimientos','Consulta',e.rfc)},
+ne(){H.ede({})},
+ede(e){const n=!e.id;modal(n?'Nuevo establecimiento':'Editar establecimiento',`<label>Razón social</label><input id="f1" value="${esc(e.rs)}"><label>Nombre comercial</label><input id="f2" value="${esc(e.nc)}"><label>RFC</label><input id="f3" value="${esc(e.rfc)}"><label>Domicilio</label><input id="f4" value="${esc(e.dom)}"><label>Tipo</label><select id="f5">${opt(TIPOS,e.tipo)}</select><label>Municipio</label><select id="f6">${opt(MUN,e.mun)}</select>`,'Guardar',()=>{const g=i=>$('#f'+i).value.trim();if(!g(1)||!g(3))return toast('Razón social y RFC son obligatorios',1)||false;if(E.some(x=>x.rfc===g(3).toUpperCase()&&x!==e))return toast('El RFC ya está registrado',1)||false;Object.assign(e,{rs:g(1),nc:g(2)||g(1),rfc:g(3).toUpperCase(),dom:g(4),tipo:g(5),mun:g(6)});if(n){Object.assign(e,{id:E.length+1,a:1,tel:'777 000 0000',by:me.id,at:nowI()});E.push(e)}log('Establecimientos',n?'Alta':'Modificación',e.rfc);toast('Establecimiento guardado');go(cur)})},
+nu(){modal('Nuevo usuario','<label>Nombre</label><input id="f1"><label>Usuario</label><input id="f2"><label>Rol</label><select id="f3">'+Object.keys(RN).map(k=>`<option value="${k}">${RN[k]}</option>`).join('')+'</select>','Crear usuario',()=>{const n=$('#f1').value.trim(),l=$('#f2').value.trim();if(!n||!l||U.some(u=>u.l===l))return toast('Nombre y usuario únicos son obligatorios',1)||false;U.push({id:U.length+1,n,l,r:$('#f3').value,a:1,est:1,by:me.id,at:nowI()});log('Usuarios','Alta',l);toast('Usuario creado');go(cur)})},
+tg(u){u.a=u.a?0:1;log('Usuarios',u.a?'Activación':'Baja lógica',u.l);toast(u.a?'Usuario activado':'Usuario desactivado');go(cur)}};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=b.dataset.id;
+const t=['vere','ede'].includes(a)?E.find(x=>x.id==id):a==='tg'?U.find(x=>x.id==id):id?O.find(x=>x.id==id):null;H[a](t)});
+function go(m){cur=m;TB=null;document.querySelectorAll('.nl button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));view();const n=alerts().length,bd=$('#bd');if(bd){bd.textContent=n;bd.style.display=n?'':'none'}}
+function shell(){$('#app').innerHTML=`<header class="nv"><div class="br">${ic('shield')}<span>VisitaSan</span></div><nav class="nl">${NAV.filter(n=>n[3].split(' ').includes(me.r)).map(n=>`<button data-m="${n[0]}" title="${n[1]}">${ic(n[2])}<span>${n[1]}</span></button>`).join('')}</nav>
+<div class="rt"><button class="ib0" id="bell" title="Alertas de plazo" aria-label="Alertas">${ic('bell')}<b class="bd" id="bd"></b></button><select id="sw" title="Cambiar perfil (demo)">${U.filter(u=>u.a).map(u=>`<option value="${u.id}"${u.id===me.id?' selected':''}>${esc(u.n)}, ${RN[u.r]}</option>`).join('')}</select><button class="ib0" id="out" title="Cerrar sesión" aria-label="Cerrar sesión">${ic('out')}</button></div></header><main id="mn"></main>`;
+document.querySelectorAll('.nl button').forEach(b=>b.onclick=()=>go(b.dataset.m));
+$('#bell').onclick=()=>{const a=alerts();modal('Alertas de plazo',a.map(o=>`<div class="al"><span><b>${o.folio}</b> ${esc(en(o.est).nc)}<small class="s">${rest(o).replace(/<[^>]+>/g,' ')}</small></span>${al(o)}</div>`).join('')||'Sin alertas activas.')};
+$('#sw').onchange=e=>{log('Seguridad','Cambio de perfil',uname(+e.target.value));me=U.find(u=>u.id==e.target.value);shell();go('dash')};
+$('#out').onclick=()=>{log('Seguridad','Cierre de sesión');me=null;login()};
+go(NAV.find(n=>n[0]===cur&&n[3].split(' ').includes(me.r))?cur:'dash')}
+function login(){$('#app').innerHTML=`<div class="lg"><div style="color:var(--ac)">${ic('shield')}</div><h1>VisitaSan</h1><p>Gestión y seguimiento de visitas sanitarias</p><label>Usuario</label><select id="lu">${U.filter(u=>u.a).map(u=>`<option value="${u.id}">${esc(u.n)}, ${RN[u.r]}</option>`).join('')}</select><label>Contraseña</label><input type="password" id="lp" placeholder="Cualquier valor (demostración)"><button class="bt" id="li">${ic('out')}Iniciar sesión</button></div>`;
+$('#li').onclick=()=>{me=U.find(u=>u.id==$('#lu').value);log('Seguridad','Inicio de sesión');cur='dash';shell()}}
+[[3,'Órdenes','Importación','COF-2026-0101','-','Recibida',1],[2,'Seguridad','Inicio de sesión','-','-','-',6]].forEach(x=>L.push({id:L.length+1,at:ago(x[0]),u:uname(x[6]),r:RN[U[x[6]-1].r],ip:'10.20.4.2'+x[6],m:x[1],a:x[2],rec:x[3],p:x[4],q:x[5]}));
+login();
+</script></body></html>

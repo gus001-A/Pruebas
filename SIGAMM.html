@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIGAM — Sistema Integral de Gestión de Activos y Mantenimiento</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap');
+
+  :root{
+    --ink:#1C2226; --ink-soft:#5B6167;
+    --paper:#F4F1EA; --card:#FFFFFF; --line:#E2DED2;
+    --graphite:#153238; --graphite2:#1E4550; --graphite-line:#2E5A63;
+    --steel:#2F7A6B; --steel-dark:#215A4F; --steel-soft:#DCEEE9;
+    --amber:#B9812A; --amber-soft:#F5EAD4; --amber-text:#7A5A15;
+    --danger:#B24A34; --danger-soft:#F5E1DB;
+    --success:#3F7A5C; --success-soft:#DEEAE3;
+    --radius:8px;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'IBM Plex Sans',sans-serif; color:var(--ink); background:var(--paper); -webkit-font-smoothing:antialiased; }
+  .brand{ font-family:'Fraunces',serif; }
+  .mono{ font-family:'IBM Plex Mono',monospace; letter-spacing:.01em; }
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb{ background:var(--line); border-radius:4px; }
+  button, select, input, textarea{ font-family:'IBM Plex Sans',sans-serif; }
+  table{ width:100%; border-collapse:collapse; }
+  th{ text-align:left; font-size:11.5px; font-weight:500; color:var(--ink-soft); padding:12px 14px; background:#FAF8F2; border-bottom:2px solid var(--line); white-space:nowrap; }
+  td{ font-size:13.5px; padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  tbody tr:nth-child(even){ background:#FBFAF6; }
+  tr.row{ transition:background-color .12s ease; }
+  tr.row.clickable{ cursor:pointer; }
+  tr.row:hover{ background:#F0ECDF !important; }
+  tfoot td{ padding:7px 10px; border-top:2px solid var(--line); border-bottom:none; background:#FAF8F2; }
+  .table-filter{ width:100%; border:1px solid var(--line); border-radius:5px; padding:6px 8px; font-size:12px; background:#fff; transition:border-color .12s ease, box-shadow .12s ease; }
+  .table-filter:focus{ outline:none; border-color:var(--steel); box-shadow:0 0 0 3px var(--steel-soft); }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 1px 2px rgba(28,34,38,.045); }
+  .badge{ font-size:11.5px; font-weight:500; padding:3px 9px; border-radius:20px; display:inline-block; line-height:1.4; white-space:nowrap; }
+  .badge-neutral{ background:#EAE8E1; color:var(--ink-soft); }
+  .badge-steel{ background:var(--steel-soft); color:var(--steel-dark); }
+  .badge-amber{ background:var(--amber-soft); color:var(--amber-text); }
+  .badge-danger{ background:var(--danger-soft); color:var(--danger); }
+  .badge-success{ background:var(--success-soft); color:var(--success); }
+  .btn{ border:none; border-radius:6px; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:opacity .12s ease, transform .05s ease, background-color .12s ease; white-space:nowrap; }
+  .btn:active{ transform:scale(.98); }
+  .btn-primary{ background:var(--steel-dark); color:#fff; padding:9px 16px; }
+  .btn-primary:hover{ background:#194539; }
+  .btn-ghost{ background:#fff; border:1px solid var(--line); padding:9px 16px; }
+  .btn-ghost:hover{ background:#FAF8F2; }
+  .btn-danger{ background:var(--danger); color:#fff; padding:9px 16px; }
+  .btn-danger:hover{ background:#96392A; }
+  .btn-sm{ padding:6px 11px; font-size:12px; }
+  .fadein{ animation:fadein .16s ease; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(3px);} to{opacity:1; transform:none;} }
+  @keyframes toastin{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
+  .icon{ width:15px; height:15px; display:inline-block; vertical-align:-3px; stroke:currentColor; fill:none; stroke-width:1.8; flex-shrink:0; }
+  .icon-btn{ width:29px; height:29px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; color:var(--ink-soft); cursor:pointer; transition:background-color .12s ease, color .12s ease; flex-shrink:0; }
+  .icon-btn:hover{ background:#EFEBDD; color:var(--ink); }
+  .icon-btn.danger:hover{ background:var(--danger-soft); color:var(--danger); }
+  .readonly-banner{ display:flex; align-items:center; gap:8px; background:var(--amber-soft); color:var(--amber-text); font-size:12.5px; padding:9px 12px; border-radius:6px; margin-bottom:16px; }
+  .info-banner{ display:flex; align-items:center; gap:8px; background:var(--steel-soft); color:var(--steel-dark); font-size:12.5px; padding:9px 12px; border-radius:6px; margin-bottom:16px; }
+  .stat-card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; box-shadow:0 1px 2px rgba(28,34,38,.045); }
+  .modal-backdrop{ position:fixed; inset:0; background:rgba(16,20,22,.5); display:flex; align-items:center; justify-content:center; z-index:60; padding:20px; }
+  .modal-box{ background:#fff; width:460px; max-width:92vw; border-radius:12px; padding:26px; max-height:88vh; overflow-y:auto; box-shadow:0 24px 60px rgba(10,14,16,.28); }
+  .modal-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid var(--line); }
+  .field-label{ font-size:12px; color:var(--ink-soft); display:block; margin-bottom:5px; font-weight:500; }
+  .field-input{ width:100%; border:1px solid var(--line); border-radius:6px; padding:9px 10px; font-size:13px; margin-bottom:14px; transition:border-color .12s ease, box-shadow .12s ease; background:#fff; }
+  .field-input:focus{ outline:none; border-color:var(--steel); box-shadow:0 0 0 3px var(--steel-soft); }
+  .field-input:disabled{ background:#F3F1EB; color:var(--ink-soft); }
+  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 14px; }
+  .chip{ border:1px solid var(--line); border-radius:6px; padding:6px 12px; font-size:12.5px; cursor:pointer; transition:background-color .12s ease; }
+  .chip:hover{ background:#FAF8F2; }
+  .chip.active{ background:var(--steel-dark); color:#fff; border-color:var(--steel-dark); }
+  .flowchip{ background:var(--steel-soft); color:var(--steel-dark); font-size:11.5px; font-weight:500; padding:6px 12px; border-radius:14px; white-space:nowrap; }
+  .toast{ position:fixed; bottom:22px; right:22px; background:var(--graphite); color:#F1EFE9; font-size:13px; padding:12px 18px; border-radius:8px; z-index:200; box-shadow:0 10px 30px rgba(0,0,0,.25); animation:toastin .18s ease; display:flex; align-items:center; gap:8px; }
+
+  .navbar{ height:58px; background:var(--graphite); color:#EDEEE9; display:flex; align-items:center; justify-content:space-between; padding:0 22px; position:sticky; top:0; z-index:45; border-bottom:2px solid var(--amber); }
+  .navgroup{ position:relative; }
+  .navlink{ display:flex; align-items:center; gap:6px; padding:9px 12px; border-radius:6px; font-size:13.3px; color:#D8DCDF; cursor:pointer; user-select:none; transition:background-color .12s ease, color .12s ease; }
+  .navlink:hover{ background:var(--graphite2); color:#fff; }
+  .navlink.active{ color:#fff; background:var(--graphite2); }
+  .navdrop{ position:absolute; top:44px; left:0; background:#fff; border:1px solid var(--line); border-radius:10px; min-width:216px; box-shadow:0 16px 36px rgba(0,0,0,.2); overflow:hidden; z-index:55; }
+  .navdrop-item{ padding:10px 14px; font-size:13px; color:var(--ink); cursor:pointer; display:flex; align-items:center; gap:9px; transition:background-color .1s ease; }
+  .navdrop-item:hover{ background:#F5F3ED; }
+  .navdrop-item.active{ background:var(--steel-soft); color:var(--steel-dark); }
+  .navdrop-item.disabled{ color:#BDBAB0; cursor:not-allowed; }
+
+  .cal-cell{ border-right:1px solid var(--line); border-bottom:1px solid var(--line); min-height:104px; padding:8px; vertical-align:top; }
+  .cal-evt{ font-size:11px; padding:4px 6px; border-radius:4px; margin-bottom:4px; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; transition:filter .1s ease; }
+  .cal-evt:hover{ filter:brightness(0.94); }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div id="toasts"></div>
+
+<script>
+/* ============================== ICONOS (SVG inline, trazo) ============================== */
+const ICONS = {
+  dashboard: '<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>',
+  boxes: '<svg class="icon" viewBox="0 0 24 24"><path d="M21 8L12 3 3 8v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>',
+  inbox: '<svg class="icon" viewBox="0 0 24 24"><path d="M4 12h4l2 3h4l2-3h4"/><path d="M5.5 5h13l2.5 7v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7z"/></svg>',
+  wrench: '<svg class="icon" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 1 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.8 2.8-2-2 2.8-2.8z"/></svg>',
+  calendar: '<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="1"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>',
+  building: '<svg class="icon" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/></svg>',
+  tags: '<svg class="icon" viewBox="0 0 24 24"><path d="M20 10L12 2H4v8l8 8z"/><circle cx="7.5" cy="6.5" r="1.2"/></svg>',
+  report: '<svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  shield: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z"/></svg>',
+  users: '<svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><path d="M17 8.2a3 3 0 1 1 0 5.8"/><path d="M21.5 20c0-2.9-2.1-5.2-5-5.9"/></svg>',
+  search: '<svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+  bell: '<svg class="icon" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>',
+  chevronR: '<svg class="icon" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M9 6l6 6-6 6"/></svg>',
+  chevronD: '<svg class="icon" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M6 9l6 6 6-6"/></svg>',
+  plus: '<svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M12 5v14M5 12h14"/></svg>',
+  download: '<svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M12 3v13m0 0l-4-4m4 4l4-4M4 21h16"/></svg>',
+  filter: '<svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M4 5h16l-6 7v6l-4 2v-8z"/></svg>',
+  pin: '<svg class="icon" viewBox="0 0 24 24" style="width:11px;height:11px;margin-right:4px"><path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.3"/></svg>',
+  clip: '<svg class="icon" viewBox="0 0 24 24"><path d="M21 12.5l-8.5 8.5a4 4 0 0 1-5.7-5.7l9-9a2.7 2.7 0 0 1 3.8 3.8l-8.8 8.8a1.3 1.3 0 0 1-1.9-1.9l7.9-7.9"/></svg>',
+  camera: '<svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  check: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.2l2.3 2.3 4.7-5"/></svg>',
+  circle: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><circle cx="12" cy="12" r="9"/></svg>',
+  file: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/></svg>',
+  back: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M19 12H5m6-7l-7 7 7 7"/></svg>',
+  alert: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17.5v.1"/></svg>',
+  clock: '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+  trend: '<svg class="icon" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>',
+  logout: '<svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>',
+  mail: '<svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 6l9 7 9-7"/></svg>',
+  lock: '<svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px"><rect x="4" y="10" width="16" height="10" rx="1"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>',
+  x: '<svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  truck: '<svg class="icon" viewBox="0 0 24 24"><rect x="1" y="7" width="13" height="9"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="5.5" cy="18" r="1.6"/><circle cx="17.5" cy="18" r="1.6"/></svg>',
+  clipboard: '<svg class="icon" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="1"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M8 10h8M8 14h8M8 18h5"/></svg>',
+  qr: '<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM19 14v3M14 19h2M19 19.01h.01"/></svg>',
+  scale: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 3v18M7 21h10"/><path d="M4 7l4-2 4 2M16 7l4-2 4 2"/><path d="M2 7h6l-3 6-3-6zM16 7h6l-3 6-3-6z"/></svg>',
+  check2: '<svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M20 6L9 17l-5-5"/></svg>',
+  edit: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  trash: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>'
+};
+
+/* ============================== CATÁLOGOS BASE ============================== */
+const SUCURSALES = [
+  { id:1, nombre:'Planta Norte', codigo:'SUC-01', direccion:'Av. Industria 1450, Parque Industrial Norte', responsable:'Diego Nava', telefono:'81 8210 4455' },
+  { id:2, nombre:'Planta Sur', codigo:'SUC-02', direccion:'Carretera Federal Km 12.5, Zona Industrial Sur', responsable:'Fernanda Chávez', telefono:'81 8347 9012' },
+  { id:3, nombre:'Centro de Distribución', codigo:'SUC-03', direccion:'Blvd. Logístico 800, Bodega 4', responsable:'Paola Ibarra', telefono:'55 5081 2200' },
+];
+const TECNICOS = ['R. Balderas','M. Cortina','J. Aguayo','L. Solano'];
+
+const PROVEEDORES = [
+  { razon:'Atlas Copco México, S.A. de C.V.', comercial:'Atlas Copco', rfc:'ACM840112AB3', contacto:'Jorge Elizondo', telefono:'55 5211 3300', correo:'servicio@atlascopco.mx', especialidad:'Compresores y aire comprimido', equipos:1, estado:'Activo' },
+  { razon:'Cleaver-Brooks de México, S.A.', comercial:'Cleaver-Brooks', rfc:'CBM910203XY7', contacto:'Sandra Puente', telefono:'81 8347 2200', correo:'soporte@cleaverbrooks.mx', especialidad:'Calderas y generación de vapor', equipos:1, estado:'Activo' },
+  { razon:'Toyota Material Handling México', comercial:'Toyota', rfc:'TMH020815QZ1', contacto:'Hugo Ramírez', telefono:'55 5081 4400', correo:'refacciones@toyotamh.mx', especialidad:'Montacargas y manejo de materiales', equipos:1, estado:'Activo' },
+  { razon:'Square D de México, S.A. de C.V.', comercial:'Square D', rfc:'SDM880519LM4', contacto:'Renata Cabral', telefono:'81 8399 7710', correo:'atencion@squared.mx', especialidad:'Distribución eléctrica industrial', equipos:1, estado:'Activo' },
+  { razon:'Frigor Refrigeración Industrial', comercial:'Frigor', rfc:'FRI050718NM9', contacto:'Omar Villegas', telefono:'55 5432 8890', correo:'contacto@frigor.mx', especialidad:'Refrigeración y cadena de frío', equipos:1, estado:'Activo' },
+  { razon:'Cummins de México, S. de R.L.', comercial:'Cummins', rfc:'CDM970622TT2', contacto:'Valeria Soto', telefono:'55 5228 1150', correo:'servicio@cummins.mx', especialidad:'Plantas de emergencia y motores', equipos:1, estado:'Activo' },
+];
+
+const NORMAS = [
+  { codigo:'NOM-020-STPS', nombre:'Recipientes sujetos a presión y calderas', version:'2018', vigencia:'Vigente', revision:'ene 2027', equipos:2 },
+  { codigo:'NOM-004-SEDE', nombre:'Instalaciones eléctricas (utilización)', version:'2014', vigencia:'Vigente', revision:'mar 2027', equipos:2 },
+  { codigo:'NOM-006-STPS', nombre:'Manejo y almacenamiento de materiales', version:'2014', vigencia:'En revisión', revision:'oct 2026', equipos:1 },
+  { codigo:'NOM-005-STPS', nombre:'Condiciones de seguridad — sustancias químicas', version:'2021', vigencia:'Vigente', revision:'jun 2028', equipos:0 },
+];
+
+const FORMATOS = [
+  { nombre:'Checklist de autoclave', tipo:'Equipo médico', usos:6, campos:['Presión','Temperatura','Tiempo de ciclo','Válvulas','Empaques','Prueba de funcionamiento','Observaciones','Firma'] },
+  { nombre:'Servicio de aire acondicionado', tipo:'Climatización', usos:14, campos:['Limpieza','Filtros','Amperaje','Temperatura','Presión','Drenaje','Funcionamiento','Evidencia'] },
+  { nombre:'Inspección de generador', tipo:'Eléctrico', usos:4, campos:['Nivel de refrigerante','Batería','Aceite','Arranque','Carga','Alarmas','Combustible','Observaciones'] },
+  { nombre:'Checklist de equipo médico', tipo:'Médico', usos:9, campos:['Checklist técnico','Pruebas funcionales','Condiciones de seguridad','Norma aplicable','Firma'] },
+];
+
+const NOTIFICACIONES = [
+  { tipo:'vencido', icono:'clock', mensaje:'El extractor industrial EQ-0244 tiene un preventivo vencido', fecha:'hoy · 07:10', leida:false },
+  { tipo:'urgente', icono:'alert', mensaje:'Nueva solicitud urgente: Cámara de refrigeración EQ-0205', fecha:'hoy · 06:40', leida:false },
+  { tipo:'garantia', icono:'shield', mensaje:'La garantía del compresor EQ-0142 vence en 12 días', fecha:'hoy · 06:05', leida:false },
+  { tipo:'supervision', icono:'check', mensaje:'MTO-2026-1175 está pendiente de supervisión', fecha:'04 sep · 15:41', leida:false },
+  { tipo:'terminado', icono:'check2', mensaje:'J. Aguayo marcó como realizada la orden MTO-2026-1175', fecha:'04 sep · 15:40', leida:true },
+  { tipo:'asignacion', icono:'wrench', mensaje:'Se asignó la orden MTO-2026-1180 a R. Balderas', fecha:'ayer · 18:05', leida:true },
+];
+
+/* ============================== EQUIPOS ============================== */
+const EQUIPOS = [
+  { codigo:'EQ-0142', nombre:'Compresor de tornillo', marca:'Atlas Copco GA-30', serie:'AC-88213', sucursal:'Planta Norte', ubicacion:'Cuarto de máquinas A', estado:'Operativo', valor:184500, proximo:'18 sep 2026', proveedor:'Atlas Copco', garantia:'20 sep 2026', garantiaEstado:'Por vencer', vidaUtil:'8 años' },
+  { codigo:'EQ-0143', nombre:'Caldera industrial', marca:'Cleaver-Brooks CB-200', serie:'CV-55021', sucursal:'Planta Norte', ubicacion:'Sala de calderas', estado:'En mantenimiento', valor:512000, proximo:'09 sep 2026', proveedor:'Cleaver-Brooks', garantia:'15 ene 2027', garantiaEstado:'Vigente', vidaUtil:'15 años' },
+  { codigo:'EQ-0198', nombre:'Montacargas eléctrico', marca:'Toyota 8FBE20', serie:'TY-30442', sucursal:'Centro de Distribución', ubicacion:'Andén 3', estado:'Operativo', valor:96800, proximo:'02 oct 2026', proveedor:'Toyota', garantia:'02 dic 2026', garantiaEstado:'Vigente', vidaUtil:'10 años' },
+  { codigo:'EQ-0205', nombre:'Cámara de refrigeración', marca:'Bohn CR-500', serie:'BH-77120', sucursal:'Centro de Distribución', ubicacion:'Nave 2', estado:'Fuera de servicio', valor:231000, proximo:'Vencido — 30 ago 2026', proveedor:'Frigor', garantia:'10 mar 2025', garantiaEstado:'Vencida', vidaUtil:'12 años' },
+  { codigo:'EQ-0211', nombre:'Subestación eléctrica', marca:'Square D SE-750', serie:'SQ-19983', sucursal:'Planta Sur', ubicacion:'Patio eléctrico', estado:'Operativo', valor:940000, proximo:'22 sep 2026', proveedor:'Square D', garantia:'30 jun 2027', garantiaEstado:'Vigente', vidaUtil:'20 años' },
+  { codigo:'EQ-0230', nombre:'Banda transportadora', marca:'Dorner 2200', serie:'DR-40021', sucursal:'Planta Sur', ubicacion:'Línea 4', estado:'Operativo', valor:158200, proximo:'14 sep 2026', proveedor:'Dorner Conveyors', garantia:'18 ago 2026', garantiaEstado:'Vencida', vidaUtil:'10 años' },
+  { codigo:'EQ-0244', nombre:'Extractor industrial', marca:'Greenheck SWB-12', serie:'GH-60218', sucursal:'Planta Norte', ubicacion:'Techo — nave 1', estado:'Operativo', valor:44300, proximo:'Vencido — 02 sep 2026', proveedor:'Greenheck Ventilación', garantia:'05 nov 2026', garantiaEstado:'Vigente', vidaUtil:'9 años' },
+  { codigo:'EQ-0260', nombre:'Planta de emergencia', marca:'Cummins C150D6', serie:'CM-90031', sucursal:'Centro de Distribución', ubicacion:'Cuarto eléctrico', estado:'Operativo', valor:610000, proximo:'05 nov 2026', proveedor:'Cummins', garantia:'01 feb 2028', garantiaEstado:'Vigente', vidaUtil:'18 años' },
+];
+
+const SOLICITUDES = [
+  { folio:'SOL-2026-0341', equipo:'EQ-0205 · Cámara de refrigeración', problema:'Pérdida de temperatura y ruido en compresor', prioridad:'Urgente', estado:'En revisión', solicitante:'P. Ibarra', fecha:'05 sep 2026' },
+  { folio:'SOL-2026-0340', equipo:'EQ-0244 · Extractor industrial', problema:'Vibración excesiva al encender', prioridad:'Prioritaria', estado:'Convertida', solicitante:'D. Nava', fecha:'04 sep 2026' },
+  { folio:'SOL-2026-0338', equipo:'EQ-0198 · Montacargas eléctrico', problema:'Batería no retiene carga completa', prioridad:'Prioritaria', estado:'Autorizada', solicitante:'A. Reséndiz', fecha:'03 sep 2026' },
+  { folio:'SOL-2026-0335', equipo:'EQ-0230 · Banda transportadora', problema:'Desalineación de banda en tramo 2', prioridad:'Normal', estado:'Nueva', solicitante:'F. Chávez', fecha:'01 sep 2026' },
+  { folio:'SOL-2026-0331', equipo:'EQ-0142 · Compresor de tornillo', problema:'Fuga menor de aceite en válvula', prioridad:'Normal', estado:'Cerrada', solicitante:'L. Morán', fecha:'28 ago 2026' },
+];
+
+/* Flujo completo de orden de trabajo (Propuesta técnica, sección 7.3) */
+const CICLO = ['Solicitado','Autorizado','Asignado','En proceso','Realizado','Supervisado','Cerrado'];
+const ESTADOS_ESPECIALES = ['Cancelado','Reprogramado','En espera de refacción','Equipo fuera de servicio'];
+
+const MANTENIMIENTOS = [
+  { folio:'MTO-2026-1180', tipo:'Correctivo', equipo:'EQ-0143 · Caldera industrial', sucursal:'Planta Norte',
+    prioridad:'Urgente', estado:'En proceso', tecnico:'R. Balderas', supervisor:'C. Fuentes',
+    programado:'08 sep 2026 · 09:00', inicio:'08 sep 2026 · 09:20', cierre:'—',
+    diagnostico:'Falla en válvula de alivio de presión detectada durante inspección rutinaria. Se requiere reemplazo de válvula y recalibración de presostato.',
+    actividades:['Aislamiento de línea de vapor','Desmontaje de válvula de alivio','Reemplazo de empaques y válvula','Pendiente: prueba hidrostática'],
+    materiales:[{nombre:'Válvula de alivio 2"',cant:1,costo:4200},{nombre:'Kit de empaques',cant:2,costo:380}],
+    formato:'—', norma:'NOM-020-STPS',
+    historial:[{estado:'Solicitado',fecha:'07 sep 2026 · 16:40',nota:'Generada desde inspección de sucursal'},
+      {estado:'Autorizado',fecha:'07 sep 2026 · 17:10',nota:'Autorizado por supervisor de planta'},
+      {estado:'Asignado',fecha:'07 sep 2026 · 18:05',nota:'Asignado a R. Balderas, prioridad urgente'},
+      {estado:'En proceso',fecha:'08 sep 2026 · 09:20',nota:'Inicio de intervención'}] },
+
+  { folio:'MTO-2026-1179', tipo:'Preventivo', equipo:'EQ-0211 · Subestación eléctrica', sucursal:'Planta Sur',
+    prioridad:'Normal', estado:'Asignado', tecnico:'M. Cortina', supervisor:'C. Fuentes',
+    programado:'22 sep 2026 · 08:00', inicio:'—', cierre:'—',
+    diagnostico:'Mantenimiento preventivo trimestral según plan PL-0211-Q3.',
+    actividades:['Termografía de tableros','Ajuste de conexiones','Limpieza de gabinetes'],
+    materiales:[], formato:'—', norma:'NOM-004-SEDE',
+    historial:[{estado:'Solicitado',fecha:'01 sep 2026 · 10:00',nota:'Generado automáticamente desde plan preventivo'},
+      {estado:'Autorizado',fecha:'01 sep 2026 · 10:00',nota:'Autorización automática — preventivo calendarizado'},
+      {estado:'Asignado',fecha:'02 sep 2026 · 09:15',nota:'Asignado a M. Cortina'}] },
+
+  { folio:'MTO-2026-1175', tipo:'Correctivo', equipo:'EQ-0244 · Extractor industrial', sucursal:'Planta Norte',
+    prioridad:'Prioritaria', estado:'Supervisado', tecnico:'J. Aguayo', supervisor:'C. Fuentes',
+    programado:'04 sep 2026 · 11:00', inicio:'04 sep 2026 · 11:15', cierre:'—',
+    diagnostico:'Rodamiento de motor desgastado, generando vibración fuera de rango.',
+    actividades:['Desmontaje de motor','Reemplazo de rodamientos','Balanceo dinámico','Prueba de vibración'],
+    materiales:[{nombre:'Juego de rodamientos',cant:1,costo:950}], formato:'—', norma:'—',
+    historial:[{estado:'Asignado',fecha:'04 sep 2026 · 10:50',nota:'Asignado a J. Aguayo'},
+      {estado:'En proceso',fecha:'04 sep 2026 · 11:15',nota:'Inicio de intervención'},
+      {estado:'Realizado',fecha:'04 sep 2026 · 15:40',nota:'Vibración dentro de rango'},
+      {estado:'Supervisado',fecha:'05 sep 2026 · 09:10',nota:'Validado por supervisor, pendiente cierre'}] },
+
+  { folio:'MTO-2026-1160', tipo:'Preventivo', equipo:'EQ-0142 · Compresor de tornillo', sucursal:'Planta Norte',
+    prioridad:'Normal', estado:'Cerrado', tecnico:'L. Solano', supervisor:'C. Fuentes',
+    programado:'28 ago 2026 · 08:00', inicio:'28 ago 2026 · 08:10', cierre:'28 ago 2026 · 12:30',
+    diagnostico:'Servicio preventivo mensual: cambio de filtros y aceite.',
+    actividades:['Cambio de aceite','Cambio de filtro de aire','Revisión de fugas','Prueba de presión'],
+    materiales:[{nombre:'Aceite sintético 20L',cant:1,costo:2100},{nombre:'Filtro de aire',cant:1,costo:320}], formato:'—', norma:'—',
+    historial:[{estado:'Realizado',fecha:'28 ago 2026 · 12:20',nota:'Sin novedades'},
+      {estado:'Supervisado',fecha:'28 ago 2026 · 12:25',nota:'Aprobado'},
+      {estado:'Cerrado',fecha:'28 ago 2026 · 12:30',nota:'Folio cerrado, próxima fecha calculada'}] },
+
+  { folio:'MTO-2026-1188', tipo:'Correctivo', equipo:'EQ-0230 · Banda transportadora', sucursal:'Planta Sur',
+    prioridad:'Prioritaria', estado:'En espera de refacción', tecnico:'M. Cortina', supervisor:'C. Fuentes',
+    programado:'06 sep 2026 · 10:00', inicio:'06 sep 2026 · 10:20', cierre:'—',
+    diagnostico:'Rodillo tensor fracturado; se requiere refacción específica del fabricante.',
+    actividades:['Diagnóstico de rodillo tensor','Solicitud de refacción a Dorner Conveyors'],
+    materiales:[{nombre:'Rodillo tensor Dorner 2200',cant:1,costo:0}], formato:'—', norma:'—', motivo:'En espera de refacción importada — ETA estimada 5 días hábiles.',
+    historial:[{estado:'En proceso',fecha:'06 sep 2026 · 10:20',nota:'Diagnóstico confirmado'},
+      {estado:'En espera de refacción',fecha:'06 sep 2026 · 13:00',nota:'Refacción solicitada al proveedor'}] },
+
+  { folio:'MTO-2026-1190', tipo:'Preventivo', equipo:'EQ-0260 · Planta de emergencia', sucursal:'Centro de Distribución',
+    prioridad:'Normal', estado:'Reprogramado', tecnico:'—', supervisor:'C. Fuentes',
+    programado:'20 sep 2026 · 08:00', inicio:'—', cierre:'—',
+    diagnostico:'Preventivo semestral según plan del fabricante.',
+    actividades:['Prueba de arranque en falso','Revisión de batería y carga','Revisión de niveles'],
+    materiales:[], formato:'Inspección de generador', norma:'—', motivo:'Reprogramado por falta de disponibilidad del técnico certificado.',
+    historial:[{estado:'Asignado',fecha:'20 ago 2026 · 09:00',nota:'Programación inicial'},
+      {estado:'Reprogramado',fecha:'28 ago 2026 · 11:30',nota:'Sin técnico certificado disponible en la fecha original'}] },
+
+  { folio:'MTO-2026-1155', tipo:'Correctivo', equipo:'EQ-0198 · Montacargas eléctrico', sucursal:'Centro de Distribución',
+    prioridad:'Normal', estado:'Cancelado', tecnico:'—', supervisor:'C. Fuentes',
+    programado:'12 sep 2026 · 09:00', inicio:'—', cierre:'—',
+    diagnostico:'Solicitud duplicada de la orden MTO-2026-1152.',
+    actividades:[], materiales:[], formato:'—', norma:'—', motivo:'Cancelado por duplicidad con MTO-2026-1152.',
+    historial:[{estado:'Solicitado',fecha:'30 ago 2026 · 08:40',nota:'Solicitud registrada'},
+      {estado:'Cancelado',fecha:'30 ago 2026 · 09:05',nota:'Identificada como duplicado'}] },
+
+  { folio:'MTO-2026-1195', tipo:'Preventivo', equipo:'EQ-0143 · Caldera industrial', sucursal:'Planta Norte',
+    prioridad:'Normal', estado:'Asignado', tecnico:'R. Balderas', supervisor:'C. Fuentes',
+    programado:'25 sep 2026 · 09:00', inicio:'—', cierre:'—',
+    diagnostico:'Inspección mensual posterior a la reparación de la válvula de alivio.',
+    actividades:['Prueba hidrostática de seguimiento','Revisión de presostato'],
+    materiales:[], formato:'—', norma:'NOM-020-STPS',
+    historial:[{estado:'Asignado',fecha:'08 sep 2026 · 12:00',nota:'Programado como seguimiento a MTO-2026-1180'}] },
+];
+
+const AUDITORIA = [
+  { fecha:'08 sep 2026 · 07:10', usuario:'Sistema', accion:'Alerta generada', modulo:'Notificaciones', registro:'EQ-0244', ip:'—' },
+  { fecha:'07 sep 2026 · 18:05', usuario:'C. Fuentes', accion:'Asignación', modulo:'Mantenimientos', registro:'MTO-2026-1180', ip:'10.20.4.12' },
+  { fecha:'07 sep 2026 · 17:10', usuario:'C. Fuentes', accion:'Autorización', modulo:'Mantenimientos', registro:'MTO-2026-1180', ip:'10.20.4.12' },
+  { fecha:'07 sep 2026 · 16:40', usuario:'P. Ibarra', accion:'Alta', modulo:'Solicitudes', registro:'SOL-2026-0341', ip:'10.20.6.44' },
+  { fecha:'06 sep 2026 · 13:00', usuario:'M. Cortina', accion:'Cambio de estado', modulo:'Mantenimientos', registro:'MTO-2026-1188', ip:'10.20.4.31' },
+  { fecha:'05 sep 2026 · 09:10', usuario:'C. Fuentes', accion:'Cambio de estado', modulo:'Mantenimientos', registro:'MTO-2026-1175', ip:'10.20.4.12' },
+  { fecha:'04 sep 2026 · 15:41', usuario:'J. Aguayo', accion:'Carga de evidencia', modulo:'Mantenimientos', registro:'MTO-2026-1175', ip:'10.20.4.31' },
+  { fecha:'03 sep 2026 · 11:02', usuario:'Superadmin', accion:'Edición de permisos', modulo:'Usuarios/Roles', registro:'ROL-Técnico', ip:'10.20.1.02' },
+  { fecha:'01 sep 2026 · 10:00', usuario:'Sistema', accion:'Generación automática', modulo:'Mantenimientos', registro:'MTO-2026-1179', ip:'—' },
+];
+
+const USUARIOS = [
+  { nombre:'Carla Fuentes', correo:'c.fuentes@sigam.mx', rol:'Supervisor', sucursal:'Todas', estado:'Activo', acceso:'hoy · 08:12' },
+  { nombre:'Rubén Balderas', correo:'r.balderas@sigam.mx', rol:'Técnico', sucursal:'Planta Norte', estado:'Activo', acceso:'hoy · 09:20' },
+  { nombre:'Marina Cortina', correo:'m.cortina@sigam.mx', rol:'Técnico', sucursal:'Planta Sur', estado:'Activo', acceso:'ayer · 17:44' },
+  { nombre:'Paola Ibarra', correo:'p.ibarra@sigam.mx', rol:'Usuario básico', sucursal:'Centro de Distribución', estado:'Activo', acceso:'hoy · 07:58' },
+  { nombre:'Iván Zárate', correo:'i.zarate@sigam.mx', rol:'Auditor', sucursal:'Todas', estado:'Activo', acceso:'03 sep · 12:10' },
+  { nombre:'Superadministrador', correo:'admin@sigam.mx', rol:'Superadministrador', sucursal:'Todas', estado:'Activo', acceso:'hoy · 08:00' },
+];
+
+const CATALOGOS = [
+  { nombre:'Tipos de equipo', items:['Médico','Cómputo','Climatización','Eléctrico','Hidráulico','Mobiliario'] },
+  { nombre:'Prioridades', items:['Normal','Prioritaria','Urgente'] },
+  { nombre:'Tipos de mantenimiento', items:['Preventivo','Correctivo','Urgente','Inspección'] },
+  { nombre:'Frecuencias', items:['Semanal','Mensual','Bimestral','Trimestral','Semestral','Anual','Personalizada'] },
+  { nombre:'Estatus de equipo', items:['Operativo','En mantenimiento','Fuera de servicio','Baja'] },
+  { nombre:'Estados de orden de trabajo', items:[...CICLO, ...ESTADOS_ESPECIALES] },
+];
+
+const CATALOGO_REPORTES = [
+  { grupo:'Inventario y mantenimiento', items:[
+    { id:'RPT-01', nombre:'Inventario general' },
+    { id:'RPT-04', nombre:'Mantenimientos por periodo' },
+    { id:'RPT-09', nombre:'Productividad por técnico' },
+    { id:'RPT-11', nombre:'Cumplimiento preventivo' },
+  ]},
+  { grupo:'Indicadores clave (KPI)', items:[
+    { id:'RPT-17', nombre:'MTTR — tiempo medio de reparación' },
+    { id:'RPT-18', nombre:'MTBF — tiempo medio entre fallas' },
+    { id:'RPT-19', nombre:'Disponibilidad de equipos' },
+    { id:'RPT-20', nombre:'Costo acumulado de mantenimiento' },
+  ]},
+];
+const REPORTES_FLAT = CATALOGO_REPORTES.flatMap(g=>g.items);
+
+const TIPO_MTO = [
+  { name:'Lun', preventivo:2, correctivo:1 }, { name:'Mar', preventivo:1, correctivo:2 },
+  { name:'Mié', preventivo:3, correctivo:0 }, { name:'Jue', preventivo:1, correctivo:1 },
+  { name:'Vie', preventivo:2, correctivo:3 }, { name:'Sáb', preventivo:0, correctivo:1 },
+];
+
+const PIE_COLORS = ['#2F7A6B','#B9812A','#3F7A5C'];
+
+const FLUJO_OPERATIVO = ['Activo','Ubicación','Plan de mantenimiento','Orden de trabajo','Técnico','Evidencia','Supervisión','Cierre','Historial','Indicadores','Auditoría'];
+
+/* ============================== NAVEGACIÓN Y PERMISOS ============================== */
+const NAV_HOME = { key:'dashboard', label:'Panel', icon:'dashboard' };
+const NAV_SECTIONS = [
+  { label:'Operación', items:[
+    { key:'equipos', label:'Equipos', icon:'boxes' },
+    { key:'solicitudes', label:'Solicitudes', icon:'inbox' },
+    { key:'mantenimientos', label:'Mantenimientos', icon:'wrench' },
+    { key:'calendario', label:'Calendario', icon:'calendar' },
+  ]},
+  { label:'Documentación', items:[
+    { key:'sucursales', label:'Sucursales', icon:'building' },
+    { key:'proveedores', label:'Proveedores', icon:'truck' },
+    { key:'normas', label:'Normas', icon:'scale' },
+    { key:'formatos', label:'Formatos', icon:'clipboard' },
+  ]},
+  { label:'Administración', items:[
+    { key:'catalogos', label:'Catálogos', icon:'tags' },
+    { key:'usuarios', label:'Usuarios', icon:'users' },
+  ]},
+  { label:'Análisis', items:[
+    { key:'reportes', label:'Reportes', icon:'report' },
+    { key:'notificaciones', label:'Notificaciones', icon:'bell' },
+    { key:'auditoria', label:'Auditoría', icon:'shield' },
+  ]},
+];
+const NAV_FLAT = [NAV_HOME, ...NAV_SECTIONS.flatMap(s=>s.items)];
+
+const ROLES = ['Superadministrador','Supervisor','Técnico','Usuario básico','Auditor'];
+
+const ROLE_ACCESS = {
+  'Superadministrador': NAV_FLAT.map(n=>n.key),
+  'Supervisor': ['dashboard','equipos','solicitudes','mantenimientos','calendario','sucursales','proveedores','normas','formatos','catalogos','reportes','notificaciones','auditoria'],
+  'Técnico': ['dashboard','equipos','mantenimientos','calendario','formatos','notificaciones'],
+  'Usuario básico': ['dashboard','solicitudes','equipos','notificaciones'],
+  'Auditor': ['dashboard','equipos','solicitudes','mantenimientos','reportes','auditoria','notificaciones'],
+};
+const ROLE_NOTE = {
+  'Superadministrador':'Acceso total: configuración, usuarios, catálogos, inventario, mantenimiento, reportes y auditoría.',
+  'Supervisor':'Programación, asignación, supervisión y autorización de cierre.',
+  'Técnico':'Agenda propia, diagnóstico, actividades, evidencias y refacciones.',
+  'Usuario básico':'Consulta autorizada y seguimiento de sus propias solicitudes.',
+  'Auditor':'Consulta de bitácora y trazabilidad, sin edición.',
+};
+const ROLE_READONLY = { 'Auditor':true };
+
+const MESES_MX = {ene:0,feb:1,mar:2,abr:3,may:4,jun:5,jul:6,ago:7,sep:8,oct:9,nov:10,dic:11};
+const MESES_LARGO = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+/* ============================== ESTADO ============================== */
+const state = {
+  session:false, role:'Supervisor', page:'dashboard',
+  equipoSel:null, mtoSel:null,
+  showQr:null, showNotif:false, showCalEvent:null, confirmDelete:null, modalForm:null,
+  openMenu:null,
+  filtroEquipo:'', filtroSucursal:'Todas',
+  reporteSel:'RPT-01',
+  tableFilters:{},
+};
+
+/* ============================== HELPERS ============================== */
+function money(n){ return '$' + Number(n||0).toLocaleString('es-MX'); }
+function toneEstadoEquipo(e){ return e==='Operativo'?'success': e==='En mantenimiento'?'amber':'danger'; }
+function tonePrioridad(p){ return p==='Urgente'?'danger': p==='Prioritaria'?'amber':'neutral'; }
+function toneGarantia(g){ return g==='Vigente'?'success': g==='Por vencer'?'amber':'danger'; }
+const ESTADO_MTO_TONE = {
+  'Solicitado':'neutral','Autorizado':'neutral','Asignado':'steel','En proceso':'steel',
+  'Realizado':'amber','Supervisado':'success','Cerrado':'neutral',
+  'Cancelado':'neutral','Reprogramado':'amber','En espera de refacción':'amber','Equipo fuera de servicio':'danger',
+};
+function toneEstadoMto(e){ return ESTADO_MTO_TONE[e] || 'neutral'; }
+function badge(text,tone){ return `<span class="badge badge-${tone}">${text}</span>`; }
+function val(id){ const el=document.getElementById(id); return el ? el.value.trim() : ''; }
+function selVal(id){ const el=document.getElementById(id); return el ? el.value : ''; }
+function chipVal(containerId){ const el=document.querySelector('#'+containerId+' .chip.active'); return el ? el.dataset.value : ''; }
+
+function showToast(msg, icon){
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = (icon?ICONS[icon]:ICONS.check2) + `<span>${msg}</span>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>{ el.style.transition='opacity .25s ease'; el.style.opacity='0'; setTimeout(()=>el.remove(),250); }, 2400);
+}
+
+function nextFolio(arr, prefix){
+  const nums = arr.map(x=>{ const parts=x.folio.split('-'); return parseInt(parts[parts.length-1],10)||0; });
+  const max = nums.length ? Math.max(...nums) : 0;
+  return prefix+'-'+String(max+1).padStart(4,'0');
+}
+
+/* Generador de patrón pseudo-QR (visual, determinista a partir de un texto) */
+function qrPattern(text){
+  let seed = 0;
+  for(let i=0;i<text.length;i++) seed = (seed*31 + text.charCodeAt(i)) >>> 0;
+  function rnd(){ seed = (seed*1103515245 + 12345) >>> 0; return (seed>>>8) % 100; }
+  const n = 15;
+  let cells = [];
+  for(let r=0;r<n;r++){ cells.push([]); for(let c=0;c<n;c++) cells[r].push(rnd()<46); }
+  const finder = (r0,c0)=>{
+    for(let r=0;r<7;r++) for(let c=0;c<7;c++){
+      const on = (r===0||r===6||c===0||c===6) || (r>=2&&r<=4&&c>=2&&c<=4);
+      cells[r0+r][c0+c] = on;
+    }
+  };
+  finder(0,0); finder(0,n-7); finder(n-7,0);
+  const s = 12;
+  let rects = '';
+  for(let r=0;r<n;r++) for(let c=0;c<n;c++) if(cells[r][c]) rects += `<rect x="${c*s}" y="${r*s}" width="${s}" height="${s}" fill="#1B1F22"/>`;
+  return `<svg viewBox="0 0 ${n*s} ${n*s}" width="176" height="176" style="background:#fff;">${rects}</svg>`;
+}
+
+function parseFechaMX(str){
+  const m = String(str).match(/(\d{1,2})\s+([a-z]{3})\s+(\d{4})/i);
+  if(!m) return null;
+  const day = parseInt(m[1],10);
+  const mon = MESES_MX[m[2].toLowerCase()];
+  const year = parseInt(m[3],10);
+  if(mon===undefined) return null;
+  return new Date(year,mon,day);
+}
+
+/* ============================== TABLA GENÉRICA CON FILTROS POR COLUMNA ============================== */
+function renderTable(tableId, columns, rows){
+  const filters = state.tableFilters[tableId] || {};
+  const filtered = rows.filter(r => columns.every((c,i)=>{
+    if(c.filterable===false) return true;
+    const f = (filters[i]||'').toLowerCase();
+    if(!f) return true;
+    return String(r.cells[i].text||'').toLowerCase().includes(f);
+  }));
+  return `<div class="card">
+    <div style="overflow-x:auto;">
+    <table>
+      <thead><tr>${columns.map(c=>`<th>${c.label}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${filtered.length ? filtered.map(r=>`<tr class="row ${r.onclick?'clickable':''}" ${r.onclick?`onclick="${r.onclick}"`:''}>${r.cells.map(c=>`<td>${c.html}</td>`).join('')}</tr>`).join('')
+          : `<tr><td colspan="${columns.length}" style="text-align:center;color:var(--ink-soft);padding:30px;font-size:13px;">Sin resultados con los filtros aplicados.</td></tr>`}
+      </tbody>
+      <tfoot><tr>${columns.map((c,i)=> c.filterable===false ? '<td></td>' :
+        `<td><input id="tf-${tableId}-${i}" class="table-filter" placeholder="Filtrar…" value="${(filters[i]||'').replace(/"/g,'&quot;')}" oninput="setTableFilter('${tableId}',${i},this.value)"></td>`).join('')}</tr></tfoot>
+    </table>
+    </div>
+  </div>`;
+}
+function setTableFilter(tableId, colIndex, value){
+  if(!state.tableFilters[tableId]) state.tableFilters[tableId] = {};
+  state.tableFilters[tableId][colIndex] = value;
+  render();
+  const input = document.getElementById(`tf-${tableId}-${colIndex}`);
+  if(input){ input.focus(); input.setSelectionRange(value.length, value.length); }
+}
+function actionsCell(editFn, deleteFn){
+  return `<div style="display:flex;gap:3px;">
+    <span class="icon-btn" onclick="event.stopPropagation(); ${editFn}" title="Editar">${ICONS.edit}</span>
+    <span class="icon-btn danger" onclick="event.stopPropagation(); ${deleteFn}" title="Eliminar">${ICONS.trash}</span>
+  </div>`;
+}
+
+/* ============================== RENDER: LOGIN ============================== */
+function renderLogin(){
+  return `
+  <div class="fadein" style="min-height:100vh; display:grid; grid-template-columns:1.1fr 1fr; background:var(--paper);">
+    <div style="background:var(--graphite); color:#F1EFE9; padding:56px 52px; display:flex; flex-direction:column; justify-content:space-between;">
+      <div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:34px;height:34px;background:var(--amber);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:600;font-family:'Fraunces',serif;font-size:17px;color:#241703;">S</div>
+          <span class="mono" style="font-size:13px;letter-spacing:.06em;color:#B9BEC4;">SIGAM · v1.0</span>
+        </div>
+        <h1 class="brand" style="font-size:40px;line-height:1.18;margin:56px 0 16px;max-width:440px;font-weight:500;">Del inventario al control integral del ciclo de vida de cada activo.</h1>
+        <p style="font-size:15px;color:#AEB4BA;max-width:400px;line-height:1.6;">Sistema Integral de Gestión de Activos y Mantenimiento — inventario, mantenimiento preventivo y correctivo, control documental, indicadores y trazabilidad en una sola plataforma multisucursal.</p>
+      </div>
+      <div style="display:flex;gap:28px;border-top:1px solid var(--graphite-line);padding-top:22px;flex-wrap:wrap;">
+        <div><div class="mono" style="font-size:20px;color:#F1EFE9;">${EQUIPOS.length}</div><div style="font-size:11.5px;color:#8B9198;">equipos activos</div></div>
+        <div><div class="mono" style="font-size:20px;color:#F1EFE9;">3</div><div style="font-size:11.5px;color:#8B9198;">sucursales</div></div>
+        <div><div class="mono" style="font-size:20px;color:var(--amber);">2</div><div style="font-size:11.5px;color:#8B9198;">preventivos vencidos</div></div>
+        <div><div class="mono" style="font-size:20px;color:#F1EFE9;">91%</div><div style="font-size:11.5px;color:#8B9198;">cumplimiento preventivo</div></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;padding:40px;">
+      <div style="width:340px;">
+        <h2 style="font-size:19px;font-weight:500;margin:0 0 4px;">Inicia sesión</h2>
+        <p style="font-size:13px;color:var(--ink-soft);margin:0 0 28px;">Usa tu correo corporativo y contraseña.</p>
+        <label class="field-label">Correo</label>
+        <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin-bottom:16px;background:#fff;">
+          ${ICONS.mail}<input value="c.fuentes@sigam.mx" style="border:none;outline:none;font-size:13.5px;flex:1;">
+        </div>
+        <label class="field-label">Contraseña</label>
+        <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin-bottom:8px;background:#fff;">
+          ${ICONS.lock}<input type="password" value="••••••••••" readonly style="border:none;outline:none;font-size:13.5px;flex:1;color:var(--ink-soft);">
+        </div>
+        <div style="text-align:right;margin-bottom:22px;"><span style="font-size:12px;color:var(--steel);cursor:pointer;">¿Olvidaste tu contraseña?</span></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px 0;font-size:14px;" onclick="login()">Entrar al sistema</button>
+        <p style="font-size:11.5px;color:#9A968C;margin-top:14px;line-height:1.6;">Prototipo de demostración para revisión del cliente — los datos y el inicio de sesión son simulados para explorar los flujos del sistema.</p>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================== RENDER: NAVBAR + SHELL ============================== */
+function renderNotifDropdown(){
+  return `
+  <div onclick="event.stopPropagation()" style="position:absolute; top:34px; right:0; width:340px; background:#fff; border:1px solid var(--line); border-radius:10px; box-shadow:0 16px 36px rgba(0,0,0,.2); z-index:70; color:var(--ink);">
+    <div style="padding:12px 16px; border-bottom:1px solid var(--line); font-size:13px; font-weight:500; display:flex; justify-content:space-between; align-items:center;">
+      Notificaciones <span onclick="goTo('notificaciones')" style="font-size:11.5px;color:var(--steel-dark);cursor:pointer;font-weight:400;">Ver todas</span>
+    </div>
+    <div style="max-height:320px; overflow-y:auto;">
+      ${NOTIFICACIONES.slice(0,5).map(n=>`
+        <div style="display:flex; gap:10px; padding:11px 16px; border-bottom:1px solid var(--line); background:${n.leida?'#fff':'#F7F6F2'};">
+          <span style="color:${n.tipo==='urgente'||n.tipo==='vencido'?'var(--danger)':n.tipo==='garantia'?'var(--amber-text)':'var(--steel-dark)'};margin-top:1px;">${ICONS[n.icono]}</span>
+          <div><div style="font-size:12.5px;line-height:1.4;">${n.mensaje}</div><div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">${n.fecha}</div></div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderShell(){
+  const access = ROLE_ACCESS[state.role];
+  const noLeidas = NOTIFICACIONES.filter(n=>!n.leida).length;
+  const initials = state.role==='Superadministrador' ? 'SA' : state.role.split(' ')[0][0];
+  const currentSectionLabel = NAV_SECTIONS.find(sec=>sec.items.some(i=>i.key===state.page))?.label;
+
+  return `
+  <div style="min-height:100vh; display:flex; flex-direction:column;">
+    <div class="navbar">
+      <div style="display:flex;align-items:center;">
+        <div style="display:flex;align-items:center;gap:9px;margin-right:14px;cursor:pointer;" onclick="goTo('dashboard')">
+          <div style="width:26px;height:26px;background:var(--amber);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;font-family:'Fraunces',serif;font-size:13px;color:#241703;">S</div>
+          <span class="brand" style="font-size:15.5px;font-weight:600;color:#fff;">SIGAM</span>
+        </div>
+        <div class="navlink ${state.page==='dashboard'?'active':''}" onclick="goTo('dashboard')">${ICONS.dashboard}Panel</div>
+        ${NAV_SECTIONS.map(sec=>{
+          const enabledItems = sec.items.filter(i=>access.includes(i.key));
+          if(enabledItems.length===0) return '';
+          const isOpen = state.openMenu===sec.label;
+          const isActiveSection = currentSectionLabel===sec.label;
+          return `<div class="navgroup">
+            <div class="navlink ${isActiveSection||isOpen?'active':''}" onclick="toggleMenu(event,'${sec.label}')">${sec.label}${ICONS.chevronD}</div>
+            ${isOpen?`<div class="navdrop" onclick="event.stopPropagation()">
+              ${sec.items.map(i=>{
+                const enabled = access.includes(i.key);
+                return `<div class="navdrop-item ${enabled?'':'disabled'} ${state.page===i.key?'active':''}" onclick="${enabled?`goTo('${i.key}')`:''}">${ICONS[i.icon]}${i.label}</div>`;
+              }).join('')}
+            </div>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <select onchange="changeRole(this.value)" title="${ROLE_NOTE[state.role]}" style="background:var(--graphite2);color:#fff;border:1px solid var(--graphite-line);border-radius:6px;padding:7px 9px;font-size:12px;">
+          ${ROLES.map(r=>`<option ${r===state.role?'selected':''}>${r}</option>`).join('')}
+        </select>
+        <div style="position:relative;cursor:pointer;" onclick="toggleNotif(event)">
+          ${ICONS.bell}
+          ${noLeidas>0?`<span style="position:absolute;top:-5px;right:-7px;background:var(--danger);color:#fff;font-size:9px;border-radius:8px;padding:1px 4px;">${noLeidas}</span>`:''}
+          ${state.showNotif?renderNotifDropdown():''}
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;cursor:pointer;" onclick="logout()" title="Cerrar sesión">
+          <div style="width:26px;height:26px;border-radius:50%;background:var(--steel-soft);color:var(--steel-dark);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:500;">${initials}</div>
+          ${ICONS.logout}
+        </div>
+      </div>
+    </div>
+    <div style="flex:1;background:var(--paper);">
+      <div style="max-width:1360px;margin:0 auto;padding:26px 28px;">${renderPage()}</div>
+    </div>
+  </div>
+  ${state.modalForm ? renderFormModal() : ''}
+  ${state.showQr ? renderQrModal() : ''}
+  ${state.showCalEvent ? renderCalEventModal() : ''}
+  ${state.confirmDelete ? renderConfirmDeleteModal() : ''}
+  `;
+}
+
+function pageHeader(iconKey, title, subtitle, actionHtml){
+  return `<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;gap:16px;flex-wrap:wrap;">
+    <div style="display:flex;gap:12px;align-items:flex-start;">
+      <div style="width:38px;height:38px;border-radius:9px;background:var(--steel-soft);color:var(--steel-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">${ICONS[iconKey]}</div>
+      <div><h1 class="brand" style="font-size:26px;font-weight:600;margin:0;">${title}</h1>
+      ${subtitle?`<p style="font-size:13.5px;color:var(--ink-soft);margin:5px 0 0;">${subtitle}</p>`:''}</div>
+    </div>
+    ${actionHtml||''}
+  </div>`;
+}
+function readOnlyBanner(){
+  if(!ROLE_READONLY[state.role]) return '';
+  return `<div class="readonly-banner">${ICONS.lock} Modo consulta — el rol Auditor no puede editar registros.</div>`;
+}
+
+function renderPage(){
+  switch(state.page){
+    case 'dashboard': return renderDashboard();
+    case 'equipos': return state.equipoSel ? renderEquipoDetalle() : renderEquipos();
+    case 'solicitudes': return renderSolicitudes();
+    case 'mantenimientos': return state.mtoSel ? renderMtoDetalle() : renderMantenimientos();
+    case 'calendario': return renderCalendario();
+    case 'sucursales': return renderSucursales();
+    case 'proveedores': return renderProveedores();
+    case 'normas': return renderNormas();
+    case 'formatos': return renderFormatos();
+    case 'catalogos': return renderCatalogos();
+    case 'reportes': return renderReportes();
+    case 'notificaciones': return renderNotificaciones();
+    case 'auditoria': return renderAuditoria();
+    case 'usuarios': return renderUsuarios();
+    default: return '';
+  }
+}
+
+/* ============================== DASHBOARD ============================== */
+function renderDashboard(){
+  const urgentes = MANTENIMIENTOS.filter(m => m.prioridad==='Urgente' && !['Cerrado','Cancelado'].includes(m.estado));
+  const vencidos = EQUIPOS.filter(e => e.proximo.startsWith('Vencido'));
+  const pendientes = MANTENIMIENTOS.filter(m=>!['Cerrado','Cancelado'].includes(m.estado)).length;
+  const abiertas = SOLICITUDES.filter(s=>s.estado!=='Cerrada').length;
+
+  const stats = [
+    ['Equipos', EQUIPOS.length, ICONS.boxes, 'neutral'],
+    ['Valor de inventario', '$2.78M', ICONS.trend, 'neutral'],
+    ['Pendientes', pendientes, ICONS.wrench, 'neutral'],
+    ['Urgentes', urgentes.length, ICONS.alert, 'danger'],
+    ['Vencidos', vencidos.length, ICONS.clock, 'amber'],
+    ['Solicitudes abiertas', abiertas, ICONS.inbox, 'neutral'],
+  ];
+  const toneColor = {neutral:'var(--ink)', amber:'var(--amber-text)', danger:'var(--danger)'};
+
+  const kpis = [
+    ['MTTR', '5.4 hrs', 'tiempo medio de reparación'],
+    ['MTBF', '612 hrs', 'tiempo medio entre fallas'],
+    ['Cumplimiento preventivo', '91%', 'realizado vs. programado'],
+    ['Disponibilidad', '97.2%', 'tiempo operativo de equipos'],
+  ];
+
+  const maxBar = Math.max(...TIPO_MTO.map(d=>d.preventivo+d.correctivo), 1);
+  const barChart = `<div style="display:flex; align-items:flex-end; gap:14px; height:150px; padding:0 4px;">
+    ${TIPO_MTO.map(d=>{
+      const hp = Math.round((d.preventivo/maxBar)*120), hc = Math.round((d.correctivo/maxBar)*120);
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div style="display:flex;align-items:flex-end;gap:3px;height:120px;">
+          <div title="Preventivo: ${d.preventivo}" style="width:12px;height:${hp}px;background:var(--steel);border-radius:2px 2px 0 0;"></div>
+          <div title="Correctivo: ${d.correctivo}" style="width:12px;height:${hc}px;background:var(--amber);border-radius:2px 2px 0 0;"></div>
+        </div>
+        <span style="font-size:11px;color:var(--ink-soft);">${d.name}</span>
+      </div>`;
+    }).join('')}
+  </div>
+  <div style="display:flex;gap:16px;margin-top:8px;">
+    <span style="font-size:11.5px;color:var(--ink-soft);"><span style="display:inline-block;width:8px;height:8px;background:var(--steel);border-radius:2px;margin-right:5px;"></span>Preventivo</span>
+    <span style="font-size:11.5px;color:var(--ink-soft);"><span style="display:inline-block;width:8px;height:8px;background:var(--amber);border-radius:2px;margin-right:5px;"></span>Correctivo</span>
+  </div>`;
+
+  const distSucursal = SUCURSALES.map(s=>({name:s.nombre.replace('Centro de Distribución','C. Distribución'), value: EQUIPOS.filter(e=>e.sucursal===s.nombre).length}));
+  const total = distSucursal.reduce((a,d)=>a+d.value,0) || 1;
+  let acc = 0;
+  const gradient = distSucursal.map((d,i)=>{
+    const start = (acc/total)*360; acc += d.value; const end = (acc/total)*360;
+    return `${PIE_COLORS[i%PIE_COLORS.length]} ${start}deg ${end}deg`;
+  }).join(', ');
+  const donut = `<div style="display:flex;align-items:center;gap:20px;">
+    <div style="width:110px;height:110px;border-radius:50%;background:conic-gradient(${gradient});display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <div style="width:60px;height:60px;border-radius:50%;background:var(--card);"></div>
+    </div>
+    <div style="flex:1;">
+      ${distSucursal.map((d,i)=>`<div style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:6px;">
+        <span style="width:8px;height:8px;border-radius:2px;background:${PIE_COLORS[i%PIE_COLORS.length]};"></span>
+        <span style="color:var(--ink-soft);">${d.name}</span><span class="mono" style="margin-left:auto;">${d.value}</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+
+  const proximos = MANTENIMIENTOS.filter(m=>['Asignado','En proceso'].includes(m.estado)).map(m=>`
+    <div class="row clickable" onclick="openMtoFromDash('${m.folio}')" style="display:flex;justify-content:space-between;padding:9px 6px;border-radius:5px;font-size:13px;">
+      <div><div style="font-weight:500;">${m.equipo}</div><div style="font-size:11.5px;color:var(--ink-soft);">${m.tecnico} · ${m.programado}</div></div>
+      ${badge(m.prioridad, tonePrioridad(m.prioridad))}
+    </div>`).join('');
+
+  const urgenciasHtml = urgentes.map(m=>`
+    <div class="row clickable" onclick="openMtoFromDash('${m.folio}')" style="display:flex;justify-content:space-between;padding:9px 6px;border-radius:5px;font-size:13px;">
+      <div><div style="font-weight:500;">${m.equipo}</div><div class="mono" style="font-size:11px;color:var(--ink-soft);">${m.folio}</div></div>
+      ${badge(m.estado, toneEstadoMto(m.estado))}
+    </div>`).join('') + vencidos.map(e=>`
+    <div class="row clickable" onclick="selectEquipoFromDash('${e.codigo}')" style="display:flex;justify-content:space-between;padding:9px 6px;border-radius:5px;font-size:13px;">
+      <div><div style="font-weight:500;">${e.nombre}</div><div class="mono" style="font-size:11px;color:var(--ink-soft);">${e.codigo} · preventivo vencido</div></div>
+      ${badge('Vencido','amber')}
+    </div>`).join('');
+
+  const flujo = `<div class="card" style="padding:16px 18px;margin-top:14px;">
+    <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">Flujo operativo SIGAM</div>
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">
+      ${FLUJO_OPERATIVO.map((f,i)=>`<span class="flowchip">${f}</span>${i<FLUJO_OPERATIVO.length-1?`<span style="color:var(--line);">${ICONS.chevronR}</span>`:''}`).join('')}
+    </div>
+  </div>`;
+
+  return `
+  <div class="fadein">
+    ${pageHeader('dashboard','Panel de control', 'Vista general · martes, 08 de septiembre de 2026')}
+    ${readOnlyBanner()}
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:14px;">
+      ${stats.map(([label,val,icon,tone])=>`
+        <div class="stat-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div style="font-size:12px;color:var(--ink-soft);">${label}</div>${icon}
+          </div>
+          <div class="mono" style="font-size:24px;margin-top:10px;color:${toneColor[tone]};">${val}</div>
+        </div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+      ${kpis.map(([label,val,sub])=>`
+        <div class="stat-card" style="background:var(--steel-soft);border-color:var(--steel-soft);">
+          <div style="font-size:12px;color:var(--steel-dark);">${label}</div>
+          <div class="mono" style="font-size:21px;margin-top:8px;color:var(--steel-dark);">${val}</div>
+          <div style="font-size:11px;color:var(--steel-dark);opacity:.8;margin-top:2px;">${sub}</div>
+        </div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:14px;margin-bottom:14px;">
+      <div class="card" style="padding:18px;">
+        <div style="font-size:13.5px;font-weight:500;margin-bottom:4px;">Preventivo vs. correctivo — últimos 6 días</div>
+        <div style="font-size:12px;color:var(--ink-soft);margin-bottom:10px;">Órdenes de trabajo generadas por día</div>
+        ${barChart}
+      </div>
+      <div class="card" style="padding:18px;">
+        <div style="font-size:13.5px;font-weight:500;margin-bottom:4px;">Equipos por sucursal</div>
+        <div style="font-size:12px;color:var(--ink-soft);margin-bottom:14px;">Distribución del inventario activo</div>
+        ${donut}
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div class="card" style="padding:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-size:13.5px;font-weight:500;">Próximos trabajos</div>
+          <span onclick="goTo('calendario')" style="font-size:12px;color:var(--steel-dark);cursor:pointer;">Ver calendario</span>
+        </div>
+        ${proximos || '<div style="font-size:13px;color:var(--ink-soft);">Sin trabajos programados.</div>'}
+      </div>
+      <div class="card" style="padding:18px;">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:12px;">${ICONS.alert}<div style="font-size:13.5px;font-weight:500;">Urgencias y alertas</div></div>
+        ${urgenciasHtml || '<div style="font-size:13px;color:var(--ink-soft);">Sin urgencias abiertas.</div>'}
+      </div>
+    </div>
+    ${flujo}
+  </div>`;
+}
+
+/* ============================== EQUIPOS ============================== */
+function renderEquipos(){
+  const q = state.filtroEquipo.toLowerCase();
+  const suc = state.filtroSucursal;
+  const filtered = EQUIPOS.filter(e => (suc==='Todas'||e.sucursal===suc) && (e.nombre.toLowerCase().includes(q)||e.codigo.toLowerCase().includes(q)));
+  const puedeEditar = !['Usuario básico','Técnico','Auditor'].includes(state.role);
+
+  const columns = [
+    {label:'Código'}, {label:'Equipo'}, {label:'Marca / modelo'}, {label:'Ubicación'},
+    {label:'Estado'}, {label:'Garantía'}, {label:'Valor'}, {label:'Próximo mtto.'}, {label:'QR', filterable:false},
+  ];
+  if(puedeEditar) columns.push({label:'Acciones', filterable:false});
+  const rows = filtered.map(e=>{
+    const cells = [
+      { text:e.codigo, html:`<span class="mono">${e.codigo}</span>` },
+      { text:e.nombre, html:e.nombre },
+      { text:e.marca, html:`<span style="color:var(--ink-soft);">${e.marca}</span>` },
+      { text:e.ubicacion, html:`<span style="color:var(--ink-soft);">${ICONS.pin}${e.ubicacion}</span>` },
+      { text:e.estado, html:badge(e.estado, toneEstadoEquipo(e.estado)) },
+      { text:e.garantiaEstado, html:badge(e.garantiaEstado, toneGarantia(e.garantiaEstado)) },
+      { text:e.valor, html:`<span class="mono">${money(e.valor)}</span>` },
+      { text:e.proximo, html:`<span style="color:${e.proximo.startsWith('Vencido')?'var(--danger)':'var(--ink-soft)'};">${e.proximo}</span>` },
+      { text:'', html:`<span class="icon-btn" onclick="event.stopPropagation(); openQr('${e.codigo}')" title="Ver QR">${ICONS.qr}</span>` },
+    ];
+    if(puedeEditar) cells.push({ text:'', html: actionsCell(`openForm('equipo','edit','${e.codigo}')`, `askDelete('equipo','${e.codigo}','${e.nombre}')`) });
+    return { onclick:`selectEquipo('${e.codigo}')`, cells };
+  });
+
+  return `
+  <div class="fadein">
+    ${pageHeader('boxes','Equipos', filtered.length+' activos visibles según tu rol · expediente digital por equipo', puedeEditar?`<button class="btn btn-primary" onclick="openForm('equipo','create',null)">${ICONS.plus}Nuevo equipo</button>`:'')}
+    ${readOnlyBanner()}
+    <div style="display:flex;gap:10px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:6px;padding:8px 12px;background:#fff;flex:1;max-width:320px;">
+        ${ICONS.search}<input value="${state.filtroEquipo}" oninput="filtroEquipoChange(this.value)" placeholder="Buscar por código, serie o nombre" style="border:none;outline:none;font-size:13px;flex:1;">
+      </div>
+      <select onchange="filtroSucursalChange(this.value)" style="border:1px solid var(--line);border-radius:6px;padding:0 10px;font-size:13px;background:#fff;">
+        <option ${suc==='Todas'?'selected':''}>Todas</option>
+        ${SUCURSALES.map(s=>`<option ${suc===s.nombre?'selected':''}>${s.nombre}</option>`).join('')}
+      </select>
+    </div>
+    ${renderTable('equipos', columns, rows)}
+  </div>`;
+}
+
+function renderEquipoDetalle(){
+  const e = EQUIPOS.find(x=>x.codigo===state.equipoSel);
+  if(!e){ state.equipoSel=null; return renderEquipos(); }
+  const historial = MANTENIMIENTOS.filter(m=>m.equipo.startsWith(e.codigo));
+  const puedeEditar = !['Usuario básico','Técnico','Auditor'].includes(state.role);
+  return `
+  <div class="fadein">
+    <div onclick="backEquipo()" style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--steel-dark);cursor:pointer;margin-bottom:16px;">${ICONS.back} Volver a equipos</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <div><div class="mono" style="font-size:12px;color:var(--ink-soft);">${e.codigo}</div>
+        <h1 class="brand" style="font-size:24px;font-weight:600;margin:3px 0 8px;">${e.nombre}</h1>
+        <div style="display:flex;gap:8px;">${badge(e.estado, toneEstadoEquipo(e.estado))}${badge('Garantía '+e.garantiaEstado.toLowerCase(), toneGarantia(e.garantiaEstado))}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="btn btn-ghost btn-sm" onclick="openQr('${e.codigo}')">${ICONS.qr} Código QR</button>
+        ${puedeEditar?`<button class="btn btn-ghost btn-sm" onclick="openForm('equipo','edit','${e.codigo}')">${ICONS.edit} Editar</button>
+        <button class="btn btn-ghost btn-sm" onclick="askDelete('equipo','${e.codigo}','${e.nombre}')" style="color:var(--danger);border-color:var(--danger-soft);">${ICONS.trash} Eliminar</button>`:''}
+        <div style="text-align:right;margin-left:8px;"><div style="font-size:12px;color:var(--ink-soft);">Valor de adquisición</div>
+        <div class="mono" style="font-size:22px;">${money(e.valor)}</div></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;">
+      ${[['Marca / modelo',e.marca],['Número de serie',e.serie],['Sucursal',e.sucursal],['Ubicación',e.ubicacion],['Proveedor',e.proveedor],['Vida útil estimada',e.vidaUtil],['Garantía hasta',e.garantia],['Valor de adquisición',money(e.valor)],['Próximo mantenimiento',e.proximo]].map(([l,v])=>`
+        <div class="card" style="padding:14px;"><div style="font-size:11.5px;color:var(--ink-soft);margin-bottom:4px;">${l}</div><div style="font-size:13.5px;font-weight:500;">${v}</div></div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;">
+      <div class="card" style="padding:18px;">
+        <div style="font-size:13.5px;font-weight:500;margin-bottom:12px;">Historial de mantenimiento</div>
+        ${historial.length===0?'<div style="font-size:13px;color:var(--ink-soft);">Sin órdenes registradas.</div>':
+          historial.map(m=>`<div class="row clickable" onclick="openMtoFromEquipo('${m.folio}')" style="display:flex;justify-content:space-between;padding:10px 6px;border-bottom:1px solid var(--line);font-size:13px;border-radius:5px;">
+            <div><span class="mono" style="color:var(--ink-soft);font-size:11.5px;">${m.folio}</span><div>${m.tipo} · ${m.tecnico}</div></div>
+            ${badge(m.estado, toneEstadoMto(m.estado))}
+          </div>`).join('')}
+      </div>
+      <div>
+        <div class="card" style="padding:18px;margin-bottom:14px;">
+          <div style="font-size:13.5px;font-weight:500;margin-bottom:12px;">Documentos</div>
+          ${['Manual de operación.pdf','Factura de compra.pdf','Garantía extendida.pdf','Certificado NOM aplicable.pdf'].map(d=>`
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:13px;color:var(--ink-soft);">${ICONS.file}${d}</div>`).join('')}
+        </div>
+        <div class="card" style="padding:18px;">
+          <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">Fotografías</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            ${['Frontal','Placa de datos'].map(t=>`<div style="border:1px dashed var(--line);border-radius:6px;height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--ink-soft);font-size:11px;">${ICONS.camera}${t}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderQrModal(){
+  const e = EQUIPOS.find(x=>x.codigo===state.showQr);
+  if(!e) return '';
+  return `
+  <div class="modal-backdrop" onclick="closeQr()">
+    <div class="modal-box fadein" style="width:320px; text-align:center;" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div style="font-size:14.5px;font-weight:500;">Código QR del activo</div>
+        <span onclick="closeQr()" style="cursor:pointer;">${ICONS.x}</span>
+      </div>
+      <div style="display:flex;justify-content:center;margin-bottom:12px;">${qrPattern(e.codigo)}</div>
+      <div class="mono" style="font-size:13px;">${e.codigo}</div>
+      <div style="font-size:13px;font-weight:500;margin:2px 0 10px;">${e.nombre}</div>
+      <p style="font-size:12px;color:var(--ink-soft);line-height:1.6;margin:0 0 14px;">El técnico puede escanear este código desde su teléfono para abrir el expediente, consultar el historial y registrar una nueva intervención en campo.</p>
+      <button class="btn btn-ghost" style="width:100%;justify-content:center;padding:9px 0;" onclick="showToast('Etiqueta QR enviada a impresión','qr')">${ICONS.download} Descargar etiqueta</button>
+    </div>
+  </div>`;
+}
+
+/* ============================== SOLICITUDES ============================== */
+function renderSolicitudes(){
+  const mine = state.role==='Usuario básico';
+  const puedeCrear = ['Usuario básico','Supervisor','Superadministrador'].includes(state.role);
+  const puedeGestionar = ['Supervisor','Superadministrador'].includes(state.role);
+
+  const columns = [
+    {label:'Folio'}, {label:'Equipo'}, {label:'Problema reportado'}, {label:'Prioridad'},
+    {label:'Estado'}, {label:'Solicitante'}, {label:'Fecha'},
+  ];
+  if(puedeGestionar) columns.push({label:'Acciones', filterable:false});
+  const rows = SOLICITUDES.map(s=>{
+    const cells = [
+      { text:s.folio, html:`<span class="mono">${s.folio}</span>` },
+      { text:s.equipo, html:s.equipo },
+      { text:s.problema, html:`<span style="color:var(--ink-soft);">${s.problema}</span>` },
+      { text:s.prioridad, html:badge(s.prioridad, tonePrioridad(s.prioridad)) },
+      { text:s.estado, html:badge(s.estado, s.estado==='Cerrada'?'neutral':'steel') },
+      { text:s.solicitante, html:s.solicitante },
+      { text:s.fecha, html:`<span style="color:var(--ink-soft);">${s.fecha}</span>` },
+    ];
+    if(puedeGestionar){
+      const convertir = (s.estado!=='Convertida'&&s.estado!=='Cerrada') ? `<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();showToast('Solicitud ${s.folio} convertida en orden de trabajo','check2')">Convertir</button>` : '';
+      cells.push({ text:'', html: `<div style="display:flex;gap:6px;align-items:center;">${convertir}${actionsCell(`openForm('solicitud','edit','${s.folio}')`, `askDelete('solicitud','${s.folio}','${s.folio}')`)}</div>` });
+    }
+    return { onclick:null, cells };
+  });
+
+  return `
+  <div class="fadein">
+    ${pageHeader('inbox','Solicitudes', mine?'Tus solicitudes de mantenimiento':'Solicitudes de todas las sucursales', puedeCrear?`<button class="btn btn-primary" onclick="openForm('solicitud','create',null)">${ICONS.plus}Nueva solicitud</button>`:'')}
+    ${readOnlyBanner()}
+    ${renderTable('solicitudes', columns, rows)}
+  </div>`;
+}
+
+/* ============================== MANTENIMIENTOS ============================== */
+function renderMantenimientos(){
+  const puedeGestionar = ['Supervisor','Superadministrador'].includes(state.role);
+  const legend = ESTADOS_ESPECIALES.map(s=>badge(s, toneEstadoMto(s))).join(' ');
+
+  const columns = [
+    {label:'Folio'}, {label:'Tipo'}, {label:'Equipo'}, {label:'Técnico'},
+    {label:'Prioridad'}, {label:'Estado'}, {label:'Programado'},
+  ];
+  if(puedeGestionar) columns.push({label:'Acciones', filterable:false});
+  const rows = MANTENIMIENTOS.map(m=>{
+    const cells = [
+      { text:m.folio, html:`<span class="mono">${m.folio}</span>` },
+      { text:m.tipo, html:m.tipo },
+      { text:m.equipo, html:m.equipo },
+      { text:m.tecnico, html:m.tecnico },
+      { text:m.prioridad, html:badge(m.prioridad, tonePrioridad(m.prioridad)) },
+      { text:m.estado, html:badge(m.estado, toneEstadoMto(m.estado)) },
+      { text:m.programado, html:`<span style="color:var(--ink-soft);">${m.programado}</span>` },
+    ];
+    if(puedeGestionar) cells.push({ text:'', html: actionsCell(`openForm('mantenimiento','edit','${m.folio}')`, `askDelete('mantenimiento','${m.folio}','${m.folio}')`) });
+    return { onclick:`selectMto('${m.folio}')`, cells };
+  });
+
+  return `
+  <div class="fadein">
+    ${pageHeader('wrench','Mantenimientos', 'Órdenes de trabajo preventivas, correctivas y urgentes', puedeGestionar?`<button class="btn btn-primary" onclick="openForm('mantenimiento','create',null)">${ICONS.plus}Nueva orden de trabajo</button>`:'')}
+    ${readOnlyBanner()}
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+      <span style="font-size:11.5px;color:var(--ink-soft);">Estados especiales:</span>${legend}
+    </div>
+    ${renderTable('mantenimientos', columns, rows)}
+  </div>`;
+}
+
+const CICLO_TITLES = { 'Cancelado':'Orden cancelada', 'Reprogramado':'Orden reprogramada', 'En espera de refacción':'En espera de refacción' };
+
+function renderMtoDetalle(){
+  const m = MANTENIMIENTOS.find(x=>x.folio===state.mtoSel);
+  if(!m){ state.mtoSel=null; return renderMantenimientos(); }
+  const esEspecial = ESTADOS_ESPECIALES.includes(m.estado) && m.estado!=='Equipo fuera de servicio';
+  const idx = Math.max(CICLO.indexOf(m.estado),0);
+  const puedeGestionar = ['Supervisor','Superadministrador'].includes(state.role);
+  const puedeSupervisar = puedeGestionar && !['Cerrado','Cancelado'].includes(m.estado);
+
+  const stepper = esEspecial ? `<div class="card" style="padding:18px 22px;margin-bottom:16px;background:${m.estado==='Cancelado'?'#F3F2ED':'var(--amber-soft)'};border-color:transparent;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="color:${m.estado==='Cancelado'?'var(--ink-soft)':'var(--amber-text)'};">${ICONS.alert}</span>
+        <div>
+          <div style="font-size:13.5px;font-weight:500;color:${m.estado==='Cancelado'?'var(--ink-soft)':'var(--amber-text)'};">${CICLO_TITLES[m.estado] || m.estado}</div>
+          <div style="font-size:12.5px;color:${m.estado==='Cancelado'?'var(--ink-soft)':'var(--amber-text)'};margin-top:2px;">${m.motivo || ''}</div>
+        </div>
+      </div>
+    </div>` :
+    `<div class="card" style="padding:18px 22px;margin-bottom:16px;">
+    <div style="display:flex;justify-content:space-between;">
+      ${CICLO.map((c,i)=>`
+        <div style="display:flex;align-items:center;flex:${i<CICLO.length-1?'1':'none'};">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:52px;">
+            ${i<=idx?ICONS.check:ICONS.circle}
+            <span style="font-size:10.5px;color:${i<=idx?'var(--ink)':'var(--ink-soft)'};text-align:center;">${c}</span>
+          </div>
+          ${i<CICLO.length-1?`<div style="flex:1;height:1px;background:${i<idx?'var(--steel)':'var(--line)'};margin:0 4px 16px;"></div>`:''}
+        </div>`).join('')}
+    </div>
+  </div>`;
+
+  return `
+  <div class="fadein">
+    <div onclick="backMto()" style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--steel-dark);cursor:pointer;margin-bottom:16px;">${ICONS.back} Volver a mantenimientos</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+      <div><div class="mono" style="font-size:12px;color:var(--ink-soft);">${m.folio}</div>
+        <h1 class="brand" style="font-size:24px;font-weight:600;margin:3px 0 8px;">${m.equipo}</h1>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">${badge(m.tipo,'neutral')}${badge(m.prioridad,tonePrioridad(m.prioridad))}${badge(m.estado,toneEstadoMto(m.estado))}${m.norma&&m.norma!=='—'?badge(m.norma,'steel'):''}</div>
+      </div>
+      ${puedeGestionar?`<div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="openForm('mantenimiento','edit','${m.folio}')">${ICONS.edit} Editar</button>
+        <button class="btn btn-ghost btn-sm" onclick="askDelete('mantenimiento','${m.folio}','${m.folio}')" style="color:var(--danger);border-color:var(--danger-soft);">${ICONS.trash} Eliminar</button>
+        ${puedeSupervisar?`<button class="btn btn-primary btn-sm" onclick="avanzarMto('${m.folio}')">${m.estado==='Supervisado'?'Cerrar orden':(m.estado==='Realizado'?'Supervisar':'Avanzar estado')}</button>`:''}
+      </div>`:''}
+    </div>
+    ${stepper}
+    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;">
+      <div>
+        <div class="card" style="padding:18px;margin-bottom:14px;">
+          <div style="font-size:13.5px;font-weight:500;margin-bottom:8px;">Diagnóstico</div>
+          <p style="font-size:13.5px;line-height:1.6;margin:0;">${m.diagnostico}</p>
+        </div>
+        <div class="card" style="padding:18px;margin-bottom:14px;">
+          <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">Actividades</div>
+          ${m.actividades.length===0?'<div style="font-size:13px;color:var(--ink-soft);">Sin actividades registradas.</div>':m.actividades.map((a,i)=>`<div style="display:flex;gap:8px;font-size:13px;padding:6px 0;">
+            <span style="color:${i<m.actividades.length-1||m.estado==='Cerrado'?'var(--success)':'var(--line)'};">${ICONS.check}</span>${a}</div>`).join('')}
+        </div>
+        ${m.formato && m.formato!=='—' ? `<div class="card" style="padding:18px;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">${ICONS.clipboard}<div style="font-size:13.5px;font-weight:500;">Formato aplicado</div></div>
+          <div style="font-size:13px;color:var(--ink-soft);">${m.formato}</div>
+        </div>` : ''}
+        <div class="card" style="padding:18px;">
+          <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">Evidencias</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+            ${['Antes','Durante','Después'].map(e=>`<div style="border:1px dashed var(--line);border-radius:6px;height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:var(--ink-soft);font-size:11.5px;cursor:pointer;" onclick="showToast('Selector de evidencias (prototipo visual)','camera')">${ICONS.camera}${e}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="padding:18px;margin-bottom:14px;">
+          <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">Datos generales</div>
+          ${[['Sucursal',m.sucursal],['Técnico',m.tecnico],['Supervisor',m.supervisor],['Programado',m.programado],['Inicio',m.inicio],['Cierre',m.cierre]].map(([l,v])=>`
+            <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--line);"><span style="color:var(--ink-soft);">${l}</span><span>${v}</span></div>`).join('')}
+        </div>
+        ${m.materiales.length>0?`<div class="card" style="padding:18px;margin-bottom:14px;">
+          <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">Materiales y refacciones</div>
+          ${m.materiales.map(mat=>`<div style="display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;"><span>${mat.cant}× ${mat.nombre}</span><span class="mono">${mat.costo>0?money(mat.costo):'Por cotizar'}</span></div>`).join('')}
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0 0;border-top:1px solid var(--line);margin-top:4px;font-weight:500;"><span>Costo acumulado</span><span class="mono">${money(m.materiales.reduce((a,x)=>a+x.costo,0))}</span></div>
+        </div>`:''}
+        <div class="card" style="padding:18px;">
+          <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">Historial de estados</div>
+          ${m.historial.map(h=>`<div style="font-size:12px;padding:7px 0 7px 10px;border-left:2px solid var(--line);margin-bottom:2px;">
+            <div style="font-weight:500;">${h.estado}</div><div style="color:var(--ink-soft);">${h.fecha}</div><div style="color:var(--ink-soft);">${h.nota}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================== CALENDARIO (vista mensual) ============================== */
+function buildMonthGrid(year, month){
+  const first = new Date(year, month, 1);
+  const startWeekday = (first.getDay()+6)%7;
+  const start = new Date(year, month, 1-startWeekday);
+  const weeks = [];
+  let cur = new Date(start);
+  for(let w=0; w<6; w++){
+    const week = [];
+    for(let d=0; d<7; d++){ week.push(new Date(cur)); cur.setDate(cur.getDate()+1); }
+    weeks.push(week);
+  }
+  return weeks;
+}
+function eventosDelDia(date){
+  return MANTENIMIENTOS.filter(m=>{
+    const dt = parseFechaMX(m.programado);
+    return dt && dt.getFullYear()===date.getFullYear() && dt.getMonth()===date.getMonth() && dt.getDate()===date.getDate();
+  });
+}
+const EVT_TONE_BG = { danger:'var(--danger-soft)', amber:'var(--amber-soft)', steel:'var(--steel-soft)', neutral:'#EAE8E1', success:'var(--success-soft)' };
+const EVT_TONE_FG = { danger:'var(--danger)', amber:'var(--amber-text)', steel:'var(--steel-dark)', neutral:'var(--ink-soft)', success:'var(--success)' };
+
+function renderCalendario(){
+  const year=2026, month=8;
+  const weeks = buildMonthGrid(year, month);
+  const hoy = new Date(2026,8,8);
+  const diasLabel = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+
+  return `
+  <div class="fadein">
+    ${pageHeader('calendar','Calendario', MESES_LARGO[month].charAt(0).toUpperCase()+MESES_LARGO[month].slice(1)+' de '+year+' · vista mensual')}
+    ${readOnlyBanner()}
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);background:#FAF8F2;">
+        ${diasLabel.map(d=>`<div style="padding:9px 10px;font-size:11.5px;color:var(--ink-soft);font-weight:500;border-bottom:2px solid var(--line);">${d}</div>`).join('')}
+      </div>
+      ${weeks.map(week=>`
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);">
+          ${week.map(date=>{
+            const inMonth = date.getMonth()===month;
+            const isToday = date.toDateString()===hoy.toDateString();
+            const evts = eventosDelDia(date);
+            const shown = evts.slice(0,3);
+            return `<div class="cal-cell" style="background:${inMonth?'#fff':'#FAF9F5'};">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <span class="mono" style="font-size:11px;color:${inMonth?'var(--ink)':'#C7C3B7'};${isToday?'background:var(--steel-dark);color:#fff;border-radius:50%;width:19px;height:19px;display:flex;align-items:center;justify-content:center;':''}">${date.getDate()}</span>
+              </div>
+              ${shown.map(m=>{
+                const tone = tonePrioridad(m.prioridad);
+                return `<div class="cal-evt" onclick="openCalEvent('${m.folio}')" style="background:${EVT_TONE_BG[tone]};color:${EVT_TONE_FG[tone]};" title="${m.equipo}">${m.equipo.split('·')[1]||m.equipo}</div>`;
+              }).join('')}
+              ${evts.length>3?`<div style="font-size:10.5px;color:var(--ink-soft);padding:2px 4px;">+${evts.length-3} más</div>`:''}
+            </div>`;
+          }).join('')}
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function openCalEvent(folio){ state.showCalEvent = folio; render(); }
+function closeCalEvent(){ state.showCalEvent = null; render(); }
+function goToMtoFromCal(folio){ state.showCalEvent=null; state.page='mantenimientos'; state.mtoSel=folio; render(); }
+
+function renderCalEventModal(){
+  const m = MANTENIMIENTOS.find(x=>x.folio===state.showCalEvent);
+  if(!m) return '';
+  const costo = m.materiales.reduce((a,x)=>a+x.costo,0);
+  return `
+  <div class="modal-backdrop" onclick="closeCalEvent()">
+    <div class="modal-box fadein" style="width:480px;" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="mono" style="font-size:12px;color:var(--ink-soft);">${m.folio}</div>
+        <span onclick="closeCalEvent()" style="cursor:pointer;">${ICONS.x}</span>
+      </div>
+      <div class="brand" style="font-size:18px;font-weight:600;margin-bottom:8px;">${m.equipo}</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">${badge(m.tipo,'neutral')}${badge(m.prioridad,tonePrioridad(m.prioridad))}${badge(m.estado,toneEstadoMto(m.estado))}</div>
+      <p style="font-size:13px;line-height:1.6;color:var(--ink);margin:0 0 16px;">${m.diagnostico}</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        ${[['Sucursal',m.sucursal],['Técnico',m.tecnico],['Supervisor',m.supervisor],['Programado',m.programado],['Inicio',m.inicio],['Cierre',m.cierre]].map(([l,v])=>`
+          <div><div style="font-size:11px;color:var(--ink-soft);">${l}</div><div style="font-size:13px;font-weight:500;">${v}</div></div>`).join('')}
+      </div>
+      ${m.actividades.length>0?`<div style="margin-bottom:16px;">
+        <div style="font-size:12.5px;font-weight:500;margin-bottom:6px;">Actividades</div>
+        ${m.actividades.map(a=>`<div style="display:flex;gap:8px;font-size:12.5px;padding:3px 0;color:var(--ink-soft);"><span style="color:var(--steel-dark);">${ICONS.check2}</span>${a}</div>`).join('')}
+      </div>`:''}
+      ${m.materiales.length>0?`<div style="display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:16px;font-weight:500;"><span>Costo acumulado</span><span class="mono">${money(costo)}</span></div>`:''}
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px 0;" onclick="goToMtoFromCal('${m.folio}')">Ver orden completa</button>
+    </div>
+  </div>`;
+}
+
+/* ============================== SUCURSALES ============================== */
+function renderSucursales(){
+  const puedeEditar = ['Supervisor','Superadministrador'].includes(state.role);
+  return `
+  <div class="fadein">
+    ${pageHeader('building','Sucursales', 'Ubicaciones jerárquicas y activos por sucursal', puedeEditar?`<button class="btn btn-primary" onclick="openForm('sucursal','create',null)">${ICONS.plus}Nueva sucursal</button>`:'')}
+    ${readOnlyBanner()}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+      ${SUCURSALES.map(s=>{
+        const eq = EQUIPOS.filter(e=>e.sucursal===s.nombre);
+        const valor = eq.reduce((a,e)=>a+e.valor,0);
+        const ubicaciones = [...new Set(eq.map(e=>e.ubicacion))];
+        return `<div class="card" style="padding:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div class="mono" style="font-size:11px;color:var(--ink-soft);">${s.codigo}</div>
+            ${puedeEditar?actionsCell(`openForm('sucursal','edit',${s.id})`, `askDelete('sucursal',${s.id},'${s.nombre}')`):''}
+          </div>
+          <div style="font-size:15.5px;font-weight:500;margin:4px 0 2px;">${s.nombre}</div>
+          <div style="font-size:12px;color:var(--ink-soft);margin-bottom:2px;">${ICONS.pin}${s.direccion}</div>
+          <div style="font-size:12px;color:var(--ink-soft);margin-bottom:14px;">Responsable: ${s.responsable} · ${s.telefono}</div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0;border-top:1px solid var(--line);"><span style="color:var(--ink-soft);">Equipos</span><span class="mono">${eq.length}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0;border-top:1px solid var(--line);"><span style="color:var(--ink-soft);">Valor de activos</span><span class="mono">${money(valor)}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0;border-top:1px solid var(--line);"><span style="color:var(--ink-soft);">Fuera de servicio</span><span class="mono">${eq.filter(e=>e.estado==='Fuera de servicio').length}</span></div>
+          <div style="font-size:11.5px;color:var(--ink-soft);margin:12px 0 6px;">Ubicaciones registradas</div>
+          <div style="font-size:12.5px;">
+            ${ubicaciones.length? ubicaciones.map(u=>`<div style="padding:5px 0 5px 14px;border-left:1px solid var(--line);margin-bottom:2px;position:relative;">
+              <span style="position:absolute;left:-4px;top:11px;width:7px;height:7px;border-radius:50%;background:var(--steel);"></span>${u}</div>`).join('') : '<div style="color:var(--ink-soft);">Sin ubicaciones registradas.</div>'}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+/* ============================== PROVEEDORES ============================== */
+function renderProveedores(){
+  const puedeEditar = ['Supervisor','Superadministrador'].includes(state.role);
+  const columns = [
+    {label:'Razón social'}, {label:'Contacto'}, {label:'Teléfono / correo'}, {label:'Especialidad'},
+    {label:'RFC'}, {label:'Equipos'}, {label:'Estado'},
+  ];
+  if(puedeEditar) columns.push({label:'Acciones', filterable:false});
+  const rows = PROVEEDORES.map((p,i)=>{
+    const cells = [
+      { text:p.razon+' '+p.comercial, html:`${p.razon}<div style="font-size:11.5px;color:var(--ink-soft);">${p.comercial}</div>` },
+      { text:p.contacto, html:p.contacto },
+      { text:p.telefono+' '+p.correo, html:`<span style="color:var(--ink-soft);">${p.telefono}<div style="font-size:11.5px;">${p.correo}</div></span>` },
+      { text:p.especialidad, html:p.especialidad },
+      { text:p.rfc, html:`<span class="mono">${p.rfc}</span>` },
+      { text:p.equipos, html:`<span class="mono">${p.equipos}</span>` },
+      { text:p.estado, html:badge(p.estado,p.estado==='Activo'?'success':'neutral') },
+    ];
+    if(puedeEditar) cells.push({ text:'', html: actionsCell(`openForm('proveedor','edit',${i})`, `askDelete('proveedor',${i},'${p.comercial}')`) });
+    return { onclick:null, cells };
+  });
+  return `
+  <div class="fadein">
+    ${pageHeader('truck','Proveedores', 'Catálogo de proveedores y prestadores de servicio', puedeEditar?`<button class="btn btn-primary" onclick="openForm('proveedor','create',null)">${ICONS.plus}Nuevo proveedor</button>`:'')}
+    ${readOnlyBanner()}
+    ${renderTable('proveedores', columns, rows)}
+  </div>`;
+}
+
+/* ============================== NORMAS ============================== */
+function renderNormas(){
+  const puedeEditar = ['Supervisor','Superadministrador'].includes(state.role);
+  const columns = [
+    {label:'Código'}, {label:'Nombre'}, {label:'Versión'}, {label:'Vigencia'}, {label:'Próxima revisión'}, {label:'Equipos relacionados'},
+  ];
+  if(puedeEditar) columns.push({label:'Acciones', filterable:false});
+  const rows = NORMAS.map((n,i)=>{
+    const cells = [
+      { text:n.codigo, html:`<span class="mono">${n.codigo}</span>` },
+      { text:n.nombre, html:n.nombre },
+      { text:n.version, html:n.version },
+      { text:n.vigencia, html:badge(n.vigencia, n.vigencia==='Vigente'?'success':'amber') },
+      { text:n.revision, html:`<span style="color:var(--ink-soft);">${n.revision}</span>` },
+      { text:n.equipos, html:`<span class="mono">${n.equipos}</span>` },
+    ];
+    if(puedeEditar) cells.push({ text:'', html: actionsCell(`openForm('norma','edit',${i})`, `askDelete('norma',${i},'${n.codigo}')`) });
+    return { onclick:null, cells };
+  });
+  return `
+  <div class="fadein">
+    ${pageHeader('scale','Normas', 'Catálogo de normas y procedimientos aplicables', puedeEditar?`<button class="btn btn-primary" onclick="openForm('norma','create',null)">${ICONS.plus}Nueva norma</button>`:'')}
+    ${readOnlyBanner()}
+    ${renderTable('normas', columns, rows)}
+  </div>`;
+}
+
+/* ============================== FORMATOS ============================== */
+function renderFormatos(){
+  const puedeEditar = ['Supervisor','Superadministrador'].includes(state.role);
+  return `
+  <div class="fadein">
+    ${pageHeader('clipboard','Formatos y checklists', 'Constructor de formularios configurables sin modificar el código', puedeEditar?`<button class="btn btn-primary" onclick="openForm('formato','create',null)">${ICONS.plus}Nuevo formato</button>`:'')}
+    ${readOnlyBanner()}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      ${FORMATOS.map((f,i)=>`
+        <div class="card" style="padding:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+            <div><div style="font-size:14px;font-weight:500;">${f.nombre}</div><div style="font-size:11.5px;color:var(--ink-soft);">${f.tipo}</div></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:11px;color:var(--ink-soft);">${f.usos} usos</span>
+              ${puedeEditar?actionsCell(`openForm('formato','edit',${i})`, `askDelete('formato',${i},'${f.nombre}')`):''}
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            ${f.campos.map(c=>`<span class="badge badge-neutral">${c}</span>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ============================== CATÁLOGOS ============================== */
+function renderCatalogos(){
+  const puedeEditar = ['Supervisor','Superadministrador'].includes(state.role);
+  return `
+  <div class="fadein">
+    ${pageHeader('tags','Catálogos', 'Listas base configurables usadas en todo el sistema (altas, bajas y modificaciones)')}
+    ${readOnlyBanner()}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      ${CATALOGOS.map((g,gi)=>`
+        <div class="card" style="padding:18px;">
+          <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">${g.nombre}</div>
+          ${g.items.map((it,ii)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;">
+            <span>${it}</span>
+            <div style="display:flex;align-items:center;gap:8px;">${badge('Activo','success')}${puedeEditar?`<span class="icon-btn danger" style="width:24px;height:24px;" onclick="deleteCatalogItem(${gi},${ii})" title="Eliminar">${ICONS.x}</span>`:''}</div>
+          </div>`).join('')}
+          ${puedeEditar?`<div style="display:flex;gap:8px;margin-top:12px;">
+            <input id="cat-input-${gi}" class="field-input" style="margin-bottom:0;" placeholder="Nuevo valor…" onkeydown="if(event.key==='Enter'){addCatalogItem(${gi});}">
+            <button class="btn btn-ghost btn-sm" onclick="addCatalogItem(${gi})">${ICONS.plus}</button>
+          </div>`:''}
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+function addCatalogItem(gIdx){
+  const input = document.getElementById('cat-input-'+gIdx);
+  const v = input.value.trim();
+  if(!v) return;
+  CATALOGOS[gIdx].items.push(v);
+  render();
+  showToast('Valor agregado a «'+CATALOGOS[gIdx].nombre+'»','check2');
+}
+function deleteCatalogItem(gIdx, itemIdx){
+  const nombre = CATALOGOS[gIdx].items[itemIdx];
+  CATALOGOS[gIdx].items.splice(itemIdx,1);
+  render();
+  showToast('«'+nombre+'» eliminado del catálogo','trash');
+}
+
+/* ============================== REPORTES ============================== */
+function renderReportes(){
+  const rpt = state.reporteSel;
+  const nombre = REPORTES_FLAT.find(r=>r.id===rpt)?.nombre;
+  const tablas = {
+    'RPT-01': { cols:['Código','Equipo','Sucursal','Estado','Valor'], rows: EQUIPOS.slice(0,6).map(e=>[e.codigo,e.nombre,e.sucursal,e.estado,money(e.valor)]) },
+    'RPT-04': { cols:['Folio','Equipo','Técnico','Estado','Programado'], rows: MANTENIMIENTOS.map(m=>[m.folio,m.equipo,m.tecnico,m.estado,m.programado]) },
+    'RPT-09': { cols:['Técnico','Asignados','Realizados','Cerrados','Promedio (hrs)'], rows: TECNICOS.map((t,i)=>[t,6+i,5+(i%3),4+(i%2),(3.2+i*0.4).toFixed(1)]) },
+    'RPT-11': { cols:['Sucursal','Programados','A tiempo','Tarde','Cumplimiento'], rows: SUCURSALES.map((s,i)=>[s.nombre,12+i,10-i,2,(88-i*6)+'%']) },
+    'RPT-17': { cols:['Equipo','Órdenes correctivas','Horas totales','MTTR (hrs)'], rows: EQUIPOS.slice(0,6).map((e,i)=>[e.nombre,2+(i%3),(6+i*1.4).toFixed(1),(2.8+i*0.5).toFixed(1)]) },
+    'RPT-18': { cols:['Equipo','Fallas en el periodo','Horas operativas','MTBF (hrs)'], rows: EQUIPOS.slice(0,6).map((e,i)=>[e.nombre,1+(i%2),720,(600+i*40)]) },
+    'RPT-19': { cols:['Equipo','Horas programadas','Horas fuera de servicio','Disponibilidad'], rows: EQUIPOS.slice(0,6).map((e,i)=>[e.nombre,720,4+i,(97.8-i*0.6).toFixed(1)+'%']) },
+    'RPT-20': { cols:['Equipo','Materiales','Mano de obra','Total acumulado'], rows: EQUIPOS.slice(0,6).map((e,i)=>[e.nombre,money(1200+i*300),money(800+i*200),money(2000+i*500)]) },
+  };
+  const t = tablas[rpt];
+  const columns = t.cols.map(c=>({label:c}));
+  const rows = t.rows.map(row=>({ onclick:null, cells: row.map((cell,j)=>({ text:cell, html: j===0? `<span class="mono">${cell}</span>` : cell })) }));
+
+  return `
+  <div class="fadein">
+    ${pageHeader('report','Reportes', 'Selecciona un reporte, aplica filtros y exporta')}
+    ${readOnlyBanner()}
+    <div style="display:grid;grid-template-columns:260px 1fr;gap:16px;">
+      <div class="card" style="padding:14px;align-self:start;">
+        ${CATALOGO_REPORTES.map(g=>`
+          <div style="font-size:11px;color:var(--ink-soft);margin:10px 0 6px;">${g.grupo.toUpperCase()}</div>
+          ${g.items.map(r=>`
+            <div class="row clickable" onclick="selectReporte('${r.id}')" style="padding:9px 8px;border-radius:5px;font-size:13px;background:${rpt===r.id?'var(--steel-soft)':'transparent'};color:${rpt===r.id?'var(--steel-dark)':'var(--ink)'};margin-bottom:2px;">
+              <span class="mono" style="font-size:11px;margin-right:6px;color:var(--ink-soft);">${r.id}</span>${r.nombre}
+            </div>`).join('')}
+        `).join('')}
+      </div>
+      <div>
+        <div class="card" style="padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <select style="border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:12.5px;">
+            <option>Todas las sucursales</option>${SUCURSALES.map(s=>`<option>${s.nombre}</option>`).join('')}
+          </select>
+          <select style="border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:12.5px;">
+            <option>Últimos 30 días</option><option>Este trimestre</option><option>Este año</option>
+          </select>
+          <div style="margin-left:auto;display:flex;gap:8px;">
+            <button class="btn btn-ghost" style="padding:8px 14px;" onclick="showToast('Generando PDF de ${rpt}…','download')">${ICONS.download} PDF</button>
+            <button class="btn btn-ghost" style="padding:8px 14px;" onclick="showToast('Generando Excel de ${rpt}…','download')">${ICONS.download} Excel</button>
+          </div>
+        </div>
+        <div style="margin-bottom:8px;font-size:13.5px;font-weight:500;">${rpt} · ${nombre}</div>
+        ${renderTable('rpt-'+rpt, columns, rows)}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================== NOTIFICACIONES ============================== */
+function renderNotificaciones(){
+  const iconTone = { vencido:'amber', urgente:'danger', garantia:'amber', supervision:'steel', terminado:'success', asignacion:'steel' };
+  return `
+  <div class="fadein">
+    ${pageHeader('bell','Notificaciones', 'Alertas de mantenimiento próximo o vencido, urgencias, asignaciones y pendientes de supervisión')}
+    <div class="card">
+      ${NOTIFICACIONES.length? NOTIFICACIONES.map((n,i)=>`
+        <div style="display:flex;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:${n.leida?'#fff':'#F7F6F2'};">
+          <span style="color:var(--${iconTone[n.tipo]==='danger'?'danger':iconTone[n.tipo]==='amber'?'amber-text':iconTone[n.tipo]==='success'?'success':'steel-dark'});margin-top:2px;">${ICONS[n.icono]}</span>
+          <div style="flex:1;">
+            <div style="font-size:13.5px;">${n.mensaje}</div>
+            <div style="font-size:11.5px;color:var(--ink-soft);margin-top:3px;">${n.fecha}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            ${!n.leida?badge('Nueva','steel'):''}
+            <span class="icon-btn" onclick="toggleNotifRead(${i})" title="${n.leida?'Marcar como no leída':'Marcar como leída'}">${n.leida?ICONS.circle:ICONS.check2}</span>
+            <span class="icon-btn danger" onclick="dismissNotif(${i})" title="Descartar">${ICONS.x}</span>
+          </div>
+        </div>`).join('') : `<div style="padding:30px;text-align:center;color:var(--ink-soft);font-size:13px;">No hay notificaciones.</div>`}
+    </div>
+  </div>`;
+}
+function toggleNotifRead(i){ NOTIFICACIONES[i].leida = !NOTIFICACIONES[i].leida; render(); }
+function dismissNotif(i){ NOTIFICACIONES.splice(i,1); render(); showToast('Notificación descartada','trash'); }
+
+/* ============================== AUDITORIA ============================== */
+function renderAuditoria(){
+  const columns = [
+    {label:'Fecha / hora'}, {label:'Usuario'}, {label:'Acción'}, {label:'Módulo'}, {label:'Registro'}, {label:'IP'},
+  ];
+  const rows = AUDITORIA.map(a=>({
+    onclick:null,
+    cells:[
+      { text:a.fecha, html:`<span style="color:var(--ink-soft);">${a.fecha}</span>` },
+      { text:a.usuario, html:a.usuario },
+      { text:a.accion, html:badge(a.accion,'neutral') },
+      { text:a.modulo, html:a.modulo },
+      { text:a.registro, html:`<span class="mono">${a.registro}</span>` },
+      { text:a.ip, html:`<span class="mono" style="color:var(--ink-soft);">${a.ip}</span>` },
+    ]
+  }));
+  return `
+  <div class="fadein">
+    ${pageHeader('shield','Auditoría', 'Bitácora central de acciones del sistema — usuario, fecha, hora, módulo y registro afectado')}
+    <div class="info-banner">${ICONS.lock} Los registros de auditoría no se pueden editar ni eliminar: son la fuente de trazabilidad del sistema.</div>
+    ${renderTable('auditoria', columns, rows)}
+  </div>`;
+}
+
+/* ============================== USUARIOS ============================== */
+function renderUsuarios(){
+  const puedeEditar = state.role==='Superadministrador';
+  const columns = [
+    {label:'Usuario'}, {label:'Correo'}, {label:'Rol'}, {label:'Sucursal'}, {label:'Estado'}, {label:'Último acceso'},
+  ];
+  if(puedeEditar) columns.push({label:'Acciones', filterable:false});
+  const rows = USUARIOS.map((u,i)=>{
+    const cells = [
+      { text:u.nombre, html:u.nombre },
+      { text:u.correo, html:`<span style="color:var(--ink-soft);">${u.correo}</span>` },
+      { text:u.rol, html:badge(u.rol,'steel') },
+      { text:u.sucursal, html:u.sucursal },
+      { text:u.estado, html:badge(u.estado,u.estado==='Activo'?'success':'neutral') },
+      { text:u.acceso, html:`<span style="color:var(--ink-soft);">${u.acceso}</span>` },
+    ];
+    if(puedeEditar) cells.push({ text:'', html: actionsCell(`openForm('usuario','edit',${i})`, `askDelete('usuario',${i},'${u.nombre}')`) });
+    return { onclick:null, cells };
+  });
+  return `
+  <div class="fadein">
+    ${pageHeader('users','Usuarios', 'Cuentas, roles y último acceso',
+      puedeEditar?`<button class="btn btn-primary" onclick="openForm('usuario','create',null)">${ICONS.plus}Nuevo usuario</button>`:'')}
+    ${!puedeEditar?`<div class="info-banner">${ICONS.lock} Solo el Superadministrador puede crear, editar o eliminar usuarios.</div>`:''}
+    ${renderTable('usuarios', columns, rows)}
+  </div>`;
+}
+
+/* ============================== FORMULARIOS DE ALTA / EDICIÓN ============================== */
+function openForm(type, mode, key){ state.modalForm = { type, mode, key }; render(); }
+function closeForm(){ state.modalForm = null; render(); }
+function modalHead(title){
+  return `<div class="modal-head"><div style="font-size:16px;font-weight:500;">${title}</div><span onclick="closeForm()" style="cursor:pointer;color:var(--ink-soft);">${ICONS.x}</span></div>`;
+}
+function selectChip(el){ el.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); }
+
+function renderFormModal(){
+  switch(state.modalForm.type){
+    case 'equipo': return renderEquipoForm();
+    case 'sucursal': return renderSucursalForm();
+    case 'proveedor': return renderProveedorForm();
+    case 'norma': return renderNormaForm();
+    case 'usuario': return renderUsuarioForm();
+    case 'formato': return renderFormatoForm();
+    case 'solicitud': return renderSolicitudForm();
+    case 'mantenimiento': return renderMantenimientoForm();
+    default: return '';
+  }
+}
+
+/* ---- Equipo ---- */
+function renderEquipoForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? EQUIPOS.find(e=>e.codigo===state.modalForm.key) : {};
+  const fv = (k,d='')=> r&&r[k]!==undefined ? r[k] : d;
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" style="width:600px;" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar equipo':'Nuevo equipo')}
+      <div class="form-grid">
+        <div><label class="field-label">Código de activo</label><input id="f-codigo" class="field-input" value="${fv('codigo')}" placeholder="EQ-0000" ${editing?'disabled':''}></div>
+        <div><label class="field-label">Nombre del equipo</label><input id="f-nombre" class="field-input" value="${fv('nombre')}" placeholder="Ej. Compresor de tornillo"></div>
+        <div><label class="field-label">Marca / modelo</label><input id="f-marca" class="field-input" value="${fv('marca')}"></div>
+        <div><label class="field-label">Número de serie</label><input id="f-serie" class="field-input" value="${fv('serie')}"></div>
+        <div><label class="field-label">Sucursal</label><select id="f-sucursal" class="field-input">${SUCURSALES.map(s=>`<option ${fv('sucursal')===s.nombre?'selected':''}>${s.nombre}</option>`).join('')}</select></div>
+        <div><label class="field-label">Ubicación</label><input id="f-ubicacion" class="field-input" value="${fv('ubicacion')}" placeholder="Ej. Cuarto de máquinas A"></div>
+        <div><label class="field-label">Estado</label><select id="f-estado" class="field-input">${['Operativo','En mantenimiento','Fuera de servicio'].map(o=>`<option ${fv('estado','Operativo')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+        <div><label class="field-label">Proveedor</label><select id="f-proveedor" class="field-input">${PROVEEDORES.map(p=>`<option ${fv('proveedor')===p.comercial?'selected':''}>${p.comercial}</option>`).join('')}</select></div>
+        <div><label class="field-label">Valor de adquisición (MXN)</label><input id="f-valor" type="number" class="field-input" value="${fv('valor',0)}"></div>
+        <div><label class="field-label">Vida útil estimada</label><input id="f-vidaUtil" class="field-input" value="${fv('vidaUtil')}" placeholder="Ej. 10 años"></div>
+        <div><label class="field-label">Garantía hasta</label><input id="f-garantia" class="field-input" value="${fv('garantia')}" placeholder="dd mmm aaaa"></div>
+        <div><label class="field-label">Estado de garantía</label><select id="f-garantiaEstado" class="field-input">${['Vigente','Por vencer','Vencida'].map(o=>`<option ${fv('garantiaEstado','Vigente')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+      </div>
+      <label class="field-label">Próximo mantenimiento</label>
+      <input id="f-proximo" class="field-input" value="${fv('proximo')}" placeholder="dd mmm aaaa">
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitEquipoForm()">${editing?'Guardar cambios':'Crear equipo'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitEquipoForm(){
+  const codigo = val('f-codigo'), nombre = val('f-nombre');
+  if(!codigo || !nombre){ showToast('Completa al menos el código y el nombre del equipo','alert'); return; }
+  const editing = state.modalForm.mode==='edit';
+  if(!editing && EQUIPOS.some(e=>e.codigo===codigo)){ showToast('Ya existe un equipo con ese código','alert'); return; }
+  const data = {
+    codigo, nombre,
+    marca: val('f-marca'), serie: val('f-serie'),
+    sucursal: selVal('f-sucursal'), ubicacion: val('f-ubicacion'),
+    estado: selVal('f-estado'), proveedor: selVal('f-proveedor'),
+    valor: Number(val('f-valor'))||0,
+    garantia: val('f-garantia'), garantiaEstado: selVal('f-garantiaEstado'),
+    vidaUtil: val('f-vidaUtil'), proximo: val('f-proximo'),
+  };
+  if(editing){
+    const idx = EQUIPOS.findIndex(e=>e.codigo===state.modalForm.key);
+    EQUIPOS[idx] = data;
+    if(state.equipoSel===state.modalForm.key) state.equipoSel = codigo;
+    showToast('Equipo actualizado','check2');
+  } else {
+    EQUIPOS.push(data);
+    showToast('Equipo creado correctamente','check2');
+  }
+  state.modalForm = null; render();
+}
+
+/* ---- Sucursal ---- */
+function renderSucursalForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? SUCURSALES.find(s=>s.id===state.modalForm.key) : {};
+  const fv = (k,d='')=> r&&r[k]!==undefined ? r[k] : d;
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar sucursal':'Nueva sucursal')}
+      <div class="form-grid">
+        <div><label class="field-label">Nombre</label><input id="f-nombre" class="field-input" value="${fv('nombre')}"></div>
+        <div><label class="field-label">Código</label><input id="f-codigo" class="field-input" value="${fv('codigo')}" placeholder="SUC-00"></div>
+      </div>
+      <label class="field-label">Dirección</label>
+      <input id="f-direccion" class="field-input" value="${fv('direccion')}">
+      <div class="form-grid">
+        <div><label class="field-label">Responsable</label><input id="f-responsable" class="field-input" value="${fv('responsable')}"></div>
+        <div><label class="field-label">Teléfono</label><input id="f-telefono" class="field-input" value="${fv('telefono')}"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitSucursalForm()">${editing?'Guardar cambios':'Crear sucursal'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitSucursalForm(){
+  const nombre = val('f-nombre'), codigo = val('f-codigo');
+  if(!nombre || !codigo){ showToast('Completa el nombre y el código de la sucursal','alert'); return; }
+  const editing = state.modalForm.mode==='edit';
+  const data = { id: editing? state.modalForm.key : (SUCURSALES.length? Math.max(...SUCURSALES.map(s=>s.id))+1 : 1),
+    nombre, codigo, direccion: val('f-direccion'), responsable: val('f-responsable'), telefono: val('f-telefono') };
+  if(editing){ const idx=SUCURSALES.findIndex(s=>s.id===state.modalForm.key); SUCURSALES[idx]=data; showToast('Sucursal actualizada','check2'); }
+  else { SUCURSALES.push(data); showToast('Sucursal creada correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Proveedor ---- */
+function renderProveedorForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? PROVEEDORES[state.modalForm.key] : {};
+  const fv = (k,d='')=> r&&r[k]!==undefined ? r[k] : d;
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" style="width:560px;" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar proveedor':'Nuevo proveedor')}
+      <label class="field-label">Razón social</label>
+      <input id="f-razon" class="field-input" value="${fv('razon')}">
+      <div class="form-grid">
+        <div><label class="field-label">Nombre comercial</label><input id="f-comercial" class="field-input" value="${fv('comercial')}"></div>
+        <div><label class="field-label">RFC</label><input id="f-rfc" class="field-input" value="${fv('rfc')}"></div>
+        <div><label class="field-label">Contacto</label><input id="f-contacto" class="field-input" value="${fv('contacto')}"></div>
+        <div><label class="field-label">Teléfono</label><input id="f-telefono" class="field-input" value="${fv('telefono')}"></div>
+        <div><label class="field-label">Correo</label><input id="f-correo" class="field-input" value="${fv('correo')}"></div>
+        <div><label class="field-label">Estado</label><select id="f-estado" class="field-input">${['Activo','Inactivo'].map(o=>`<option ${fv('estado','Activo')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+      </div>
+      <label class="field-label">Especialidad</label>
+      <input id="f-especialidad" class="field-input" value="${fv('especialidad')}">
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitProveedorForm()">${editing?'Guardar cambios':'Crear proveedor'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitProveedorForm(){
+  const razon = val('f-razon'), comercial = val('f-comercial');
+  if(!razon || !comercial){ showToast('Completa la razón social y el nombre comercial','alert'); return; }
+  const editing = state.modalForm.mode==='edit';
+  const data = { razon, comercial, rfc: val('f-rfc'), contacto: val('f-contacto'), telefono: val('f-telefono'),
+    correo: val('f-correo'), especialidad: val('f-especialidad'), estado: selVal('f-estado'),
+    equipos: editing? PROVEEDORES[state.modalForm.key].equipos : 0 };
+  if(editing){ PROVEEDORES[state.modalForm.key]=data; showToast('Proveedor actualizado','check2'); }
+  else { PROVEEDORES.push(data); showToast('Proveedor creado correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Norma ---- */
+function renderNormaForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? NORMAS[state.modalForm.key] : {};
+  const fv = (k,d='')=> r&&r[k]!==undefined ? r[k] : d;
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar norma':'Nueva norma')}
+      <div class="form-grid">
+        <div><label class="field-label">Código</label><input id="f-codigo" class="field-input" value="${fv('codigo')}" placeholder="NOM-000-XXXX"></div>
+        <div><label class="field-label">Versión</label><input id="f-version" class="field-input" value="${fv('version')}"></div>
+      </div>
+      <label class="field-label">Nombre</label>
+      <input id="f-nombre" class="field-input" value="${fv('nombre')}">
+      <div class="form-grid">
+        <div><label class="field-label">Vigencia</label><select id="f-vigencia" class="field-input">${['Vigente','En revisión'].map(o=>`<option ${fv('vigencia','Vigente')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+        <div><label class="field-label">Próxima revisión</label><input id="f-revision" class="field-input" value="${fv('revision')}" placeholder="mmm aaaa"></div>
+      </div>
+      <label class="field-label">Equipos relacionados</label>
+      <input id="f-equipos" type="number" class="field-input" value="${fv('equipos',0)}">
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitNormaForm()">${editing?'Guardar cambios':'Crear norma'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitNormaForm(){
+  const codigo = val('f-codigo'), nombre = val('f-nombre');
+  if(!codigo || !nombre){ showToast('Completa el código y el nombre de la norma','alert'); return; }
+  const editing = state.modalForm.mode==='edit';
+  const data = { codigo, nombre, version: val('f-version'), vigencia: selVal('f-vigencia'), revision: val('f-revision'), equipos: Number(val('f-equipos'))||0 };
+  if(editing){ NORMAS[state.modalForm.key]=data; showToast('Norma actualizada','check2'); }
+  else { NORMAS.push(data); showToast('Norma creada correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Usuario ---- */
+function renderUsuarioForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? USUARIOS[state.modalForm.key] : {};
+  const fv = (k,d='')=> r&&r[k]!==undefined ? r[k] : d;
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar usuario':'Nuevo usuario')}
+      <label class="field-label">Nombre completo</label>
+      <input id="f-nombre" class="field-input" value="${fv('nombre')}">
+      <label class="field-label">Correo</label>
+      <input id="f-correo" class="field-input" value="${fv('correo')}">
+      <div class="form-grid">
+        <div><label class="field-label">Rol</label><select id="f-rol" class="field-input">${ROLES.map(o=>`<option ${fv('rol','Usuario básico')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+        <div><label class="field-label">Sucursal</label><select id="f-sucursal" class="field-input"><option ${fv('sucursal','Todas')==='Todas'?'selected':''}>Todas</option>${SUCURSALES.map(s=>`<option ${fv('sucursal')===s.nombre?'selected':''}>${s.nombre}</option>`).join('')}</select></div>
+      </div>
+      <label class="field-label">Estado</label>
+      <select id="f-estado" class="field-input">${['Activo','Inactivo'].map(o=>`<option ${fv('estado','Activo')===o?'selected':''}>${o}</option>`).join('')}</select>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitUsuarioForm()">${editing?'Guardar cambios':'Crear usuario'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitUsuarioForm(){
+  const nombre = val('f-nombre'), correo = val('f-correo');
+  if(!nombre || !correo){ showToast('Completa el nombre y el correo del usuario','alert'); return; }
+  const editing = state.modalForm.mode==='edit';
+  const data = { nombre, correo, rol: selVal('f-rol'), sucursal: selVal('f-sucursal'), estado: selVal('f-estado'),
+    acceso: editing? USUARIOS[state.modalForm.key].acceso : 'Sin accesos aún' };
+  if(editing){ USUARIOS[state.modalForm.key]=data; showToast('Usuario actualizado','check2'); }
+  else { USUARIOS.push(data); showToast('Usuario creado correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Formato ---- */
+function renderFormatoForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? FORMATOS[state.modalForm.key] : {};
+  const fv = (k,d='')=> r&&r[k]!==undefined ? r[k] : d;
+  const campos = editing ? r.campos.join(String.fromCharCode(10)) : '';
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar formato':'Nuevo formato')}
+      <label class="field-label">Nombre del formato</label>
+      <input id="f-nombre" class="field-input" value="${fv('nombre')}" placeholder="Ej. Checklist de autoclave">
+      <label class="field-label">Tipo de equipo asociado</label>
+      <input id="f-tipo" class="field-input" value="${fv('tipo')}" placeholder="Ej. Equipo médico">
+      <label class="field-label">Campos del formato (uno por línea)</label>
+      <textarea id="f-campos" class="field-input" rows="6" style="resize:none;">${campos}</textarea>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitFormatoForm()">${editing?'Guardar cambios':'Crear formato'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitFormatoForm(){
+  const nombre = val('f-nombre');
+  if(!nombre){ showToast('Ingresa el nombre del formato','alert'); return; }
+  const campos = document.getElementById('f-campos').value.split(String.fromCharCode(10)).map(s=>s.trim()).filter(Boolean);
+  const editing = state.modalForm.mode==='edit';
+  const data = { nombre, tipo: val('f-tipo'), campos, usos: editing? FORMATOS[state.modalForm.key].usos : 0 };
+  if(editing){ FORMATOS[state.modalForm.key]=data; showToast('Formato actualizado','check2'); }
+  else { FORMATOS.push(data); showToast('Formato creado correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Solicitud ---- */
+function renderSolicitudForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? SOLICITUDES.find(s=>s.folio===state.modalForm.key) : {};
+  const fv = (k,d='')=> r&&r[k]!==undefined ? r[k] : d;
+  const prioridades = ['Normal','Prioritaria','Urgente'];
+  const estados = ['Nueva','En revisión','Autorizada','Convertida','Cerrada'];
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar solicitud':'Nueva solicitud de mantenimiento')}
+      <label class="field-label">Equipo</label>
+      <select id="f-equipo" class="field-input">${EQUIPOS.map(e=>{ const opt=e.codigo+' · '+e.nombre; return `<option ${fv('equipo')===opt?'selected':''}>${opt}</option>`; }).join('')}</select>
+      <label class="field-label">Descripción del problema</label>
+      <textarea id="f-problema" rows="3" class="field-input" placeholder="Describe qué está fallando y desde cuándo" style="resize:none;">${fv('problema')}</textarea>
+      <label class="field-label">Prioridad</label>
+      <div id="chip-prioridad" style="display:flex;gap:8px;margin:6px 0 14px;">
+        ${prioridades.map(p=>`<div class="chip ${fv('prioridad','Normal')===p?'active':''}" data-value="${p}" onclick="selectChip(this)">${p}</div>`).join('')}
+      </div>
+      ${editing?`<label class="field-label">Estado</label><select id="f-estado" class="field-input">${estados.map(o=>`<option ${fv('estado')===o?'selected':''}>${o}</option>`).join('')}</select>`:''}
+      <div style="display:flex;align-items:center;gap:8px;border:1px dashed var(--line);border-radius:6px;padding:12px;font-size:12.5px;color:var(--ink-soft);margin-bottom:6px;">
+        ${ICONS.clip} Adjuntar fotos o documentos (opcional)
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitSolicitudForm()">${editing?'Guardar cambios':'Enviar solicitud'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitSolicitudForm(){
+  const equipo = selVal('f-equipo'), problema = val('f-problema');
+  if(!problema){ showToast('Describe el problema reportado','alert'); return; }
+  const prioridad = chipVal('chip-prioridad');
+  const editing = state.modalForm.mode==='edit';
+  if(editing){
+    const idx = SOLICITUDES.findIndex(s=>s.folio===state.modalForm.key);
+    SOLICITUDES[idx] = { ...SOLICITUDES[idx], equipo, problema, prioridad, estado: selVal('f-estado') };
+    showToast('Solicitud actualizada','check2');
+  } else {
+    const folio = nextFolio(SOLICITUDES,'SOL-2026');
+    SOLICITUDES.push({ folio, equipo, problema, prioridad, estado:'Nueva', solicitante:'Usuario actual · '+state.role, fecha:'08 sep 2026' });
+    showToast('Solicitud enviada correctamente','check2');
+  }
+  state.modalForm=null; render();
+}
+
+/* ---- Mantenimiento ---- */
+function renderMantenimientoForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? MANTENIMIENTOS.find(m=>m.folio===state.modalForm.key) : {};
+  const fv = (k,d='')=> r&&r[k]!==undefined ? r[k] : d;
+  const tipos = ['Preventivo','Correctivo','Urgente'];
+  const prioridades = ['Normal','Prioritaria','Urgente'];
+  const estados = [...CICLO, ...ESTADOS_ESPECIALES];
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" style="width:520px;" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar orden de trabajo':'Nueva orden de trabajo')}
+      <label class="field-label">Equipo</label>
+      <select id="f-equipo" class="field-input">${EQUIPOS.map(e=>{ const opt=e.codigo+' · '+e.nombre; return `<option ${fv('equipo')===opt?'selected':''}>${opt}</option>`; }).join('')}</select>
+      <label class="field-label">Tipo de mantenimiento</label>
+      <div id="chip-tipo" style="display:flex;gap:8px;margin:6px 0 14px;">
+        ${tipos.map(p=>`<div class="chip ${fv('tipo','Preventivo')===p?'active':''}" data-value="${p}" onclick="selectChip(this)">${p}</div>`).join('')}
+      </div>
+      <div class="form-grid">
+        <div><label class="field-label">Técnico asignado</label><select id="f-tecnico" class="field-input"><option ${fv('tecnico','—')==='—'?'selected':''}>—</option>${TECNICOS.map(t=>`<option ${fv('tecnico')===t?'selected':''}>${t}</option>`).join('')}</select></div>
+        <div><label class="field-label">Fecha programada</label><input id="f-fecha" class="field-input" value="${fv('programado','09 sep 2026 · 09:00')}"></div>
+      </div>
+      ${editing?`<div class="form-grid">
+        <div><label class="field-label">Estado</label><select id="f-estado" class="field-input">${estados.map(o=>`<option ${fv('estado')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+        <div><label class="field-label">Prioridad</label>
+          <div id="chip-prioridad" style="display:flex;gap:6px;margin-top:2px;">${prioridades.map(p=>`<div class="chip ${fv('prioridad','Normal')===p?'active':''}" data-value="${p}" onclick="selectChip(this)" style="padding:9px 10px;">${p}</div>`).join('')}</div>
+        </div>
+      </div>`:`<div id="chip-prioridad" style="display:none;"><div class="chip active" data-value="Normal"></div></div>`}
+      <label class="field-label">Descripción / diagnóstico</label>
+      <textarea id="f-descripcion" rows="3" class="field-input" placeholder="Describe el trabajo a realizar" style="resize:none;">${fv('diagnostico')}</textarea>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitMantenimientoForm()">${editing?'Guardar cambios':'Crear orden'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitMantenimientoForm(){
+  const equipo = selVal('f-equipo'), tecnico = selVal('f-tecnico'), fecha = val('f-fecha'), descripcion = val('f-descripcion');
+  const tipo = chipVal('chip-tipo');
+  if(!fecha){ showToast('Indica la fecha programada','alert'); return; }
+  const editing = state.modalForm.mode==='edit';
+  if(editing){
+    const idx = MANTENIMIENTOS.findIndex(m=>m.folio===state.modalForm.key);
+    const estado = selVal('f-estado');
+    const prioridad = chipVal('chip-prioridad');
+    MANTENIMIENTOS[idx] = { ...MANTENIMIENTOS[idx], equipo, tipo, tecnico, programado:fecha, diagnostico: descripcion || MANTENIMIENTOS[idx].diagnostico, estado, prioridad };
+    if(state.mtoSel===state.modalForm.key) state.mtoSel = MANTENIMIENTOS[idx].folio;
+    showToast('Orden de trabajo actualizada','check2');
+  } else {
+    const folio = nextFolio(MANTENIMIENTOS,'MTO-2026');
+    const eqRec = EQUIPOS.find(e=>equipo.startsWith(e.codigo));
+    MANTENIMIENTOS.push({
+      folio, tipo, equipo, sucursal: eqRec? eqRec.sucursal : '—', prioridad:'Normal',
+      estado: (tecnico && tecnico!=='—') ? 'Asignado' : 'Solicitado',
+      tecnico: tecnico||'—', supervisor:'C. Fuentes', programado:fecha, inicio:'—', cierre:'—',
+      diagnostico: descripcion || 'Sin diagnóstico registrado.', actividades:[], materiales:[], formato:'—', norma:'—',
+      historial:[{ estado:(tecnico && tecnico!=='—')?'Asignado':'Solicitado', fecha:'08 sep 2026 · '+new Date().toTimeString().slice(0,5), nota:'Orden creada desde el prototipo' }]
+    });
+    showToast('Orden de trabajo creada','check2');
+  }
+  state.modalForm=null; render();
+}
+
+/* ============================== CONFIRMACIÓN DE ELIMINACIÓN ============================== */
+function askDelete(type, key, label){ state.confirmDelete = { type, key, label }; render(); }
+function cancelDeleteModal(){ state.confirmDelete = null; render(); }
+function renderConfirmDeleteModal(){
+  const { label } = state.confirmDelete;
+  return `<div class="modal-backdrop" onclick="cancelDeleteModal()">
+    <div class="modal-box fadein" style="width:380px;text-align:center;" onclick="event.stopPropagation()">
+      <div style="width:44px;height:44px;border-radius:50%;background:var(--danger-soft);color:var(--danger);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">${ICONS.trash}</div>
+      <div style="font-size:15px;font-weight:500;margin-bottom:6px;">¿Eliminar «${label}»?</div>
+      <p style="font-size:12.5px;color:var(--ink-soft);line-height:1.6;margin:0 0 20px;">Esta acción es permanente dentro de esta sesión de demostración y no se puede deshacer.</p>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="cancelDeleteModal()">Cancelar</button>
+        <button class="btn btn-danger" style="flex:1;justify-content:center;padding:10px 0;" onclick="doDelete()">Eliminar</button>
+      </div>
+    </div>
+  </div>`;
+}
+function doDelete(){
+  const { type, key, label } = state.confirmDelete;
+  switch(type){
+    case 'equipo': { const idx=EQUIPOS.findIndex(e=>e.codigo===key); if(idx>-1) EQUIPOS.splice(idx,1); if(state.equipoSel===key){ state.equipoSel=null; state.page='equipos'; } break; }
+    case 'sucursal': { const idx=SUCURSALES.findIndex(s=>s.id===key); if(idx>-1) SUCURSALES.splice(idx,1); break; }
+    case 'proveedor': PROVEEDORES.splice(key,1); break;
+    case 'norma': NORMAS.splice(key,1); break;
+    case 'usuario': USUARIOS.splice(key,1); break;
+    case 'formato': FORMATOS.splice(key,1); break;
+    case 'solicitud': { const idx=SOLICITUDES.findIndex(s=>s.folio===key); if(idx>-1) SOLICITUDES.splice(idx,1); break; }
+    case 'mantenimiento': { const idx=MANTENIMIENTOS.findIndex(m=>m.folio===key); if(idx>-1) MANTENIMIENTOS.splice(idx,1); if(state.mtoSel===key){ state.mtoSel=null; state.page='mantenimientos'; } break; }
+  }
+  showToast((label||'Registro')+' eliminado','trash');
+  state.confirmDelete = null;
+  render();
+}
+
+/* ============================== ACCIONES / RUTEO ============================== */
+function render(){
+  document.getElementById('app').innerHTML = state.session ? renderShell() : renderLogin();
+}
+function login(){ state.session = true; render(); showToast('Sesión iniciada','check2'); }
+function logout(){ state.session = false; render(); }
+function goTo(page){ state.page = page; state.equipoSel = null; state.mtoSel = null; state.showNotif = false; state.openMenu = null; render(); }
+function changeRole(role){
+  state.role = role;
+  if(!ROLE_ACCESS[role].includes(state.page)) state.page = 'dashboard';
+  state.equipoSel = null; state.mtoSel = null; state.openMenu = null; render();
+  showToast('Vista cambiada al rol '+role,'users');
+}
+function toggleMenu(ev, label){ ev.stopPropagation(); state.openMenu = state.openMenu===label ? null : label; state.showNotif = false; render(); }
+function selectEquipo(codigo){ state.equipoSel = codigo; render(); }
+function selectEquipoFromDash(codigo){ state.page='equipos'; state.equipoSel=codigo; render(); }
+function backEquipo(){ state.equipoSel = null; render(); }
+function selectMto(folio){ state.mtoSel = folio; render(); }
+function backMto(){ state.mtoSel = null; render(); }
+function openMtoFromDash(folio){ state.page='mantenimientos'; state.mtoSel = folio; render(); }
+function openMtoFromEquipo(folio){ state.page='mantenimientos'; state.equipoSel=null; state.mtoSel = folio; render(); }
+function openQr(codigo){ state.showQr = codigo; render(); }
+function closeQr(){ state.showQr = null; render(); }
+function toggleNotif(ev){ ev.stopPropagation(); state.showNotif = !state.showNotif; state.openMenu = null; render(); }
+function filtroEquipoChange(v){
+  state.filtroEquipo = v; render();
+  const input = document.querySelector('#app input[placeholder^="Buscar"]');
+  if(input){ input.focus(); input.setSelectionRange(v.length, v.length); }
+}
+function filtroSucursalChange(v){ state.filtroSucursal = v; render(); }
+function selectReporte(id){ state.reporteSel = id; render(); }
+function avanzarMto(folio){
+  const m = MANTENIMIENTOS.find(x=>x.folio===folio);
+  if(m){
+    const idx = CICLO.indexOf(m.estado);
+    if(idx>-1 && idx<CICLO.length-1){
+      m.estado = CICLO[idx+1];
+      m.historial.push({ estado:m.estado, fecha:'08 sep 2026 · '+new Date().toTimeString().slice(0,5), nota:'Actualizado desde el prototipo' });
+    }
+  }
+  showToast('Estado actualizado para '+folio,'check2');
+  render();
+}
+
+document.addEventListener('click', ()=>{ if(state.showNotif || state.openMenu){ state.showNotif=false; state.openMenu=null; render(); } });
+
+render();
+</script>
+</body>
+</html>
