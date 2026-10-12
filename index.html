@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -146,6 +147,12 @@
             border-color: rgba(245, 179, 1, .2);
         }
 
+        .card:nth-child(4) .card__icon {
+            background: linear-gradient(135deg, rgba(16, 185, 129, .15), rgba(16, 185, 129, .05));
+            color: #059669;
+            border-color: rgba(16, 185, 129, .2);
+        }
+
         .card h2 {
             font-size: 1.15rem;
             font-weight: 700;
@@ -194,12 +201,21 @@
         }
 
         @media (max-width: 640px) {
-            h1 { font-size: 1.7rem; }
-            body { padding: 30px 16px; }
-            .card { padding: 22px 18px 18px; }
+            h1 {
+                font-size: 1.7rem;
+            }
+
+            body {
+                padding: 30px 16px;
+            }
+
+            .card {
+                padding: 22px 18px 18px;
+            }
         }
     </style>
 </head>
+
 <body>
     <header>
         <span class="eyebrow">Prototipos</span>
@@ -211,17 +227,19 @@
         <!-- COFEPRIS -->
         <a class="card" href="COFEPRIS.html" target="_blank" rel="noopener">
             <div class="card__icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                 </svg>
             </div>
             <h2>COFEPRIS</h2>
             <p>Prototipo del sistema de gestión sanitaria y regulación.</p>
             <span class="card__cta">
                 Ver prototipo
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"/>
-                    <polyline points="12 5 19 12 12 19"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
                 </svg>
             </span>
         </a>
@@ -229,19 +247,22 @@
         <!-- SIGAMM -->
         <a class="card" href="SIGAMM.html" target="_blank" rel="noopener">
             <div class="card__icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                    <line x1="12" y1="22.08" x2="12" y2="12"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                    <line x1="12" y1="22.08" x2="12" y2="12" />
                 </svg>
             </div>
             <h2>SIGAMM</h2>
             <p>Prototipo del sistema de gestión y administración.</p>
             <span class="card__cta">
                 Ver prototipo
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"/>
-                    <polyline points="12 5 19 12 12 19"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
                 </svg>
             </span>
         </a>
@@ -249,20 +270,43 @@
         <!-- AGENDA_SIGMA -->
         <a class="card" href="AGENDA_SIGMA.html" target="_blank" rel="noopener">
             <div class="card__icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                    <line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8" y1="2" x2="8" y2="6"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
                 </svg>
             </div>
             <h2>Agenda SIGMA</h2>
             <p>Prototipo del sistema de agenda y gestión de citas.</p>
             <span class="card__cta">
                 Ver prototipo
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"/>
-                    <polyline points="12 5 19 12 12 19"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                </svg>
+            </span>
+        </a>
+
+        <!-- VENTRAK -->
+        <a class="card" href="VENTRAK.html" target="_blank" rel="noopener">
+            <div class="card__icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3v18h18" />
+                    <path d="M7 14l4-4 4 3 5-6" />
+                </svg>
+            </div>
+            <h2>VENTRAK</h2>
+            <p>Prototipo del sistema de ventas y seguimiento comercial.</p>
+            <span class="card__cta">
+                Ver prototipo
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
                 </svg>
             </span>
         </a>
@@ -272,4 +316,5 @@
         &copy; 2026 · Menú de prototipos
     </footer>
 </body>
+
 </html>
