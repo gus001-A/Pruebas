@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIREH — Sistema Integral de Recursos Humanos</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap');
+
+  :root{
+    --ink:#262330; --ink-soft:#656077;
+    --paper:#EFF0EC; --card:#FFFFFF; --line:#DEE0DA;
+    --graphite:#2A2740; --graphite2:#383552; --graphite-line:#484468;
+    --steel:#8C4A54; --steel-dark:#6E3842; --steel-soft:#F1DFE1;
+    --amber:#B2822E; --amber-soft:#F3E7D1; --amber-text:#6E5518;
+    --danger:#A23E3E; --danger-soft:#F2DEDC;
+    --success:#3F7A63; --success-soft:#DDEAE3;
+    --radius:8px;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:'IBM Plex Sans',sans-serif; color:var(--ink); background:var(--paper); -webkit-font-smoothing:antialiased; }
+  .brand{ font-family:'Fraunces',serif; }
+  .mono{ font-family:'IBM Plex Mono',monospace; letter-spacing:.01em; }
+  ::-webkit-scrollbar{ width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb{ background:var(--line); border-radius:4px; }
+  button, select, input, textarea{ font-family:'IBM Plex Sans',sans-serif; }
+  table{ width:100%; border-collapse:collapse; }
+  th{ text-align:left; font-size:11.5px; font-weight:500; color:var(--ink-soft); padding:12px 14px; background:#FAF9F6; border-bottom:2px solid var(--line); white-space:nowrap; }
+  td{ font-size:13.5px; padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  tbody tr:nth-child(even){ background:#FBFBF9; }
+  tr.row{ transition:background-color .12s ease; }
+  tr.row.clickable{ cursor:pointer; }
+  tr.row:hover{ background:#F2EEE8 !important; }
+  tfoot td{ padding:7px 10px; border-top:2px solid var(--line); border-bottom:none; background:#FAF9F6; }
+  .table-filter{ width:100%; border:1px solid var(--line); border-radius:5px; padding:6px 8px; font-size:12px; background:#fff; transition:border-color .12s ease, box-shadow .12s ease; }
+  .table-filter:focus{ outline:none; border-color:var(--steel); box-shadow:0 0 0 3px var(--steel-soft); }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 1px 2px rgba(38,35,48,.045); }
+  .badge{ font-size:11.5px; font-weight:500; padding:3px 9px; border-radius:20px; display:inline-block; line-height:1.4; white-space:nowrap; }
+  .badge-neutral{ background:#EAE8E3; color:var(--ink-soft); }
+  .badge-steel{ background:var(--steel-soft); color:var(--steel-dark); }
+  .badge-amber{ background:var(--amber-soft); color:var(--amber-text); }
+  .badge-danger{ background:var(--danger-soft); color:var(--danger); }
+  .badge-success{ background:var(--success-soft); color:var(--success); }
+  .btn{ border:none; border-radius:6px; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:opacity .12s ease, transform .05s ease, background-color .12s ease; white-space:nowrap; }
+  .btn:active{ transform:scale(.98); }
+  .btn-primary{ background:var(--steel-dark); color:#fff; padding:9px 16px; }
+  .btn-primary:hover{ background:#5A2D35; }
+  .btn-ghost{ background:#fff; border:1px solid var(--line); padding:9px 16px; }
+  .btn-ghost:hover{ background:#FAF9F6; }
+  .btn-danger{ background:var(--danger); color:#fff; padding:9px 16px; }
+  .btn-danger:hover{ background:#8A3232; }
+  .btn-sm{ padding:6px 11px; font-size:12px; }
+  .fadein{ animation:fadein .16s ease; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(3px);} to{opacity:1; transform:none;} }
+  @keyframes toastin{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;} }
+  .icon{ width:15px; height:15px; display:inline-block; vertical-align:-3px; stroke:currentColor; fill:none; stroke-width:1.8; flex-shrink:0; }
+  .icon-btn{ width:29px; height:29px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; color:var(--ink-soft); cursor:pointer; transition:background-color .12s ease, color .12s ease; flex-shrink:0; }
+  .icon-btn:hover{ background:#EFEAE3; color:var(--ink); }
+  .icon-btn.danger:hover{ background:var(--danger-soft); color:var(--danger); }
+  .readonly-banner{ display:flex; align-items:center; gap:8px; background:var(--amber-soft); color:var(--amber-text); font-size:12.5px; padding:9px 12px; border-radius:6px; margin-bottom:16px; }
+  .info-banner{ display:flex; align-items:center; gap:8px; background:var(--steel-soft); color:var(--steel-dark); font-size:12.5px; padding:9px 12px; border-radius:6px; margin-bottom:16px; }
+  .stat-card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; box-shadow:0 1px 2px rgba(38,35,48,.045); }
+  .modal-backdrop{ position:fixed; inset:0; background:rgba(20,18,26,.5); display:flex; align-items:center; justify-content:center; z-index:60; padding:20px; }
+  .modal-box{ background:#fff; width:460px; max-width:92vw; border-radius:12px; padding:26px; max-height:88vh; overflow-y:auto; box-shadow:0 24px 60px rgba(20,18,26,.3); }
+  .modal-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid var(--line); }
+  .field-label{ font-size:12px; color:var(--ink-soft); display:block; margin-bottom:5px; font-weight:500; }
+  .field-input{ width:100%; border:1px solid var(--line); border-radius:6px; padding:9px 10px; font-size:13px; margin-bottom:14px; transition:border-color .12s ease, box-shadow .12s ease; background:#fff; }
+  .field-input:focus{ outline:none; border-color:var(--steel); box-shadow:0 0 0 3px var(--steel-soft); }
+  .field-input:disabled{ background:#F3F1EC; color:var(--ink-soft); }
+  .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 14px; }
+  .chip{ border:1px solid var(--line); border-radius:6px; padding:6px 12px; font-size:12.5px; cursor:pointer; transition:background-color .12s ease; }
+  .chip:hover{ background:#FAF9F6; }
+  .chip.active{ background:var(--steel-dark); color:#fff; border-color:var(--steel-dark); }
+  .flowchip{ background:var(--steel-soft); color:var(--steel-dark); font-size:11.5px; font-weight:500; padding:6px 12px; border-radius:14px; white-space:nowrap; }
+  .toast{ position:fixed; bottom:22px; right:22px; background:var(--graphite); color:#F1EFE9; font-size:13px; padding:12px 18px; border-radius:8px; z-index:200; box-shadow:0 10px 30px rgba(0,0,0,.25); animation:toastin .18s ease; display:flex; align-items:center; gap:8px; }
+
+  .app-shell{ display:flex; min-height:100vh; }
+  .sidebar{ width:254px; flex-shrink:0; background:var(--graphite); color:#D8D6DF; display:flex; flex-direction:column; border-right:2px solid var(--amber); position:sticky; top:0; align-self:flex-start; height:100vh; overflow-y:auto; }
+  .sidebar-brand{ display:flex; align-items:center; gap:10px; padding:20px 20px 16px; flex-shrink:0; }
+  .sidebar-nav{ padding:4px 12px 26px; }
+  .sidebar-link{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:6px; font-size:13.3px; color:#D8D6DF; cursor:pointer; user-select:none; margin-bottom:2px; transition:background-color .12s ease, color .12s ease; }
+  .sidebar-link:hover{ background:var(--graphite2); color:#fff; }
+  .sidebar-link.active{ color:#fff; background:var(--steel); }
+  .sidebar-link.disabled{ color:#5C5870; cursor:not-allowed; }
+  .sidebar-link.disabled:hover{ background:none; color:#5C5870; }
+  .sidebar-group-label{ font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:#8E8AA0; padding:16px 12px 6px; }
+  .main-area{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .topbar{ height:58px; background:#fff; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:flex-end; gap:14px; padding:0 24px; position:sticky; top:0; z-index:45; }
+  .main-content{ flex:1; background:var(--paper); }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div id="toasts"></div>
+
+<script>
+/* ============================== ICONOS ============================== */
+const ICONS = {
+  dashboard: '<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>',
+  users: '<svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><path d="M17 8.2a3 3 0 1 1 0 5.8"/><path d="M21.5 20c0-2.9-2.1-5.2-5-5.9"/></svg>',
+  exit: '<svg class="icon" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>',
+  building: '<svg class="icon" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/></svg>',
+  sitemap: '<svg class="icon" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 7v4M5 16v-3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3"/></svg>',
+  book: '<svg class="icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+  calendar: '<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="1"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>',
+  sun: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 2v4M4.9 4.9l2.8 2.8M2 12h4M17.3 7.7l2.8-2.8M12 12a7 7 0 0 1 7 7H5a7 7 0 0 1 7-7z"/></svg>',
+  clock: '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+  file: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M6 2h9l5 5v15H6z"/><path d="M15 2v5h5"/></svg>',
+  clipboard: '<svg class="icon" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="1"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M8 10h8M8 14h8M8 18h5"/></svg>',
+  graduation: '<svg class="icon" viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg>',
+  gift: '<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M3 12h18M12 8v13"/><path d="M12 8c-2 0-4-1-4-3a2 2 0 0 1 4 0 2 2 0 0 1 4 0c0 2-2 3-4 3z"/></svg>',
+  tags: '<svg class="icon" viewBox="0 0 24 24"><path d="M20 10L12 2H4v8l8 8z"/><circle cx="7.5" cy="6.5" r="1.2"/></svg>',
+  report: '<svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  shield: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5z"/></svg>',
+  bell: '<svg class="icon" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>',
+  search: '<svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+  chevronR: '<svg class="icon" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M9 6l6 6-6 6"/></svg>',
+  chevronD: '<svg class="icon" viewBox="0 0 24 24" style="width:12px;height:12px"><path d="M6 9l6 6 6-6"/></svg>',
+  plus: '<svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M12 5v14M5 12h14"/></svg>',
+  download: '<svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M12 3v13m0 0l-4-4m4 4l4-4M4 21h16"/></svg>',
+  pin: '<svg class="icon" viewBox="0 0 24 24" style="width:11px;height:11px;margin-right:4px"><path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.3"/></svg>',
+  clip: '<svg class="icon" viewBox="0 0 24 24"><path d="M21 12.5l-8.5 8.5a4 4 0 0 1-5.7-5.7l9-9a2.7 2.7 0 0 1 3.8 3.8l-8.8 8.8a1.3 1.3 0 0 1-1.9-1.9l7.9-7.9"/></svg>',
+  camera: '<svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  check: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.2l2.3 2.3 4.7-5"/></svg>',
+  circle: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><circle cx="12" cy="12" r="9"/></svg>',
+  back: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M19 12H5m6-7l-7 7 7 7"/></svg>',
+  alert: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17.5v.1"/></svg>',
+  trend: '<svg class="icon" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>',
+  logout: '<svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>',
+  mail: '<svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 6l9 7 9-7"/></svg>',
+  lock: '<svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px"><rect x="4" y="10" width="16" height="10" rx="1"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>',
+  x: '<svg class="icon" viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  check2: '<svg class="icon" viewBox="0 0 24 24" style="width:13px;height:13px"><path d="M20 6L9 17l-5-5"/></svg>',
+  edit: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  trash: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>',
+  upload: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 16V4m0 0l-4 4m4-4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>',
+  eye: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+  image: '<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.8"/><path d="M21 15l-5-5-9 9"/></svg>',
+  heart: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 20.5s-7.5-4.6-10-9.3C.4 7.8 2.2 4 6 4c2.2 0 3.8 1.3 6 3.6C14.2 5.3 15.8 4 18 4c3.8 0 5.6 3.8 4 7.2-2.5 4.7-10 9.3-10 9.3z"/></svg>',
+  comment: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M21 11.5a8.5 8.5 0 1 1-3.8-7.1L21 3l-1.2 3.6c.8 1.3 1.2 2.8 1.2 4.9z"/></svg>',
+  share: '<svg class="icon" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M16 6l-4-4-4 4M12 2v14"/></svg>'
+};
+
+/* ============================== DATOS BASE ============================== */
+const EMPRESAS = ['Clínica San Antonio','Fundación Salud Integral'];
+
+const SUCURSALES = [
+  { id:1, nombre:'Clínica San Antonio — Matriz', empresa:'Clínica San Antonio', direccion:'Av. Reforma 220, Col. Centro', responsable:'Dra. Mariana Solís', telefono:'81 8112 3300', estado:'Activa' },
+  { id:2, nombre:'Clínica San Antonio — Anexo Quirúrgico', empresa:'Clínica San Antonio', direccion:'Calle Hidalgo 88, Col. Centro', responsable:'Lic. Humberto Vega', telefono:'81 8112 3355', estado:'Activa' },
+  { id:3, nombre:'Fundación Salud Integral — Centro Comunitario', empresa:'Fundación Salud Integral', direccion:'Blvd. Solidaridad 450', responsable:'Lic. Renata Campos', telefono:'81 8390 1200', estado:'Activa' },
+];
+
+const AREAS = [
+  { id:1, nombre:'Enfermería', sucursal:'Clínica San Antonio — Matriz', responsable:'Lic. Enf. Daniela Ruiz' },
+  { id:2, nombre:'Urgencias', sucursal:'Clínica San Antonio — Matriz', responsable:'Dr. Esteban Luna' },
+  { id:3, nombre:'Quirófano', sucursal:'Clínica San Antonio — Anexo Quirúrgico', responsable:'Dra. Patricia Núñez' },
+  { id:4, nombre:'Recursos Humanos', sucursal:'Clínica San Antonio — Matriz', responsable:'Lic. Jorge Peña' },
+  { id:5, nombre:'Farmacia', sucursal:'Fundación Salud Integral — Centro Comunitario', responsable:'QFB Marisol Treviño' },
+];
+
+const PUESTOS = [
+  { id:1, nombre:'Enfermera general', area:'Enfermería', nivel:'Operativo', jefe:'Jefatura de Enfermería', plazas:10, ocupadas:8, estado:'Activo' },
+  { id:2, nombre:'Jefatura de Enfermería', area:'Enfermería', nivel:'Mando medio', jefe:'Dirección Médica', plazas:1, ocupadas:1, estado:'Activo' },
+  { id:3, nombre:'Recepcionista', area:'Urgencias', nivel:'Operativo', jefe:'Coordinación de Urgencias', plazas:4, ocupadas:3, estado:'Activo' },
+  { id:4, nombre:'Responsable de Recursos Humanos', area:'Recursos Humanos', nivel:'Mando medio', jefe:'Dirección General', plazas:1, ocupadas:1, estado:'Activo' },
+  { id:5, nombre:'Auxiliar de farmacia', area:'Farmacia', nivel:'Operativo', jefe:'QFB responsable', plazas:3, ocupadas:2, estado:'Activo' },
+];
+
+const COLABORADORES = [
+  { folio:'COL-0001', nombre:'Daniela Ruiz Camacho', tipo:'Interno', puesto:'Jefatura de Enfermería', area:'Enfermería', sucursal:'Clínica San Antonio — Matriz', especialidad:'—', ingreso:'12 ene 2019', estado:'Activo', telefono:'81 1122 3344', correo:'d.ruiz@sanantonio.mx', docEstado:'Completo', cumple:'18 nov', antiguedad:'7 años' },
+  { folio:'COL-0002', nombre:'Esteban Luna Ortiz', tipo:'Externo', puesto:'Médico de Urgencias', area:'Urgencias', sucursal:'Clínica San Antonio — Matriz', especialidad:'Medicina de Urgencias', ingreso:'03 mar 2022', estado:'Activo', telefono:'81 2233 4455', correo:'e.luna@sanantonio.mx', docEstado:'Pendiente', cumple:'22 nov', antiguedad:'4 años' },
+  { folio:'COL-0003', nombre:'Patricia Núñez Alday', tipo:'Externo', puesto:'Cirujana General', area:'Quirófano', sucursal:'Clínica San Antonio — Anexo Quirúrgico', especialidad:'Cirugía General', ingreso:'15 jul 2020', estado:'Activo', telefono:'81 3344 5566', correo:'p.nunez@sanantonio.mx', docEstado:'Vencido', cumple:'02 dic', antiguedad:'6 años' },
+  { folio:'COL-0004', nombre:'Jorge Peña Villarreal', tipo:'Interno', puesto:'Responsable de Recursos Humanos', area:'Recursos Humanos', sucursal:'Clínica San Antonio — Matriz', especialidad:'—', ingreso:'02 feb 2021', estado:'Activo', telefono:'81 4455 6677', correo:'j.pena@sanantonio.mx', docEstado:'Completo', cumple:'29 nov', antiguedad:'5 años' },
+  { folio:'COL-0005', nombre:'Marisol Treviño Garza', tipo:'Interno', puesto:'Auxiliar de farmacia', area:'Farmacia', sucursal:'Fundación Salud Integral — Centro Comunitario', especialidad:'—', ingreso:'20 ago 2023', estado:'Activo', telefono:'81 5566 7788', correo:'m.trevino@fundacionsalud.mx', docEstado:'Pendiente', cumple:'14 nov', antiguedad:'2 años' },
+  { folio:'COL-0006', nombre:'Ricardo Flores Medina', tipo:'Interno', puesto:'Recepcionista', area:'Urgencias', sucursal:'Clínica San Antonio — Matriz', especialidad:'—', ingreso:'05 may 2024', estado:'Baja', telefono:'81 6677 8899', correo:'r.flores@sanantonio.mx', docEstado:'Completo', cumple:'08 jun', antiguedad:'1 año' },
+];
+
+const CONTRATOS = [
+  { folio:'CTR-2026-0041', colaborador:'COL-0002 · Esteban Luna Ortiz', tipo:'Prestación de servicios', inicio:'03 mar 2026', fin:'02 mar 2027', estado:'Vigente', responsable:'J. Peña' },
+  { folio:'CTR-2026-0038', colaborador:'COL-0003 · Patricia Núñez Alday', tipo:'Convenio de colaboración', inicio:'01 ago 2025', fin:'30 nov 2026', estado:'Por vencer', responsable:'J. Peña' },
+  { folio:'CTR-2026-0030', colaborador:'COL-0001 · Daniela Ruiz Camacho', tipo:'Laboral', inicio:'12 ene 2019', fin:'Indeterminado', estado:'Vigente', responsable:'J. Peña' },
+  { folio:'CTR-2026-0044', colaborador:'COL-0005 · Marisol Treviño Garza', tipo:'Laboral', inicio:'20 ago 2026', fin:'19 ago 2027', estado:'Pendiente de firma', responsable:'J. Peña' },
+  { folio:'CTR-2025-0012', colaborador:'COL-0006 · Ricardo Flores Medina', tipo:'Laboral', inicio:'05 may 2024', fin:'04 may 2025', estado:'Vencido', responsable:'J. Peña' },
+];
+
+const VACACIONES = [
+  { folio:'VAC-2026-0071', colaborador:'COL-0001 · Daniela Ruiz Camacho', periodo:'2026', dias:5, inicio:'20 nov 2026', regreso:'27 nov 2026', estado:'Autorizada' },
+  { folio:'VAC-2026-0070', colaborador:'COL-0004 · Jorge Peña Villarreal', periodo:'2026', dias:3, inicio:'24 dic 2026', regreso:'29 dic 2026', estado:'Solicitada' },
+  { folio:'VAC-2026-0065', colaborador:'COL-0003 · Patricia Núñez Alday', periodo:'2026', dias:7, inicio:'10 oct 2026', regreso:'19 oct 2026', estado:'Disfrutada' },
+  { folio:'VAC-2026-0069', colaborador:'COL-0005 · Marisol Treviño Garza', periodo:'2026', dias:4, inicio:'15 nov 2026', regreso:'20 nov 2026', estado:'En revisión' },
+  { folio:'VAC-2025-0040', colaborador:'COL-0002 · Esteban Luna Ortiz', periodo:'2025', dias:6, inicio:'02 feb 2026', regreso:'09 feb 2026', estado:'Rechazada' },
+];
+
+const PERMISOS = [
+  { folio:'PER-2026-0122', colaborador:'COL-0002 · Esteban Luna Ortiz', tipo:'Personal', goce:'Con goce', fecha:'13 nov 2026', duracion:'4 horas', estado:'Autorizada' },
+  { folio:'PER-2026-0121', colaborador:'COL-0006 · Ricardo Flores Medina', tipo:'Incapacidad', goce:'Sin goce', fecha:'10 nov 2026', duracion:'3 días', estado:'En revisión' },
+  { folio:'PER-2026-0119', colaborador:'COL-0005 · Marisol Treviño Garza', tipo:'Salida anticipada', goce:'Con goce', fecha:'08 nov 2026', duracion:'2 horas', estado:'Autorizada' },
+  { folio:'PER-2026-0115', colaborador:'COL-0001 · Daniela Ruiz Camacho', tipo:'Entrada posterior', goce:'Con goce', fecha:'03 nov 2026', duracion:'1 hora', estado:'Cancelada' },
+];
+
+const MOVIMIENTOS = [
+  { folio:'MOV-2026-018', colaborador:'COL-0005 · Marisol Treviño Garza', tipo:'Alta', fecha:'20 ago 2023', motivo:'Alta inicial', responsable:'J. Peña' },
+  { folio:'MOV-2026-022', colaborador:'COL-0006 · Ricardo Flores Medina', tipo:'Baja', fecha:'30 oct 2026', motivo:'Renuncia', responsable:'J. Peña' },
+  { folio:'MOV-2026-015', colaborador:'COL-0002 · Esteban Luna Ortiz', tipo:'Cambio interno', fecha:'01 ene 2026', motivo:'Cambio de área: de Hospitalización a Urgencias', responsable:'J. Peña' },
+  { folio:'MOV-2025-009', colaborador:'COL-0003 · Patricia Núñez Alday', tipo:'Reingreso', fecha:'01 ago 2025', motivo:'Reingreso tras conclusión de convenio anterior', responsable:'J. Peña' },
+];
+
+const CURSOS = [
+  { codigo:'CAP-001', nombre:'Inducción institucional', modalidad:'Presencial', duracion:'4 hrs', vigencia:'1 año' },
+  { codigo:'CAP-014', nombre:'Seguridad del paciente', modalidad:'Virtual', duracion:'6 hrs', vigencia:'1 año' },
+  { codigo:'CAP-022', nombre:'Soporte vital básico', modalidad:'Mixta', duracion:'8 hrs', vigencia:'2 años' },
+  { codigo:'CAP-030', nombre:'Manejo de residuos biológico-infecciosos', modalidad:'Virtual', duracion:'3 hrs', vigencia:'1 año' },
+];
+
+const CAPACITACION = [
+  { colaborador:'COL-0001 · Daniela Ruiz Camacho', curso:'Soporte vital básico', estado:'Aprobado' },
+  { colaborador:'COL-0001 · Daniela Ruiz Camacho', curso:'Seguridad del paciente', estado:'Aprobado' },
+  { colaborador:'COL-0002 · Esteban Luna Ortiz', curso:'Soporte vital básico', estado:'Vencido' },
+  { colaborador:'COL-0005 · Marisol Treviño Garza', curso:'Inducción institucional', estado:'Pendiente' },
+  { colaborador:'COL-0005 · Marisol Treviño Garza', curso:'Manejo de residuos biológico-infecciosos', estado:'Programado' },
+  { colaborador:'COL-0003 · Patricia Núñez Alday', curso:'Seguridad del paciente', estado:'En proceso' },
+];
+
+const PRESTACIONES = [
+  { folio:'PRE-2026-001', colaborador:'COL-0001 · Daniela Ruiz Camacho', concepto:'Aguinaldo', periodo:'2026', importe:18500, estado:'Autorizado' },
+  { folio:'PRE-2026-002', colaborador:'COL-0004 · Jorge Peña Villarreal', concepto:'Aguinaldo', periodo:'2026', importe:21000, estado:'En revisión' },
+  { folio:'PRE-2026-003', colaborador:'COL-0005 · Marisol Treviño Garza', concepto:'Prima vacacional', periodo:'2026', importe:2400, estado:'Pagado' },
+  { folio:'PRE-2026-004', colaborador:'COL-0006 · Ricardo Flores Medina', concepto:'Aguinaldo', periodo:'2026', importe:9800, estado:'Borrador' },
+];
+
+const FORMATOS = [
+  { nombre:'Contrato laboral individual', categoria:'Contratación', usos:22, campos:['Nombre completo','Puesto','Fecha de ingreso','Sueldo','Horario','Vigencia'] },
+  { nombre:'Constancia de capacitación', categoria:'Capacitación', usos:35, campos:['Nombre completo','Curso','Fecha','Horas','Instructor'] },
+  { nombre:'Solicitud de vacaciones', categoria:'Vacaciones', usos:48, campos:['Nombre completo','Periodo','Días solicitados','Fecha de regreso'] },
+  { nombre:'Carta de confidencialidad', categoria:'Ingreso', usos:19, campos:['Nombre completo','Puesto','Fecha','Firma'] },
+];
+
+const CONTENIDO = [
+  { titulo:'Reglamento interno de trabajo', categoria:'Reglamentos', empresa:'Ambas empresas', estado:'Publicado', fecha:'ene 2026',
+    autor:'Jorge Peña Villarreal', cuerpo:'Compartimos la actualización 2026 del reglamento interno de trabajo. Incluye los ajustes a horarios, código de vestimenta y el nuevo procedimiento de reporte de incidentes. Por favor revísenlo y firmen de enterado en su expediente.',
+    archivoNombre:'Reglamento_Interno_2026.pdf', archivoUrl:null, likes:14, comentarios:3 },
+  { titulo:'Misión, visión y valores', categoria:'Filosofía institucional', empresa:'Clínica San Antonio', estado:'Publicado', fecha:'mar 2024',
+    autor:'Jorge Peña Villarreal', cuerpo:'"De la información dispersa a la gestión integral de las personas." Les compartimos nuestra misión, visión y valores institucionales — la base de cómo trabajamos todos los días en Clínica San Antonio.',
+    archivoNombre:null, archivoUrl:null, likes:22, comentarios:5 },
+  { titulo:'Política de confidencialidad de expedientes clínicos', categoria:'Políticas', empresa:'Ambas empresas', estado:'Publicado', fecha:'jun 2026',
+    autor:'Jorge Peña Villarreal', cuerpo:'Recordatorio importante: toda la información contenida en los expedientes clínicos y de personal es estrictamente confidencial. Anexamos la política completa con los lineamientos de manejo, resguardo y acceso autorizado.',
+    archivoNombre:'Politica_Confidencialidad.pdf', archivoUrl:null, likes:9, comentarios:1 },
+  { titulo:'Manual de inducción 2026', categoria:'Manuales', empresa:'Fundación Salud Integral', estado:'Borrador', fecha:'—',
+    autor:'Jorge Peña Villarreal', cuerpo:'Borrador del nuevo manual de inducción para colaboradores de nuevo ingreso en Fundación Salud Integral. Aún en revisión por el área de Recursos Humanos antes de su publicación oficial.',
+    archivoNombre:null, archivoUrl:null, likes:0, comentarios:0 },
+];
+
+const HORARIOS = [
+  { colaborador:'COL-0001 · Daniela Ruiz Camacho', tipo:'Fijo diurno', dias:'Lun a Vie', horario:'07:00 – 15:00', sucursal:'Clínica San Antonio — Matriz', vigencia:'Desde ene 2024' },
+  { colaborador:'COL-0002 · Esteban Luna Ortiz', tipo:'Guardia rotativa', dias:'Rotativo 24×48', horario:'Guardia completa', sucursal:'Clínica San Antonio — Matriz', vigencia:'Desde mar 2026' },
+  { colaborador:'COL-0003 · Patricia Núñez Alday', tipo:'Por evento', dias:'Según programación', horario:'Variable', sucursal:'Clínica San Antonio — Anexo Quirúrgico', vigencia:'Desde ago 2025' },
+  { colaborador:'COL-0005 · Marisol Treviño Garza', tipo:'Fijo mixto', dias:'Lun a Sáb', horario:'09:00 – 15:00', sucursal:'Fundación Salud Integral — Centro Comunitario', vigencia:'Desde ago 2023' },
+];
+
+const NOTIFICACIONES = [
+  { tipo:'cumple', icono:'sun', mensaje:'Marisol Treviño cumple años el 14 de noviembre', fecha:'hoy · 07:00', leida:false },
+  { tipo:'vencido', icono:'clock', mensaje:'La documentación de Patricia Núñez está vencida', fecha:'hoy · 06:40', leida:false },
+  { tipo:'contrato', icono:'file', mensaje:'El convenio CTR-2026-0038 vence en 17 días', fecha:'hoy · 06:10', leida:false },
+  { tipo:'vacaciones', icono:'sun', mensaje:'Nueva solicitud de vacaciones de Marisol Treviño por revisar', fecha:'ayer · 15:20', leida:false },
+  { tipo:'capacitacion', icono:'graduation', mensaje:'El curso de Soporte vital básico de Esteban Luna está vencido', fecha:'ayer · 10:05', leida:true },
+  { tipo:'baja', icono:'exit', mensaje:'Se registró la baja de Ricardo Flores Medina', fecha:'30 oct · 09:00', leida:true },
+];
+
+const AUDITORIA = [
+  { fecha:'13 nov 2026 · 07:00', usuario:'Sistema', accion:'Alerta generada', modulo:'Notificaciones', registro:'COL-0005', ip:'—' },
+  { fecha:'12 nov 2026 · 16:40', usuario:'J. Peña', accion:'Alta', modulo:'Vacaciones', registro:'VAC-2026-0069', ip:'10.10.2.11' },
+  { fecha:'30 oct 2026 · 09:00', usuario:'J. Peña', accion:'Baja', modulo:'Altas y bajas', registro:'MOV-2026-022', ip:'10.10.2.11' },
+  { fecha:'20 ago 2026 · 11:00', usuario:'J. Peña', accion:'Alta', modulo:'Contratos', registro:'CTR-2026-0044', ip:'10.10.2.11' },
+  { fecha:'01 ene 2026 · 09:30', usuario:'J. Peña', accion:'Cambio de estado', modulo:'Colaboradores', registro:'COL-0002', ip:'10.10.2.11' },
+];
+
+const USUARIOS = [
+  { nombre:'Jorge Peña Villarreal', correo:'j.pena@sireh.mx', rol:'Administrador de Recursos Humanos', sucursal:'Todas', estado:'Activo', acceso:'hoy · 08:00' },
+  { nombre:'Daniela Ruiz Camacho', correo:'d.ruiz@sireh.mx', rol:'Supervisor o responsable de área', sucursal:'Clínica San Antonio — Matriz', estado:'Activo', acceso:'hoy · 07:50' },
+  { nombre:'Renata Campos', correo:'r.campos@sireh.mx', rol:'Responsable de capacitación', sucursal:'Fundación Salud Integral — Centro Comunitario', estado:'Activo', acceso:'ayer · 14:10' },
+  { nombre:'Humberto Vega', correo:'h.vega@sireh.mx', rol:'Contabilidad / Prestaciones', sucursal:'Clínica San Antonio — Anexo Quirúrgico', estado:'Activo', acceso:'12 nov · 09:15' },
+  { nombre:'Iván Zárate', correo:'i.zarate@sireh.mx', rol:'Consulta / Auditor', sucursal:'Todas', estado:'Activo', acceso:'10 nov · 12:00' },
+  { nombre:'Superadministrador', correo:'admin@sireh.mx', rol:'Superadministrador', sucursal:'Todas', estado:'Activo', acceso:'hoy · 08:00' },
+];
+
+const CATALOGOS = [
+  { nombre:'Sexo', items:['Femenino','Masculino','Otro'] },
+  { nombre:'Estado civil', items:['Soltero','Casado','Divorciado','Viudo','Unión libre'] },
+  { nombre:'Escolaridad', items:['Secundaria','Bachillerato','Carrera técnica','Licenciatura','Especialidad','Maestría'] },
+  { nombre:'Tipos de permiso', items:['Personal','Entrada posterior','Salida anticipada','Incapacidad'] },
+  { nombre:'Motivos de baja', items:['Renuncia','Terminación de contrato','Conclusión de servicios'] },
+  { nombre:'Tipos de contrato', items:['Laboral','Prestación de servicios','Colaboración','Convenio modificatorio'] },
+];
+
+const CATALOGO_REPORTES = [
+  { grupo:'Personal', items:[
+    { id:'RPT-01', nombre:'Plantilla activa' },
+    { id:'RPT-02', nombre:'Altas, bajas y reingresos' },
+    { id:'RPT-03', nombre:'Rotación de personal' },
+  ]},
+  { grupo:'Documentación y cumplimiento', items:[
+    { id:'RPT-04', nombre:'Integración de expedientes' },
+    { id:'RPT-05', nombre:'Contratos y convenios por vencer' },
+    { id:'RPT-06', nombre:'Cumplimiento de capacitación' },
+  ]},
+  { grupo:'Prestaciones', items:[
+    { id:'RPT-07', nombre:'Aguinaldos y prestaciones' },
+  ]},
+];
+const REPORTES_FLAT = CATALOGO_REPORTES.flatMap(g=>g.items);
+
+const ALTAS_BAJAS_MES = [
+  { name:'Jun', altas:1, bajas:0 }, { name:'Jul', altas:0, bajas:1 },
+  { name:'Ago', altas:1, bajas:0 }, { name:'Sep', altas:0, bajas:0 },
+  { name:'Oct', altas:0, bajas:1 }, { name:'Nov', altas:0, bajas:0 },
+];
+const PIE_COLORS = ['#8C4A54','#B2822E','#3F7A63'];
+const FLUJO_OPERATIVO = ['Registro','Asignación organizacional','Integración del expediente','Revisión y autorización de ingreso','Formalización de contrato','Horarios, solicitudes y prestaciones','Capacitación y seguimiento','Baja o conclusión','Conservación del historial'];
+
+/* ============================== NAVEGACIÓN Y PERMISOS ============================== */
+const NAV_HOME = { key:'dashboard', label:'Panel', icon:'dashboard' };
+const NAV_SECTIONS = [
+  { label:'Personal', items:[
+    { key:'colaboradores', label:'Colaboradores', icon:'users' },
+    { key:'altasbajas', label:'Altas y bajas', icon:'exit' },
+  ]},
+  { label:'Organización', items:[
+    { key:'sucursales', label:'Sucursales', icon:'building' },
+    { key:'estructura', label:'Estructura organizacional', icon:'sitemap' },
+    { key:'contenido', label:'Contenido institucional', icon:'book' },
+  ]},
+  { label:'Operación', items:[
+    { key:'horarios', label:'Horarios y guardias', icon:'calendar' },
+    { key:'vacaciones', label:'Vacaciones', icon:'sun' },
+    { key:'permisos', label:'Permisos y ausencias', icon:'clock' },
+    { key:'capacitacion', label:'Capacitación', icon:'graduation' },
+  ]},
+  { label:'Documentos', items:[
+    { key:'contratos', label:'Contratos y convenios', icon:'file' },
+    { key:'formatos', label:'Formatos', icon:'clipboard' },
+  ]},
+  { label:'Administración', items:[
+    { key:'catalogos', label:'Catálogos', icon:'tags' },
+    { key:'usuarios', label:'Usuarios', icon:'users' },
+    { key:'prestaciones', label:'Prestaciones', icon:'gift' },
+  ]},
+  { label:'Análisis', items:[
+    { key:'reportes', label:'Reportes', icon:'report' },
+    { key:'notificaciones', label:'Notificaciones', icon:'bell' },
+    { key:'auditoria', label:'Auditoría', icon:'shield' },
+  ]},
+];
+const NAV_FLAT = [NAV_HOME, ...NAV_SECTIONS.flatMap(s=>s.items)];
+
+const ROLES = ['Superadministrador','Administrador de Recursos Humanos','Supervisor o responsable de área','Responsable de capacitación','Contabilidad / Prestaciones','Consulta / Auditor','Colaborador / Profesional externo'];
+
+const ROLE_ACCESS = {
+  'Superadministrador': NAV_FLAT.map(n=>n.key),
+  'Administrador de Recursos Humanos': ['dashboard','colaboradores','altasbajas','sucursales','estructura','contenido','horarios','vacaciones','permisos','capacitacion','contratos','formatos','catalogos','reportes','notificaciones'],
+  'Supervisor o responsable de área': ['dashboard','colaboradores','horarios','vacaciones','permisos','notificaciones'],
+  'Responsable de capacitación': ['dashboard','colaboradores','capacitacion','reportes','notificaciones'],
+  'Contabilidad / Prestaciones': ['dashboard','prestaciones','colaboradores','reportes','notificaciones'],
+  'Consulta / Auditor': ['dashboard','colaboradores','reportes','auditoria','notificaciones'],
+  'Colaborador / Profesional externo': ['dashboard','vacaciones','permisos','contenido','notificaciones'],
+};
+const ROLE_NOTE = {
+  'Superadministrador':'Acceso total: configuración, usuarios, catálogos, auditoría y respaldos.',
+  'Administrador de Recursos Humanos':'Administra colaboradores, expedientes, horarios, contratos, vacaciones, permisos y capacitación.',
+  'Supervisor o responsable de área':'Consulta a su personal; revisa y autoriza solicitudes de su área cuando tiene el permiso.',
+  'Responsable de capacitación':'Administra cursos, matriz, asignaciones y evidencias de capacitación.',
+  'Contabilidad / Prestaciones':'Revisa aguinaldos y prestaciones; registra pagos según sus permisos.',
+  'Consulta / Auditor':'Consulta información, reportes y bitácoras autorizadas, sin modificar registros.',
+  'Colaborador / Profesional externo':'Accede solo a su información: solicitudes propias y contenido institucional.',
+};
+const ROLE_READONLY = { 'Consulta / Auditor':true };
+
+/* ============================== ESTADO ============================== */
+const state = {
+  session:false, role:'Administrador de Recursos Humanos', page:'dashboard',
+  colSel:null,
+  showNotif:false, confirmDelete:null, modalForm:null,
+  filtroCol:'', filtroTipo:'Todos',
+  reporteSel:'RPT-01',
+  tableFilters:{},
+};
+
+/* ============================== HELPERS ============================== */
+function money(n){ return '$' + Number(n||0).toLocaleString('es-MX'); }
+function badge(text,tone){ return `<span class="badge badge-${tone}">${text}</span>`; }
+function val(id){ const el=document.getElementById(id); return el ? el.value.trim() : ''; }
+function selVal(id){ const el=document.getElementById(id); return el ? el.value : ''; }
+function chipVal(containerId){ const el=document.querySelector('#'+containerId+' .chip.active'); return el ? el.dataset.value : ''; }
+function fv_prev(obj,key){ return obj && obj[key]!==undefined ? obj[key] : ''; }
+
+function toneEstadoColaborador(e){ return e==='Activo'?'success':'neutral'; }
+function toneDoc(d){ return d==='Completo'?'success': d==='Pendiente'?'amber':'danger'; }
+function toneContrato(e){ return e==='Vigente'?'success': e==='Por vencer'?'amber': e==='Pendiente de firma'?'steel':'danger'; }
+const VAC_TONE = { 'Borrador':'neutral','Solicitada':'steel','En revisión':'amber','Autorizada':'success','Rechazada':'danger','Cancelada':'neutral','Disfrutada':'neutral' };
+function toneVac(e){ return VAC_TONE[e] || 'neutral'; }
+const CAP_TONE = { 'Pendiente':'neutral','Programado':'steel','En proceso':'steel','Aprobado':'success','No aprobado':'danger','Vencido':'danger' };
+function tonePrestacion(e){ return e==='Pagado'?'success': e==='Autorizado'?'steel': e==='En revisión'?'amber': e==='Cancelado'?'danger':'neutral'; }
+
+function showToast(msg, icon){
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = (icon?ICONS[icon]:ICONS.check2) + `<span>${msg}</span>`;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>{ el.style.transition='opacity .25s ease'; el.style.opacity='0'; setTimeout(()=>el.remove(),250); }, 2400);
+}
+function nextFolio(arr, prefix){
+  const nums = arr.map(x=>{ const parts=x.folio.split('-'); return parseInt(parts[parts.length-1],10)||0; });
+  const max = nums.length ? Math.max(...nums) : 0;
+  return prefix+'-'+String(max+1).padStart(4,'0');
+}
+
+/* ============================== FECHAS, HORAS Y DÍAS ============================== */
+const MES_ABBR = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const DIAS_SEMANA = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+function parseDiasRango(dias){
+  const m = (dias||'').match(/^(\w{3})\s+a\s+(\w{3})$/i);
+  if(m && DIAS_SEMANA.includes(m[1]) && DIAS_SEMANA.includes(m[2])) return { desde:m[1], hasta:m[2], libre:'' };
+  return { desde:'Lun', hasta:'Vie', libre: dias||'' };
+}
+function parseHorarioRango(horario){
+  const m = (horario||'').match(/^(\d{1,2}:\d{2})\s*[–-]\s*(\d{1,2}:\d{2})$/);
+  if(m) return { entrada:m[1], salida:m[2], libre:'' };
+  return { entrada:'', salida:'', libre: horario||'' };
+}
+function isoToMX(iso){
+  if(!iso) return '';
+  const [y,m,d] = iso.split('-');
+  if(!y||!m||!d) return '';
+  return `${d} ${MES_ABBR[Number(m)-1]} ${y}`;
+}
+function mxToIso(mx){
+  if(!mx) return '';
+  const m = mx.match(/(\d{1,2})\s+([a-zA-Záéíóúñ]{3,})\.?\s+(\d{4})/i);
+  if(!m) return '';
+  const idx = MES_ABBR.findIndex(a=>m[2].toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').startsWith(a));
+  if(idx<0) return '';
+  return `${m[3]}-${String(idx+1).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`;
+}
+function dateVal(id){ const el=document.getElementById(id); return el && el.value ? isoToMX(el.value) : ''; }
+function dateField(id, label, currentMX, placeholder){
+  return `<label class="field-label">${label}</label><input id="${id}" type="date" class="field-input" value="${mxToIso(currentMX)}" ${placeholder?`placeholder="${placeholder}"`:''}>`;
+}
+
+/* ============================== ARCHIVOS (subir / visualizar) ============================== */
+const FILES = {};
+function handleFileChange(id){
+  const el = document.getElementById(id);
+  const nameEl = document.getElementById(id+'-name');
+  const viewEl = document.getElementById(id+'-view');
+  if(el && el.files && el.files[0]){
+    const file = el.files[0];
+    const url = URL.createObjectURL(file);
+    FILES[id] = { name:file.name, url, type:file.type };
+    if(nameEl) nameEl.textContent = file.name;
+    if(viewEl) viewEl.innerHTML = `<a href="${url}" target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none;">${ICONS.eye}Ver</a>`;
+    showToast('Archivo cargado: '+file.name,'upload');
+  }
+}
+function fileField(id, label, existingName, existingUrl){
+  return `<label class="field-label">${label}</label>
+  <div class="card" style="padding:9px 11px;display:flex;align-items:center;gap:9px;margin-bottom:14px;">
+    <input type="file" id="${id}" style="display:none" onchange="handleFileChange('${id}')">
+    <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('${id}').click()">${ICONS.upload}Subir archivo</button>
+    <span id="${id}-name" class="mono" style="font-size:12px;color:var(--ink-soft);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${existingName||'Ningún archivo seleccionado'}</span>
+    <span id="${id}-view">${existingUrl?`<a href="${existingUrl}" target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none;">${ICONS.eye}Ver</a>`:''}</span>
+  </div>`;
+}
+function getFileData(id, fallbackName, fallbackUrl){
+  if(FILES[id]) return FILES[id];
+  if(fallbackName) return { name:fallbackName, url:fallbackUrl||null, type:'' };
+  return { name:null, url:null, type:'' };
+}
+
+/* ============================== TABLA GENÉRICA CON FILTROS POR COLUMNA ============================== */
+function renderTable(tableId, columns, rows){
+  const filters = state.tableFilters[tableId] || {};
+  const filtered = rows.filter(r => columns.every((c,i)=>{
+    if(c.filterable===false) return true;
+    const f = (filters[i]||'').toLowerCase();
+    if(!f) return true;
+    return String(r.cells[i].text||'').toLowerCase().includes(f);
+  }));
+  return `<div class="card">
+    <div style="overflow-x:auto;">
+    <table>
+      <thead><tr>${columns.map(c=>`<th>${c.label}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${filtered.length ? filtered.map(r=>`<tr class="row ${r.onclick?'clickable':''}" ${r.onclick?`onclick="${r.onclick}"`:''}>${r.cells.map(c=>`<td>${c.html}</td>`).join('')}</tr>`).join('')
+          : `<tr><td colspan="${columns.length}" style="text-align:center;color:var(--ink-soft);padding:30px;font-size:13px;">Sin resultados con los filtros aplicados.</td></tr>`}
+      </tbody>
+      <tfoot><tr>${columns.map((c,i)=> c.filterable===false ? '<td></td>' :
+        `<td><input id="tf-${tableId}-${i}" class="table-filter" placeholder="Filtrar…" value="${(filters[i]||'').replace(/"/g,'&quot;')}" oninput="setTableFilter('${tableId}',${i},this.value)"></td>`).join('')}</tr></tfoot>
+    </table>
+    </div>
+  </div>`;
+}
+function setTableFilter(tableId, colIndex, value){
+  if(!state.tableFilters[tableId]) state.tableFilters[tableId] = {};
+  state.tableFilters[tableId][colIndex] = value;
+  render();
+  const input = document.getElementById(`tf-${tableId}-${colIndex}`);
+  if(input){ input.focus(); input.setSelectionRange(value.length, value.length); }
+}
+function actionsCell(editFn, deleteFn){
+  return `<div style="display:flex;gap:3px;">
+    <span class="icon-btn" onclick="event.stopPropagation(); ${editFn}" title="Editar">${ICONS.edit}</span>
+    <span class="icon-btn danger" onclick="event.stopPropagation(); ${deleteFn}" title="Eliminar">${ICONS.trash}</span>
+  </div>`;
+}
+
+/* ============================== LOGIN ============================== */
+function renderLogin(){
+  return `
+  <div class="fadein" style="min-height:100vh; display:grid; grid-template-columns:1.1fr 1fr; background:var(--paper);">
+    <div style="background:var(--graphite); color:#F1EFE9; padding:56px 52px; display:flex; flex-direction:column; justify-content:space-between;">
+      <div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:34px;height:34px;background:var(--steel);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:600;font-family:'Fraunces',serif;font-size:17px;color:#fff;">S</div>
+          <span class="mono" style="font-size:13px;letter-spacing:.06em;color:#B9B6C4;">SIREH · v1.0</span>
+        </div>
+        <h1 class="brand" style="font-size:38px;line-height:1.2;margin:56px 0 16px;max-width:460px;font-weight:500;">De la información dispersa a la gestión integral de las personas.</h1>
+        <p style="font-size:15px;color:#AEABBA;max-width:410px;line-height:1.6;">Sistema Integral de Recursos Humanos — expedientes, horarios, vacaciones, contratos, capacitación y prestaciones de Clínica San Antonio y Fundación Salud Integral en una sola plataforma.</p>
+      </div>
+      <div style="display:flex;gap:28px;border-top:1px solid var(--graphite-line);padding-top:22px;flex-wrap:wrap;">
+        <div><div class="mono" style="font-size:20px;color:#F1EFE9;">${COLABORADORES.filter(c=>c.estado==='Activo').length}</div><div style="font-size:11.5px;color:#8E8AA0;">colaboradores activos</div></div>
+        <div><div class="mono" style="font-size:20px;color:#F1EFE9;">3</div><div style="font-size:11.5px;color:#8E8AA0;">sucursales</div></div>
+        <div><div class="mono" style="font-size:20px;color:var(--amber);">2</div><div style="font-size:11.5px;color:#8E8AA0;">documentos vencidos</div></div>
+        <div><div class="mono" style="font-size:20px;color:#F1EFE9;">83%</div><div style="font-size:11.5px;color:#8E8AA0;">cumplimiento de capacitación</div></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;padding:40px;">
+      <div style="width:340px;">
+        <h2 style="font-size:19px;font-weight:500;margin:0 0 4px;">Inicia sesión</h2>
+        <p style="font-size:13px;color:var(--ink-soft);margin:0 0 28px;">Usa tu correo corporativo y contraseña.</p>
+        <label class="field-label">Correo</label>
+        <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin-bottom:16px;background:#fff;">
+          ${ICONS.mail}<input value="j.pena@sireh.mx" style="border:none;outline:none;font-size:13.5px;flex:1;">
+        </div>
+        <label class="field-label">Contraseña</label>
+        <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin-bottom:8px;background:#fff;">
+          ${ICONS.lock}<input type="password" value="••••••••••" readonly style="border:none;outline:none;font-size:13.5px;flex:1;color:var(--ink-soft);">
+        </div>
+        <div style="text-align:right;margin-bottom:22px;"><span style="font-size:12px;color:var(--steel);cursor:pointer;">¿Olvidaste tu contraseña?</span></div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px 0;font-size:14px;" onclick="login()">Entrar al sistema</button>
+        <p style="font-size:11.5px;color:#9A968C;margin-top:14px;line-height:1.6;">Prototipo de demostración para revisión del cliente — los datos y el inicio de sesión son simulados para explorar los flujos del sistema.</p>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================== NAVBAR + SHELL ============================== */
+function renderNotifDropdown(){
+  return `
+  <div onclick="event.stopPropagation()" style="position:absolute; top:34px; right:0; width:340px; background:#fff; border:1px solid var(--line); border-radius:10px; box-shadow:0 16px 36px rgba(0,0,0,.2); z-index:70; color:var(--ink);">
+    <div style="padding:12px 16px; border-bottom:1px solid var(--line); font-size:13px; font-weight:500; display:flex; justify-content:space-between; align-items:center;">
+      Notificaciones <span onclick="goTo('notificaciones')" style="font-size:11.5px;color:var(--steel-dark);cursor:pointer;font-weight:400;">Ver todas</span>
+    </div>
+    <div style="max-height:320px; overflow-y:auto;">
+      ${NOTIFICACIONES.slice(0,5).map(n=>`
+        <div style="display:flex; gap:10px; padding:11px 16px; border-bottom:1px solid var(--line); background:${n.leida?'#fff':'#F7F5F1'};">
+          <span style="color:${n.tipo==='vencido'?'var(--danger)':n.tipo==='cumple'||n.tipo==='vacaciones'?'var(--amber-text)':'var(--steel-dark)'};margin-top:1px;">${ICONS[n.icono]}</span>
+          <div><div style="font-size:12.5px;line-height:1.4;">${n.mensaje}</div><div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">${n.fecha}</div></div>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderShell(){
+  const access = ROLE_ACCESS[state.role];
+  const noLeidas = NOTIFICACIONES.filter(n=>!n.leida).length;
+  const initials = state.role==='Superadministrador' ? 'SA' : state.role.split(' ')[0][0];
+
+  return `
+  <div class="app-shell">
+    <div class="sidebar">
+      <div class="sidebar-brand" style="cursor:pointer;" onclick="goTo('dashboard')">
+        <div style="width:28px;height:28px;background:var(--steel);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;font-family:'Fraunces',serif;font-size:14px;color:#fff;flex-shrink:0;">S</div>
+        <span class="brand" style="font-size:16px;font-weight:600;color:#fff;">SIREH</span>
+      </div>
+      <div class="sidebar-nav">
+        <div class="sidebar-link ${state.page==='dashboard'?'active':''}" onclick="goTo('dashboard')">${ICONS.dashboard}Panel</div>
+        ${NAV_SECTIONS.map(sec=>{
+          const enabledItems = sec.items.filter(i=>access.includes(i.key));
+          if(enabledItems.length===0) return '';
+          return `<div class="sidebar-group-label">${sec.label}</div>
+            ${sec.items.map(i=>{
+              const enabled = access.includes(i.key);
+              return `<div class="sidebar-link ${enabled?'':'disabled'} ${state.page===i.key?'active':''}" onclick="${enabled?`goTo('${i.key}')`:''}">${ICONS[i.icon]}${i.label}</div>`;
+            }).join('')}`;
+        }).join('')}
+      </div>
+    </div>
+    <div class="main-area">
+      <div class="topbar">
+        <select onchange="changeRole(this.value)" title="${ROLE_NOTE[state.role]}" style="background:#FAF9F6;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px 9px;font-size:12px;max-width:260px;">
+          ${ROLES.map(r=>`<option ${r===state.role?'selected':''}>${r}</option>`).join('')}
+        </select>
+        <div style="position:relative;cursor:pointer;color:var(--ink-soft);display:flex;align-items:center;" onclick="toggleNotif(event)">
+          ${ICONS.bell}
+          ${noLeidas>0?`<span style="position:absolute;top:-6px;right:-8px;background:var(--danger);color:#fff;font-size:9px;border-radius:8px;padding:1px 4px;">${noLeidas}</span>`:''}
+          ${state.showNotif?renderNotifDropdown():''}
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;cursor:pointer;color:var(--ink-soft);" onclick="logout()" title="Cerrar sesión">
+          <div style="width:26px;height:26px;border-radius:50%;background:var(--steel-soft);color:var(--steel-dark);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:500;">${initials}</div>
+          ${ICONS.logout}
+        </div>
+      </div>
+      <div class="main-content">
+        <div style="max-width:1360px;margin:0 auto;padding:26px 28px;">${renderPage()}</div>
+      </div>
+    </div>
+  </div>
+  ${state.modalForm ? renderFormModal() : ''}
+  ${state.confirmDelete ? renderConfirmDeleteModal() : ''}
+  `;
+}
+
+function pageHeader(iconKey, title, subtitle, actionHtml){
+  return `<div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;gap:16px;flex-wrap:wrap;">
+    <div style="display:flex;gap:12px;align-items:flex-start;">
+      <div style="width:38px;height:38px;border-radius:9px;background:var(--steel-soft);color:var(--steel-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">${ICONS[iconKey]}</div>
+      <div><h1 class="brand" style="font-size:26px;font-weight:600;margin:0;">${title}</h1>
+      ${subtitle?`<p style="font-size:13.5px;color:var(--ink-soft);margin:5px 0 0;">${subtitle}</p>`:''}</div>
+    </div>
+    ${actionHtml||''}
+  </div>`;
+}
+function readOnlyBanner(){
+  if(!ROLE_READONLY[state.role]) return '';
+  return `<div class="readonly-banner">${ICONS.lock} Modo consulta — este rol no puede editar registros.</div>`;
+}
+
+function renderPage(){
+  switch(state.page){
+    case 'dashboard': return renderDashboard();
+    case 'colaboradores': return state.colSel ? renderColaboradorDetalle() : renderColaboradores();
+    case 'altasbajas': return renderAltasBajas();
+    case 'sucursales': return renderSucursales();
+    case 'estructura': return renderEstructura();
+    case 'contenido': return renderContenido();
+    case 'horarios': return renderHorarios();
+    case 'vacaciones': return renderVacaciones();
+    case 'permisos': return renderPermisos();
+    case 'capacitacion': return renderCapacitacion();
+    case 'contratos': return renderContratos();
+    case 'formatos': return renderFormatos();
+    case 'catalogos': return renderCatalogos();
+    case 'usuarios': return renderUsuarios();
+    case 'prestaciones': return renderPrestaciones();
+    case 'reportes': return renderReportes();
+    case 'notificaciones': return renderNotificaciones();
+    case 'auditoria': return renderAuditoria();
+    default: return '';
+  }
+}
+
+/* ============================== DASHBOARD ============================== */
+function renderDashboard(){
+  const activos = COLABORADORES.filter(c=>c.estado==='Activo').length;
+  const externos = COLABORADORES.filter(c=>c.tipo==='Externo' && c.estado==='Activo').length;
+  const vacPendientes = VACACIONES.filter(v=>['Solicitada','En revisión'].includes(v.estado)).length;
+  const permPendientes = PERMISOS.filter(p=>p.estado==='En revisión').length;
+  const docsPend = COLABORADORES.filter(c=>c.docEstado!=='Completo').length;
+  const cumplesProx = COLABORADORES.filter(c=>c.cumple.includes('nov') && c.estado==='Activo');
+
+  const stats = [
+    ['Plantilla activa', activos, ICONS.users, 'neutral'],
+    ['Profesionales externos', externos, ICONS.users, 'neutral'],
+    ['Vacaciones por autorizar', vacPendientes, ICONS.sun, 'amber'],
+    ['Permisos por autorizar', permPendientes, ICONS.clock, 'amber'],
+    ['Documentación pendiente', docsPend, ICONS.alert, 'danger'],
+    ['Cumpleaños este mes', cumplesProx.length, ICONS.sun, 'neutral'],
+  ];
+  const toneColor = {neutral:'var(--ink)', amber:'var(--amber-text)', danger:'var(--danger)'};
+
+  const kpis = [
+    ['Cumplimiento de capacitación', '83%', 'requisitos acreditados'],
+    ['Documentación completa', '67%', 'expedientes sin pendientes'],
+    ['Rotación anual', '12%', 'bajas / plantilla promedio'],
+    ['Contratos por vencer', CONTRATOS.filter(c=>c.estado==='Por vencer').length, 'en los próximos 30 días'],
+  ];
+
+  const maxBar = Math.max(...ALTAS_BAJAS_MES.map(d=>d.altas+d.bajas), 1);
+  const barChart = `<div style="display:flex; align-items:flex-end; gap:14px; height:150px; padding:0 4px;">
+    ${ALTAS_BAJAS_MES.map(d=>{
+      const ha = Math.round((d.altas/maxBar)*120), hb = Math.round((d.bajas/maxBar)*120);
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div style="display:flex;align-items:flex-end;gap:3px;height:120px;">
+          <div title="Altas: ${d.altas}" style="width:12px;height:${Math.max(ha,2)}px;background:var(--steel);border-radius:2px 2px 0 0;"></div>
+          <div title="Bajas: ${d.bajas}" style="width:12px;height:${Math.max(hb,2)}px;background:var(--amber);border-radius:2px 2px 0 0;"></div>
+        </div>
+        <span style="font-size:11px;color:var(--ink-soft);">${d.name}</span>
+      </div>`;
+    }).join('')}
+  </div>
+  <div style="display:flex;gap:16px;margin-top:8px;">
+    <span style="font-size:11.5px;color:var(--ink-soft);"><span style="display:inline-block;width:8px;height:8px;background:var(--steel);border-radius:2px;margin-right:5px;"></span>Altas</span>
+    <span style="font-size:11.5px;color:var(--ink-soft);"><span style="display:inline-block;width:8px;height:8px;background:var(--amber);border-radius:2px;margin-right:5px;"></span>Bajas</span>
+  </div>`;
+
+  const distSucursal = SUCURSALES.map(s=>({name:s.nombre.split(' — ')[0]+(s.nombre.includes('—')?' ('+s.nombre.split(' — ')[1].slice(0,10)+')':''), value: COLABORADORES.filter(c=>c.sucursal===s.nombre).length}));
+  const total = distSucursal.reduce((a,d)=>a+d.value,0) || 1;
+  let acc = 0;
+  const gradient = distSucursal.map((d,i)=>{
+    const start=(acc/total)*360; acc+=d.value; const end=(acc/total)*360;
+    return `${PIE_COLORS[i%PIE_COLORS.length]} ${start}deg ${end}deg`;
+  }).join(', ');
+  const donut = `<div style="display:flex;align-items:center;gap:20px;">
+    <div style="width:110px;height:110px;border-radius:50%;background:conic-gradient(${gradient});display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <div style="width:60px;height:60px;border-radius:50%;background:var(--card);"></div>
+    </div>
+    <div style="flex:1;">
+      ${distSucursal.map((d,i)=>`<div style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:6px;">
+        <span style="width:8px;height:8px;border-radius:2px;background:${PIE_COLORS[i%PIE_COLORS.length]};"></span>
+        <span style="color:var(--ink-soft);">${d.name}</span><span class="mono" style="margin-left:auto;">${d.value}</span>
+      </div>`).join('')}
+    </div>
+  </div>`;
+
+  const alertasHtml = [
+    ...cumplesProx.map(c=>({label:c.nombre+' cumple años el '+c.cumple, tone:'amber'})),
+    ...COLABORADORES.filter(c=>c.docEstado==='Vencido').map(c=>({label:'Documentación vencida — '+c.nombre, tone:'danger'})),
+    ...CONTRATOS.filter(c=>c.estado==='Por vencer').map(c=>({label:'Convenio por vencer — '+c.colaborador.split('·')[1], tone:'amber'})),
+  ];
+
+  const pendientesHtml = [
+    ...VACACIONES.filter(v=>['Solicitada','En revisión'].includes(v.estado)).map(v=>({label:v.colaborador.split('·')[1]+' · vacaciones', sub:v.dias+' días · '+v.inicio, tone:toneVac(v.estado), estado:v.estado})),
+    ...PERMISOS.filter(p=>p.estado==='En revisión').map(p=>({label:p.colaborador.split('·')[1]+' · '+p.tipo, sub:p.duracion+' · '+p.fecha, tone:'amber', estado:p.estado})),
+  ];
+
+  const flujo = `<div class="card" style="padding:16px 18px;margin-top:14px;">
+    <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">Flujo operativo SIREH</div>
+    <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">
+      ${FLUJO_OPERATIVO.map((f,i)=>`<span class="flowchip">${f}</span>${i<FLUJO_OPERATIVO.length-1?`<span style="color:var(--line);">${ICONS.chevronR}</span>`:''}`).join('')}
+    </div>
+  </div>`;
+
+  return `
+  <div class="fadein">
+    ${pageHeader('dashboard','Panel de control', 'Vista general · viernes, 13 de noviembre de 2026')}
+    ${readOnlyBanner()}
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:14px;">
+      ${stats.map(([label,v,icon,tone])=>`
+        <div class="stat-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div style="font-size:12px;color:var(--ink-soft);">${label}</div>${icon}
+          </div>
+          <div class="mono" style="font-size:24px;margin-top:10px;color:${toneColor[tone]};">${v}</div>
+        </div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+      ${kpis.map(([label,v,sub])=>`
+        <div class="stat-card" style="background:var(--steel-soft);border-color:var(--steel-soft);">
+          <div style="font-size:12px;color:var(--steel-dark);">${label}</div>
+          <div class="mono" style="font-size:21px;margin-top:8px;color:var(--steel-dark);">${v}</div>
+          <div style="font-size:11px;color:var(--steel-dark);opacity:.8;margin-top:2px;">${sub}</div>
+        </div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:14px;margin-bottom:14px;">
+      <div class="card" style="padding:18px;">
+        <div style="font-size:13.5px;font-weight:500;margin-bottom:4px;">Altas vs. bajas — últimos 6 meses</div>
+        <div style="font-size:12px;color:var(--ink-soft);margin-bottom:10px;">Movimientos de personal por mes</div>
+        ${barChart}
+      </div>
+      <div class="card" style="padding:18px;">
+        <div style="font-size:13.5px;font-weight:500;margin-bottom:4px;">Colaboradores por sucursal</div>
+        <div style="font-size:12px;color:var(--ink-soft);margin-bottom:14px;">Distribución de la plantilla activa</div>
+        ${donut}
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      <div class="card" style="padding:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-size:13.5px;font-weight:500;">Pendientes de autorización</div>
+        </div>
+        ${pendientesHtml.length? pendientesHtml.map(p=>`<div style="display:flex;justify-content:space-between;padding:9px 6px;border-radius:5px;font-size:13px;">
+          <div><div style="font-weight:500;">${p.label}</div><div style="font-size:11.5px;color:var(--ink-soft);">${p.sub}</div></div>
+          ${badge(p.estado,p.tone)}</div>`).join('') : '<div style="font-size:13px;color:var(--ink-soft);">Sin pendientes de autorización.</div>'}
+      </div>
+      <div class="card" style="padding:18px;">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:12px;">${ICONS.alert}<div style="font-size:13.5px;font-weight:500;">Alertas y vencimientos</div></div>
+        ${alertasHtml.length? alertasHtml.map(a=>`<div style="display:flex;justify-content:space-between;padding:9px 6px;border-radius:5px;font-size:13px;">
+          <div style="font-weight:500;">${a.label}</div>${badge(a.tone==='danger'?'Vencido':'Por revisar',a.tone)}</div>`).join('') : '<div style="font-size:13px;color:var(--ink-soft);">Sin alertas activas.</div>'}
+      </div>
+    </div>
+    ${flujo}
+  </div>`;
+}
+
+/* ============================== COLABORADORES ============================== */
+function renderColaboradores(){
+  const q = state.filtroCol.toLowerCase();
+  const tipo = state.filtroTipo;
+  const filtered = COLABORADORES.filter(c => (tipo==='Todos'||c.tipo===tipo) && (c.nombre.toLowerCase().includes(q)||c.folio.toLowerCase().includes(q)));
+  const puedeEditar = ['Administrador de Recursos Humanos','Superadministrador'].includes(state.role);
+
+  const columns = [
+    {label:'Folio'}, {label:'Nombre'}, {label:'Tipo'}, {label:'Puesto'}, {label:'Sucursal'},
+    {label:'Estado'}, {label:'Documentación'}, {label:'Ingreso'},
+  ];
+  if(puedeEditar) columns.push({label:'Acciones', filterable:false});
+  const rows = filtered.map(c=>{
+    const cells = [
+      { text:c.folio, html:`<span class="mono">${c.folio}</span>` },
+      { text:c.nombre, html:c.nombre },
+      { text:c.tipo, html:badge(c.tipo, c.tipo==='Externo'?'steel':'neutral') },
+      { text:c.puesto, html:c.puesto },
+      { text:c.sucursal, html:`<span style="color:var(--ink-soft);">${c.sucursal}</span>` },
+      { text:c.estado, html:badge(c.estado, toneEstadoColaborador(c.estado)) },
+      { text:c.docEstado, html:badge(c.docEstado, toneDoc(c.docEstado)) },
+      { text:c.ingreso, html:`<span style="color:var(--ink-soft);">${c.ingreso}</span>` },
+    ];
+    if(puedeEditar) cells.push({ text:'', html: actionsCell(`openForm('colaborador','edit','${c.folio}')`, `askDelete('colaborador','${c.folio}','${c.nombre}')`) });
+    return { onclick:`selectCol('${c.folio}')`, cells };
+  });
+
+  return `
+  <div class="fadein">
+    ${pageHeader('users','Colaboradores', filtered.length+' personas visibles según tu rol · personal interno y profesionales externos', puedeEditar?`<button class="btn btn-primary" onclick="openForm('colaborador','create',null)">${ICONS.plus}Nuevo colaborador</button>`:'')}
+    ${readOnlyBanner()}
+    <div style="display:flex;gap:10px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:6px;padding:8px 12px;background:#fff;flex:1;max-width:320px;">
+        ${ICONS.search}<input value="${state.filtroCol}" oninput="filtroColChange(this.value)" placeholder="Buscar por folio o nombre" style="border:none;outline:none;font-size:13px;flex:1;">
+      </div>
+      <select onchange="filtroTipoChange(this.value)" style="border:1px solid var(--line);border-radius:6px;padding:0 10px;font-size:13px;background:#fff;">
+        <option ${tipo==='Todos'?'selected':''}>Todos</option>
+        <option ${tipo==='Interno'?'selected':''}>Interno</option>
+        <option ${tipo==='Externo'?'selected':''}>Externo</option>
+      </select>
+    </div>
+    ${renderTable('colaboradores', columns, rows)}
+  </div>`;
+}
+
+function renderColaboradorDetalle(){
+  const c = COLABORADORES.find(x=>x.folio===state.colSel);
+  if(!c){ state.colSel=null; return renderColaboradores(); }
+  const contratos = CONTRATOS.filter(x=>x.colaborador.startsWith(c.folio));
+  const vacs = VACACIONES.filter(x=>x.colaborador.startsWith(c.folio));
+  const perms = PERMISOS.filter(x=>x.colaborador.startsWith(c.folio));
+  const caps = CAPACITACION.filter(x=>x.colaborador.startsWith(c.folio));
+  const puedeEditar = ['Administrador de Recursos Humanos','Superadministrador'].includes(state.role);
+
+  return `
+  <div class="fadein">
+    <div onclick="backCol()" style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--steel-dark);cursor:pointer;margin-bottom:16px;">${ICONS.back} Volver a colaboradores</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+      <div><div class="mono" style="font-size:12px;color:var(--ink-soft);">${c.folio}</div>
+        <h1 class="brand" style="font-size:24px;font-weight:600;margin:3px 0 8px;">${c.nombre}</h1>
+        <div style="display:flex;gap:8px;">${badge(c.tipo, c.tipo==='Externo'?'steel':'neutral')}${badge(c.estado, toneEstadoColaborador(c.estado))}${badge('Documentación '+c.docEstado.toLowerCase(), toneDoc(c.docEstado))}</div>
+      </div>
+      ${puedeEditar?`<div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="openForm('colaborador','edit','${c.folio}')">${ICONS.edit} Editar</button>
+        <button class="btn btn-ghost btn-sm" onclick="askDelete('colaborador','${c.folio}','${c.nombre}')" style="color:var(--danger);border-color:var(--danger-soft);">${ICONS.trash} Eliminar</button>
+      </div>`:''}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;">
+      ${[['Puesto',c.puesto],['Área',c.area],['Sucursal',c.sucursal],['Especialidad',c.especialidad],['Teléfono',c.telefono],['Correo',c.correo],['Fecha de ingreso',c.ingreso],['Antigüedad',c.antiguedad]].map(([l,v])=>`
+        <div class="card" style="padding:14px;"><div style="font-size:11.5px;color:var(--ink-soft);margin-bottom:4px;">${l}</div><div style="font-size:13.5px;font-weight:500;">${v}</div></div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+      <div class="card" style="padding:18px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">${ICONS.clipboard}<div style="font-size:13.5px;font-weight:500;">Checklist documental</div></div>
+        ${['Identificación oficial','Comprobante de domicilio','Comprobantes de estudios','Contrato firmado','Carta de confidencialidad','Reglamento interno recibido'].map((d,i)=>`
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0;font-size:13px;">
+            <span style="color:${i<4?'var(--success)':'var(--amber-text)'};">${i<4?ICONS.check2:ICONS.alert}</span>${d}
+          </div>`).join('')}
+        ${c.documentoNombre?`
+        <a href="${c.documentoUrl||'#'}" ${c.documentoUrl?'target="_blank"':'onclick="return false;"'} style="text-decoration:none;color:inherit;">
+          <div style="display:flex;align-items:center;gap:9px;background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:9px 11px;margin-top:10px;">
+            <span style="color:var(--steel-dark);">${ICONS.file}</span>
+            <span class="mono" style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.documentoNombre}</span>
+            <span style="color:var(--steel-dark);display:flex;align-items:center;gap:4px;font-size:12px;">${ICONS.eye}Ver documento</span>
+          </div>
+        </a>`:''}
+      </div>
+      <div class="card" style="padding:18px;">
+        <div style="font-size:13.5px;font-weight:500;margin-bottom:12px;">Contratos y convenios</div>
+        ${contratos.length? contratos.map(ct=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;">
+          <div><span class="mono" style="color:var(--ink-soft);font-size:11px;">${ct.folio}</span><div>${ct.tipo}</div></div>${badge(ct.estado,toneContrato(ct.estado))}</div>`).join('') : '<div style="font-size:13px;color:var(--ink-soft);">Sin contratos registrados.</div>'}
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+      <div class="card" style="padding:18px;">
+        <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">Vacaciones</div>
+        ${vacs.length? vacs.map(v=>`<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:12.5px;"><span>${v.dias} días · ${v.inicio}</span>${badge(v.estado,toneVac(v.estado))}</div>`).join('') : '<div style="font-size:12.5px;color:var(--ink-soft);">Sin solicitudes.</div>'}
+      </div>
+      <div class="card" style="padding:18px;">
+        <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">Permisos y ausencias</div>
+        ${perms.length? perms.map(p=>`<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:12.5px;"><span>${p.tipo} · ${p.duracion}</span>${badge(p.estado,p.estado==='Autorizada'?'success':p.estado==='En revisión'?'amber':'neutral')}</div>`).join('') : '<div style="font-size:12.5px;color:var(--ink-soft);">Sin registros.</div>'}
+      </div>
+      <div class="card" style="padding:18px;">
+        <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">Capacitación</div>
+        ${caps.length? caps.map(k=>`<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:12.5px;"><span>${k.curso}</span>${badge(k.estado,CAP_TONE[k.estado])}</div>`).join('') : '<div style="font-size:12.5px;color:var(--ink-soft);">Sin cursos registrados.</div>'}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================== ALTAS Y BAJAS ============================== */
+function renderAltasBajas(){
+  const puedeEditar = ['Administrador de Recursos Humanos','Superadministrador'].includes(state.role);
+  const TONE_MOV = { 'Alta':'success','Baja':'danger','Reingreso':'steel','Cambio interno':'neutral' };
+  const columns = [
+    {label:'Folio'}, {label:'Colaborador'}, {label:'Tipo'}, {label:'Fecha'}, {label:'Motivo'}, {label:'Responsable'},
+  ];
+  if(puedeEditar) columns.push({label:'Acciones', filterable:false});
+  const rows = MOVIMIENTOS.map((m,i)=>{
+    const cells = [
+      { text:m.folio, html:`<span class="mono">${m.folio}</span>` },
+      { text:m.colaborador, html:m.colaborador },
+      { text:m.tipo, html:badge(m.tipo, TONE_MOV[m.tipo]||'neutral') },
+      { text:m.fecha, html:`<span style="color:var(--ink-soft);">${m.fecha}</span>` },
+      { text:m.motivo, html:`<span style="color:var(--ink-soft);">${m.motivo}</span>` },
+      { text:m.responsable, html:m.responsable },
+    ];
+    if(puedeEditar) cells.push({ text:'', html: actionsCell(`openForm('movimiento','edit',${i})`, `askDelete('movimiento',${i},'${m.folio}')`) });
+    return { onclick:null, cells };
+  });
+  return `
+  <div class="fadein">
+    ${pageHeader('exit','Altas y bajas', 'Registro de incorporaciones, bajas, reingresos y cambios internos', puedeEditar?`<button class="btn btn-primary" onclick="openForm('movimiento','create',null)">${ICONS.plus}Nuevo movimiento</button>`:'')}
+    ${readOnlyBanner()}
+    ${renderTable('movimientos', columns, rows)}
+  </div>`;
+}
+
+/* ============================== SUCURSALES ============================== */
+function renderSucursales(){
+  const puedeEditar = ['Administrador de Recursos Humanos','Superadministrador'].includes(state.role);
+  return `
+  <div class="fadein">
+    ${pageHeader('building','Sucursales', 'Sedes de Clínica San Antonio y Fundación Salud Integral', puedeEditar?`<button class="btn btn-primary" onclick="openForm('sucursal','create',null)">${ICONS.plus}Nueva sucursal</button>`:'')}
+    ${readOnlyBanner()}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+      ${SUCURSALES.map(s=>{
+        const personal = COLABORADORES.filter(c=>c.sucursal===s.nombre && c.estado==='Activo');
+        return `<div class="card" style="padding:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <span class="badge badge-neutral">${s.empresa}</span>
+            ${puedeEditar?actionsCell(`openForm('sucursal','edit',${s.id})`, `askDelete('sucursal',${s.id},'${s.nombre}')`):''}
+          </div>
+          <div style="font-size:15.5px;font-weight:500;margin:10px 0 2px;">${s.nombre}</div>
+          <div style="font-size:12px;color:var(--ink-soft);margin-bottom:2px;">${ICONS.pin}${s.direccion}</div>
+          <div style="font-size:12px;color:var(--ink-soft);margin-bottom:14px;">Responsable: ${s.responsable} · ${s.telefono}</div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0;border-top:1px solid var(--line);"><span style="color:var(--ink-soft);">Personal activo</span><span class="mono">${personal.length}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:8px 0;border-top:1px solid var(--line);"><span style="color:var(--ink-soft);">Estado</span>${badge(s.estado,'success')}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+/* ============================== ESTRUCTURA ORGANIZACIONAL ============================== */
+function renderEstructura(){
+  const puedeEditar = ['Administrador de Recursos Humanos','Superadministrador'].includes(state.role);
+  const colArea = { label:'Áreas y departamentos',
+    cols:[{label:'Área'},{label:'Sucursal'},{label:'Responsable'}],
+    rows: AREAS.map((a,i)=>{
+      const cells=[{text:a.nombre,html:a.nombre},{text:a.sucursal,html:`<span style="color:var(--ink-soft);">${a.sucursal}</span>`},{text:a.responsable,html:a.responsable}];
+      if(puedeEditar) cells.push({text:'',html:actionsCell(`openForm('area','edit',${i})`,`askDelete('area',${i},'${a.nombre}')`)});
+      return {onclick:null, cells};
+    })
+  };
+  if(puedeEditar) colArea.cols.push({label:'Acciones', filterable:false});
+
+  const colPuesto = { label:'Puestos',
+    cols:[{label:'Puesto'},{label:'Área'},{label:'Nivel'},{label:'Jefe inmediato'},{label:'Plazas'},{label:'Ocupadas'}],
+    rows: PUESTOS.map((p,i)=>{
+      const cells=[{text:p.nombre,html:p.nombre},{text:p.area,html:p.area},{text:p.nivel,html:p.nivel},{text:p.jefe,html:`<span style="color:var(--ink-soft);">${p.jefe}</span>`},{text:p.plazas,html:`<span class="mono">${p.plazas}</span>`},{text:p.ocupadas,html:`<span class="mono">${p.ocupadas}</span>${p.ocupadas<p.plazas?badge('Vacante','amber'):''}`}];
+      if(puedeEditar) cells.push({text:'',html:actionsCell(`openForm('puesto','edit',${i})`,`askDelete('puesto',${i},'${p.nombre}')`)});
+      return {onclick:null, cells};
+    })
+  };
+  if(puedeEditar) colPuesto.cols.push({label:'Acciones', filterable:false});
+
+  return `
+  <div class="fadein">
+    ${pageHeader('sitemap','Estructura organizacional', 'Empresas, sucursales, áreas, puestos y plantilla autorizada')}
+    ${readOnlyBanner()}
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div style="font-size:13.5px;font-weight:500;">Áreas y departamentos</div>
+      ${puedeEditar?`<button class="btn btn-ghost btn-sm" onclick="openForm('area','create',null)">${ICONS.plus}Nueva área</button>`:''}
+    </div>
+    ${renderTable('areas', colArea.cols, colArea.rows)}
+    <div style="height:20px;"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div style="font-size:13.5px;font-weight:500;">Puestos y plantilla autorizada</div>
+      ${puedeEditar?`<button class="btn btn-ghost btn-sm" onclick="openForm('puesto','create',null)">${ICONS.plus}Nuevo puesto</button>`:''}
+    </div>
+    ${renderTable('puestos', colPuesto.cols, colPuesto.rows)}
+  </div>`;
+}
+
+/* ============================== CONTENIDO INSTITUCIONAL ============================== */
+function initialsOf(nombre){ const p=(nombre||'?').trim().split(/\s+/); return ((p[0]?.[0]||'')+(p[1]?.[0]||'')).toUpperCase(); }
+function renderContenido(){
+  const puedeEditar = ['Administrador de Recursos Humanos','Superadministrador'].includes(state.role);
+  const ordenados = CONTENIDO.map((c,i)=>({...c,_i:i})).slice().reverse();
+  return `
+  <div class="fadein" style="max-width:640px;margin:0 auto;">
+    ${pageHeader('book','Contenido institucional', 'Historia, filosofía, reglamentos, políticas y comunicados — estilo muro de publicaciones')}
+    ${readOnlyBanner()}
+    ${puedeEditar?`
+    <div class="card" style="padding:14px 16px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:38px;height:38px;border-radius:50%;background:var(--steel-soft);color:var(--steel-dark);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;">${initialsOf(state.role==='Superadministrador'?'Superadministrador':'Jorge Peña')}</div>
+        <div onclick="openForm('contenido','create',null)" style="flex:1;background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:10px 16px;font-size:13.5px;color:var(--ink-soft);cursor:pointer;">¿Qué quieres publicar en el muro institucional?</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;border-top:1px solid var(--line);padding-top:10px;">
+        <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;" onclick="openForm('contenido','create',null)">${ICONS.image}Foto / archivo</button>
+        <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;" onclick="openForm('contenido','create',null)">${ICONS.plus}Publicación</button>
+      </div>
+    </div>`:''}
+    ${ordenados.map(c=>`
+      <div class="card" style="padding:16px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="display:flex;gap:10px;">
+            <div style="width:38px;height:38px;border-radius:50%;background:var(--steel-soft);color:var(--steel-dark);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;">${initialsOf(c.autor)}</div>
+            <div>
+              <div style="font-size:13.5px;font-weight:600;">${c.autor||'Recursos Humanos'}</div>
+              <div style="font-size:11.5px;color:var(--ink-soft);margin-top:1px;">${c.categoria} · ${c.empresa} · ${c.fecha} ${badge(c.estado, c.estado==='Publicado'?'success':'amber')}</div>
+            </div>
+          </div>
+          ${puedeEditar?actionsCell(`openForm('contenido','edit',${c._i})`,`askDelete('contenido',${c._i},'${c.titulo}')`):''}
+        </div>
+        <div style="font-size:14px;font-weight:600;margin-top:12px;">${c.titulo}</div>
+        <div style="font-size:13.5px;line-height:1.55;color:var(--ink);margin-top:5px;white-space:pre-wrap;">${c.cuerpo||''}</div>
+        ${c.archivoNombre?`
+          <a href="${c.archivoUrl||'#'}" ${c.archivoUrl?'target="_blank"':'onclick="return false;"'} style="text-decoration:none;color:inherit;">
+            <div style="display:flex;align-items:center;gap:9px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:12px;">
+              <span style="color:var(--steel-dark);">${ICONS.file}</span>
+              <span class="mono" style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.archivoNombre}</span>
+              <span style="color:var(--steel-dark);display:flex;align-items:center;gap:4px;font-size:12px;">${ICONS.eye}Ver</span>
+            </div>
+          </a>`:''}
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--ink-soft);margin-top:12px;padding-top:10px;border-top:1px solid var(--line);">
+          <span>${ICONS.heart} ${c.likes||0} reacciones</span>
+          <span>${c.comentarios||0} comentarios</span>
+        </div>
+        <div style="display:flex;gap:4px;margin-top:8px;border-top:1px solid var(--line);padding-top:6px;">
+          <div class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;border:none;" onclick="reaccionarContenido(${c._i})">${ICONS.heart}Me gusta</div>
+          <div class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;border:none;" onclick="showToast('Función de comentarios disponible en la versión final','comment')">${ICONS.comment}Comentar</div>
+          <div class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;border:none;" onclick="showToast('Publicación compartida con el equipo','share')">${ICONS.share}Compartir</div>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
+/* ============================== HORARIOS Y GUARDIAS ============================== */
+function renderHorarios(){
+  const puedeEditar = ['Administrador de Recursos Humanos','Superadministrador'].includes(state.role);
+  const columns = [
+    {label:'Colaborador'}, {label:'Tipo de horario'}, {label:'Días'}, {label:'Horario'}, {label:'Sucursal'}, {label:'Vigencia'},
+  ];
+  if(puedeEditar) columns.push({label:'Acciones', filterable:false});
+  const rows = HORARIOS.map((h,i)=>{
+    const cells = [
+      { text:h.colaborador, html:h.colaborador },
+      { text:h.tipo, html:badge(h.tipo,'steel') },
+      { text:h.dias, html:h.dias },
+      { text:h.horario, html:`<span class="mono">${h.horario}</span>` },
+      { text:h.sucursal, html:`<span style="color:var(--ink-soft);">${h.sucursal}</span>` },
+      { text:h.vigencia, html:`<span style="color:var(--ink-soft);">${h.vigencia}</span>` },
+    ];
+    if(puedeEditar) cells.push({ text:'', html: actionsCell(`openForm('horario','edit',${i})`, `askDelete('horario',${i},'Horario')`) });
+    return { onclick:null, cells };
+  });
+  return `
+  <div class="fadein">
+    ${pageHeader('calendar','Horarios y guardias', 'Jornadas, turnos, guardias y disponibilidad por persona', puedeEditar?`<button class="btn btn-primary" onclick="openForm('horario','create',null)">${ICONS.plus}Nueva asignación</button>`:'')}
+    ${readOnlyBanner()}
+    <div class="info-banner">${ICONS.calendar} La configuración detallada de rotaciones, cobertura por servicio y conflictos de traslape se definirá en la etapa de diseño; esta vista muestra la asignación vigente por persona.</div>
+    ${renderTable('horarios', columns, rows)}
+  </div>`;
+}
+
+/* ============================== VACACIONES ============================== */
+function renderVacaciones(){
+  const mine = state.role==='Colaborador / Profesional externo';
+  const puedeCrear = ['Administrador de Recursos Humanos','Superadministrador','Colaborador / Profesional externo'].includes(state.role);
+  const puedeGestionar = ['Administrador de Recursos Humanos','Supervisor o responsable de área','Superadministrador'].includes(state.role);
+  const columns = [
+    {label:'Folio'}, {label:'Colaborador'}, {label:'Periodo'}, {label:'Días'}, {label:'Salida'}, {label:'Regreso'}, {label:'Estado'},
+  ];
+  if(puedeGestionar) columns.push({label:'Acciones', filterable:false});
+  const rows = VACACIONES.map(v=>{
+    const cells = [
+      { text:v.folio, html:`<span class="mono">${v.folio}</span>` },
+      { text:v.colaborador, html:v.colaborador },
+      { text:v.periodo, html:v.periodo },
+      { text:v.dias, html:`<span class="mono">${v.dias}</span>` },
+      { text:v.inicio, html:`<span style="color:var(--ink-soft);">${v.inicio}</span>` },
+      { text:v.regreso, html:`<span style="color:var(--ink-soft);">${v.regreso}</span>` },
+      { text:v.estado, html:badge(v.estado, toneVac(v.estado)) },
+    ];
+    if(puedeGestionar) cells.push({ text:'', html: actionsCell(`openForm('vacacion','edit','${v.folio}')`, `askDelete('vacacion','${v.folio}','${v.folio}')`) });
+    return { onclick:null, cells };
+  });
+  return `
+  <div class="fadein">
+    ${pageHeader('sun','Vacaciones', mine?'Tus solicitudes de vacaciones':'Solicitudes, autorizaciones y saldos', puedeCrear?`<button class="btn btn-primary" onclick="openForm('vacacion','create',null)">${ICONS.plus}Nueva solicitud</button>`:'')}
+    ${readOnlyBanner()}
+    ${renderTable('vacaciones', columns, rows)}
+  </div>`;
+}
+
+/* ============================== PERMISOS Y AUSENCIAS ============================== */
+function renderPermisos(){
+  const mine = state.role==='Colaborador / Profesional externo';
+  const puedeCrear = ['Administrador de Recursos Humanos','Superadministrador','Colaborador / Profesional externo'].includes(state.role);
+  const puedeGestionar = ['Administrador de Recursos Humanos','Supervisor o responsable de área','Superadministrador'].includes(state.role);
+  const columns = [
+    {label:'Folio'}, {label:'Colaborador'}, {label:'Tipo'}, {label:'Condición'}, {label:'Fecha'}, {label:'Duración'}, {label:'Estado'},
+  ];
+  if(puedeGestionar) columns.push({label:'Acciones', filterable:false});
+  const rows = PERMISOS.map(p=>{
+    const cells = [
+      { text:p.folio, html:`<span class="mono">${p.folio}</span>` },
+      { text:p.colaborador, html:p.colaborador },
+      { text:p.tipo, html:p.tipo },
+      { text:p.goce, html:badge(p.goce, p.goce==='Con goce'?'success':'neutral') },
+      { text:p.fecha, html:`<span style="color:var(--ink-soft);">${p.fecha}</span>` },
+      { text:p.duracion, html:p.duracion },
+      { text:p.estado, html:badge(p.estado, p.estado==='Autorizada'?'success':p.estado==='En revisión'?'amber':p.estado==='Cancelada'?'neutral':'danger') },
+    ];
+    if(puedeGestionar) cells.push({ text:'', html: actionsCell(`openForm('permiso','edit','${p.folio}')`, `askDelete('permiso','${p.folio}','${p.folio}')`) });
+    return { onclick:null, cells };
+  });
+  return `
+  <div class="fadein">
+    ${pageHeader('clock','Permisos y ausencias', mine?'Tus solicitudes de permiso':'Solicitudes, clasificación y autorización', puedeCrear?`<button class="btn btn-primary" onclick="openForm('permiso','create',null)">${ICONS.plus}Nueva solicitud</button>`:'')}
+    ${readOnlyBanner()}
+    ${renderTable('permisos', columns, rows)}
+  </div>`;
+}
+
+/* ============================== CAPACITACIÓN ============================== */
+function renderCapacitacion(){
+  const puedeEditar = ['Responsable de capacitación','Superadministrador'].includes(state.role);
+  const colCursos = [{label:'Código'},{label:'Curso'},{label:'Modalidad'},{label:'Duración'},{label:'Vigencia'}];
+  if(puedeEditar) colCursos.push({label:'Acciones', filterable:false});
+  const rowsCursos = CURSOS.map((k,i)=>{
+    const cells=[{text:k.codigo,html:`<span class="mono">${k.codigo}</span>`},{text:k.nombre,html:k.nombre},{text:k.modalidad,html:badge(k.modalidad,'steel')},{text:k.duracion,html:k.duracion},{text:k.vigencia,html:`<span style="color:var(--ink-soft);">${k.vigencia}</span>`}];
+    if(puedeEditar) cells.push({text:'',html:actionsCell(`openForm('curso','edit',${i})`,`askDelete('curso',${i},'${k.nombre}')`)});
+    return {onclick:null, cells};
+  });
+
+  const colMatriz = [{label:'Colaborador'},{label:'Curso'},{label:'Estado'}];
+  const rowsMatriz = CAPACITACION.map(m=>({ onclick:null, cells:[
+    { text:m.colaborador, html:m.colaborador },
+    { text:m.curso, html:m.curso },
+    { text:m.estado, html:badge(m.estado, CAP_TONE[m.estado]) },
+  ]}));
+
+  const total = CAPACITACION.length, aprob = CAPACITACION.filter(c=>c.estado==='Aprobado').length;
+  const pct = total? Math.round((aprob/total)*100) : 0;
+
+  return `
+  <div class="fadein">
+    ${pageHeader('graduation','Capacitación', 'Catálogo de cursos, matriz de cumplimiento y vigencias', puedeEditar?`<button class="btn btn-primary" onclick="openForm('curso','create',null)">${ICONS.plus}Nuevo curso</button>`:'')}
+    ${readOnlyBanner()}
+    <div class="card" style="padding:16px 18px;margin-bottom:16px;display:flex;align-items:center;gap:16px;">
+      <div style="font-size:13.5px;font-weight:500;">Cumplimiento general</div>
+      <div style="flex:1;height:8px;background:#EDEAE3;border-radius:4px;overflow:hidden;"><div style="width:${pct}%;height:100%;background:var(--success);"></div></div>
+      <div class="mono" style="font-size:13px;">${pct}%</div>
+    </div>
+    <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">Catálogo de cursos</div>
+    ${renderTable('cursos', colCursos, rowsCursos)}
+    <div style="height:20px;"></div>
+    <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">Matriz de cumplimiento</div>
+    ${renderTable('matriz', colMatriz, rowsMatriz)}
+  </div>`;
+}
+
+/* ============================== CONTRATOS Y CONVENIOS ============================== */
+function renderContratos(){
+  const puedeEditar = ['Administrador de Recursos Humanos','Superadministrador'].includes(state.role);
+  const columns = [
+    {label:'Folio'}, {label:'Colaborador'}, {label:'Tipo'}, {label:'Inicio'}, {label:'Fin'}, {label:'Estado'}, {label:'Responsable'}, {label:'Archivo'},
+  ];
+  if(puedeEditar) columns.push({label:'Acciones', filterable:false});
+  const rows = CONTRATOS.map(c=>{
+    const cells = [
+      { text:c.folio, html:`<span class="mono">${c.folio}</span>` },
+      { text:c.colaborador, html:c.colaborador },
+      { text:c.tipo, html:c.tipo },
+      { text:c.inicio, html:`<span style="color:var(--ink-soft);">${c.inicio}</span>` },
+      { text:c.fin, html:`<span style="color:var(--ink-soft);">${c.fin}</span>` },
+      { text:c.estado, html:badge(c.estado, toneContrato(c.estado)) },
+      { text:c.responsable, html:c.responsable },
+      { text:c.archivoNombre||'', html: c.archivoNombre ? `<a href="${c.archivoUrl||'#'}" ${c.archivoUrl?'target="_blank"':'onclick="return false;"'} style="text-decoration:none;color:var(--steel-dark);display:flex;align-items:center;gap:4px;font-size:12px;">${ICONS.eye}Ver</a>` : `<span style="color:var(--ink-soft);font-size:12px;">—</span>` },
+    ];
+    if(puedeEditar) cells.push({ text:'', html: actionsCell(`openForm('contrato','edit','${c.folio}')`, `askDelete('contrato','${c.folio}','${c.folio}')`) });
+    return { onclick:null, cells };
+  });
+  return `
+  <div class="fadein">
+    ${pageHeader('file','Contratos y convenios', 'Vigencias, firmas pendientes, renovaciones e historial', puedeEditar?`<button class="btn btn-primary" onclick="openForm('contrato','create',null)">${ICONS.plus}Nuevo contrato</button>`:'')}
+    ${readOnlyBanner()}
+    ${renderTable('contratos', columns, rows)}
+  </div>`;
+}
+
+/* ============================== FORMATOS ============================== */
+function renderFormatos(){
+  const puedeEditar = ['Administrador de Recursos Humanos','Superadministrador'].includes(state.role);
+  return `
+  <div class="fadein">
+    ${pageHeader('clipboard','Formatos y documentos automáticos', 'Plantillas reutilizables con campos vinculados al expediente', puedeEditar?`<button class="btn btn-primary" onclick="openForm('formato','create',null)">${ICONS.plus}Nuevo formato</button>`:'')}
+    ${readOnlyBanner()}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      ${FORMATOS.map((f,i)=>`
+        <div class="card" style="padding:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+            <div><div style="font-size:14px;font-weight:500;">${f.nombre}</div><div style="font-size:11.5px;color:var(--ink-soft);">${f.categoria}</div></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:11px;color:var(--ink-soft);">${f.usos} usos</span>
+              ${puedeEditar?actionsCell(`openForm('formato','edit',${i})`, `askDelete('formato',${i},'${f.nombre}')`):''}
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            ${f.campos.map(c=>`<span class="badge badge-neutral">${c}</span>`).join('')}
+          </div>
+          ${f.plantillaNombre?`
+          <a href="${f.plantillaUrl||'#'}" ${f.plantillaUrl?'target="_blank"':'onclick="return false;"'} style="text-decoration:none;color:inherit;">
+            <div style="display:flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:8px 10px;margin-top:10px;">
+              <span style="color:var(--steel-dark);">${ICONS.file}</span>
+              <span class="mono" style="font-size:11.5px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.plantillaNombre}</span>
+              <span style="color:var(--steel-dark);display:flex;align-items:center;gap:4px;font-size:11.5px;">${ICONS.eye}Ver</span>
+            </div>
+          </a>`:''}
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ============================== CATÁLOGOS ============================== */
+function renderCatalogos(){
+  const puedeEditar = ['Administrador de Recursos Humanos','Superadministrador'].includes(state.role);
+  return `
+  <div class="fadein">
+    ${pageHeader('tags','Catálogos', 'Listas base configurables para formularios y checklists')}
+    ${readOnlyBanner()}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+      ${CATALOGOS.map((g,gi)=>`
+        <div class="card" style="padding:18px;">
+          <div style="font-size:13.5px;font-weight:500;margin-bottom:10px;">${g.nombre}</div>
+          ${g.items.map((it,ii)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;">
+            <span>${it}</span>
+            <div style="display:flex;align-items:center;gap:8px;">${badge('Activo','success')}${puedeEditar?`<span class="icon-btn danger" style="width:24px;height:24px;" onclick="deleteCatalogItem(${gi},${ii})" title="Eliminar">${ICONS.x}</span>`:''}</div>
+          </div>`).join('')}
+          ${puedeEditar?`<div style="display:flex;gap:8px;margin-top:12px;">
+            <input id="cat-input-${gi}" class="field-input" style="margin-bottom:0;" placeholder="Nuevo valor…" onkeydown="if(event.key==='Enter'){addCatalogItem(${gi});}">
+            <button class="btn btn-ghost btn-sm" onclick="addCatalogItem(${gi})">${ICONS.plus}</button>
+          </div>`:''}
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+function addCatalogItem(gIdx){
+  const input = document.getElementById('cat-input-'+gIdx);
+  const v = input.value.trim();
+  if(!v) return;
+  CATALOGOS[gIdx].items.push(v);
+  render();
+  showToast('Valor agregado a «'+CATALOGOS[gIdx].nombre+'»','check2');
+}
+function deleteCatalogItem(gIdx, itemIdx){
+  const nombre = CATALOGOS[gIdx].items[itemIdx];
+  CATALOGOS[gIdx].items.splice(itemIdx,1);
+  render();
+  showToast('«'+nombre+'» eliminado del catálogo','trash');
+}
+
+/* ============================== USUARIOS ============================== */
+function renderUsuarios(){
+  const puedeEditar = state.role==='Superadministrador';
+  const columns = [
+    {label:'Usuario'}, {label:'Correo'}, {label:'Rol'}, {label:'Sucursal'}, {label:'Estado'}, {label:'Último acceso'},
+  ];
+  if(puedeEditar) columns.push({label:'Acciones', filterable:false});
+  const rows = USUARIOS.map((u,i)=>{
+    const cells = [
+      { text:u.nombre, html:u.nombre },
+      { text:u.correo, html:`<span style="color:var(--ink-soft);">${u.correo}</span>` },
+      { text:u.rol, html:badge(u.rol,'steel') },
+      { text:u.sucursal, html:u.sucursal },
+      { text:u.estado, html:badge(u.estado,u.estado==='Activo'?'success':'neutral') },
+      { text:u.acceso, html:`<span style="color:var(--ink-soft);">${u.acceso}</span>` },
+    ];
+    if(puedeEditar) cells.push({ text:'', html: actionsCell(`openForm('usuario','edit',${i})`, `askDelete('usuario',${i},'${u.nombre}')`) });
+    return { onclick:null, cells };
+  });
+  return `
+  <div class="fadein">
+    ${pageHeader('users','Usuarios y permisos', 'Cuentas, roles y ámbito de acceso',
+      puedeEditar?`<button class="btn btn-primary" onclick="openForm('usuario','create',null)">${ICONS.plus}Nuevo usuario</button>`:'')}
+    ${!puedeEditar?`<div class="info-banner">${ICONS.lock} Solo el Superadministrador puede crear, editar o eliminar usuarios. Ningún usuario puede elevar sus propios privilegios.</div>`:''}
+    ${renderTable('usuarios', columns, rows)}
+  </div>`;
+}
+
+/* ============================== PRESTACIONES ============================== */
+function renderPrestaciones(){
+  const puedeEditar = ['Contabilidad / Prestaciones','Superadministrador'].includes(state.role);
+  const columns = [
+    {label:'Folio'}, {label:'Colaborador'}, {label:'Concepto'}, {label:'Periodo'}, {label:'Importe'}, {label:'Estado'},
+  ];
+  if(puedeEditar) columns.push({label:'Acciones', filterable:false});
+  const rows = PRESTACIONES.map(p=>{
+    const cells = [
+      { text:p.folio, html:`<span class="mono">${p.folio}</span>` },
+      { text:p.colaborador, html:p.colaborador },
+      { text:p.concepto, html:p.concepto },
+      { text:p.periodo, html:p.periodo },
+      { text:p.importe, html:`<span class="mono">${money(p.importe)}</span>` },
+      { text:p.estado, html:badge(p.estado, tonePrestacion(p.estado)) },
+    ];
+    if(puedeEditar) cells.push({ text:'', html: actionsCell(`openForm('prestacion','edit','${p.folio}')`, `askDelete('prestacion','${p.folio}','${p.folio}')`) });
+    return { onclick:null, cells };
+  });
+  return `
+  <div class="fadein">
+    ${pageHeader('gift','Aguinaldos y prestaciones', 'Cálculo, revisión, autorización y registro de pagos', puedeEditar?`<button class="btn btn-primary" onclick="openForm('prestacion','create',null)">${ICONS.plus}Nuevo cálculo</button>`:'')}
+    ${!puedeEditar?`<div class="info-banner">${ICONS.lock} La información salarial y de prestaciones requiere permisos específicos de Contabilidad.</div>`:''}
+    ${renderTable('prestaciones', columns, rows)}
+  </div>`;
+}
+
+/* ============================== REPORTES ============================== */
+function renderReportes(){
+  const rpt = state.reporteSel;
+  const nombre = REPORTES_FLAT.find(r=>r.id===rpt)?.nombre;
+  const tablas = {
+    'RPT-01': { cols:['Folio','Nombre','Puesto','Sucursal','Estado'], rows: COLABORADORES.map(c=>[c.folio,c.nombre,c.puesto,c.sucursal,c.estado]) },
+    'RPT-02': { cols:['Folio','Colaborador','Tipo','Fecha','Motivo'], rows: MOVIMIENTOS.map(m=>[m.folio,m.colaborador,m.tipo,m.fecha,m.motivo]) },
+    'RPT-03': { cols:['Sucursal','Plantilla promedio','Bajas en el periodo','Rotación'], rows: SUCURSALES.map((s,i)=>[s.nombre, 10+i, 1, ((1/(10+i))*100).toFixed(1)+'%']) },
+    'RPT-04': { cols:['Colaborador','Documentos requeridos','Recibidos','% integración'], rows: COLABORADORES.map((c,i)=>[c.nombre, 6, c.docEstado==='Completo'?6:(c.docEstado==='Pendiente'?4:3), c.docEstado==='Completo'?'100%':(c.docEstado==='Pendiente'?'67%':'50%')]) },
+    'RPT-05': { cols:['Folio','Colaborador','Tipo','Vence','Estado'], rows: CONTRATOS.map(c=>[c.folio,c.colaborador,c.tipo,c.fin,c.estado]) },
+    'RPT-06': { cols:['Colaborador','Cursos requeridos','Aprobados','% cumplimiento'], rows: COLABORADORES.slice(0,5).map((c,i)=>[c.nombre, 3, 3-(i%3), Math.round(((3-(i%3))/3)*100)+'%']) },
+    'RPT-07': { cols:['Folio','Colaborador','Concepto','Importe','Estado'], rows: PRESTACIONES.map(p=>[p.folio,p.colaborador,p.concepto,money(p.importe),p.estado]) },
+  };
+  const t = tablas[rpt];
+  const columns = t.cols.map(c=>({label:c}));
+  const rows = t.rows.map(row=>({ onclick:null, cells: row.map((cell,j)=>({ text:cell, html: j===0? `<span class="mono">${cell}</span>` : cell })) }));
+
+  return `
+  <div class="fadein">
+    ${pageHeader('report','Reportes', 'Indicadores por persona, empresa, área, puesto y periodo')}
+    ${readOnlyBanner()}
+    <div style="display:grid;grid-template-columns:260px 1fr;gap:16px;">
+      <div class="card" style="padding:14px;align-self:start;">
+        ${CATALOGO_REPORTES.map(g=>`
+          <div style="font-size:11px;color:var(--ink-soft);margin:10px 0 6px;">${g.grupo.toUpperCase()}</div>
+          ${g.items.map(r=>`
+            <div class="row clickable" onclick="selectReporte('${r.id}')" style="padding:9px 8px;border-radius:5px;font-size:13px;background:${rpt===r.id?'var(--steel-soft)':'transparent'};color:${rpt===r.id?'var(--steel-dark)':'var(--ink)'};margin-bottom:2px;">
+              <span class="mono" style="font-size:11px;margin-right:6px;color:var(--ink-soft);">${r.id}</span>${r.nombre}
+            </div>`).join('')}
+        `).join('')}
+      </div>
+      <div>
+        <div class="card" style="padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <select style="border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:12.5px;">
+            <option>Todas las sucursales</option>${SUCURSALES.map(s=>`<option>${s.nombre}</option>`).join('')}
+          </select>
+          <select style="border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:12.5px;">
+            <option>Este periodo</option><option>Este trimestre</option><option>Este año</option>
+          </select>
+          <div style="margin-left:auto;display:flex;gap:8px;">
+            <button class="btn btn-ghost" style="padding:8px 14px;" onclick="showToast('Generando PDF de ${rpt}…','download')">${ICONS.download} PDF</button>
+            <button class="btn btn-ghost" style="padding:8px 14px;" onclick="showToast('Generando Excel de ${rpt}…','download')">${ICONS.download} Excel</button>
+          </div>
+        </div>
+        <div style="margin-bottom:8px;font-size:13.5px;font-weight:500;">${rpt} · ${nombre}</div>
+        ${renderTable('rpt-'+rpt, columns, rows)}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================== NOTIFICACIONES ============================== */
+function renderNotificaciones(){
+  return `
+  <div class="fadein">
+    ${pageHeader('bell','Notificaciones', 'Cumpleaños, vencimientos, documentación pendiente y solicitudes por autorizar')}
+    <div class="card">
+      ${NOTIFICACIONES.length? NOTIFICACIONES.map((n,i)=>`
+        <div style="display:flex;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:${n.leida?'#fff':'#F7F5F1'};">
+          <span style="color:${n.tipo==='vencido'?'var(--danger)':(n.tipo==='cumple'||n.tipo==='vacaciones')?'var(--amber-text)':'var(--steel-dark)'};margin-top:2px;">${ICONS[n.icono]}</span>
+          <div style="flex:1;">
+            <div style="font-size:13.5px;">${n.mensaje}</div>
+            <div style="font-size:11.5px;color:var(--ink-soft);margin-top:3px;">${n.fecha}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            ${!n.leida?badge('Nueva','steel'):''}
+            <span class="icon-btn" onclick="toggleNotifRead(${i})" title="${n.leida?'Marcar como no leída':'Marcar como leída'}">${n.leida?ICONS.circle:ICONS.check2}</span>
+            <span class="icon-btn danger" onclick="dismissNotif(${i})" title="Descartar">${ICONS.x}</span>
+          </div>
+        </div>`).join('') : `<div style="padding:30px;text-align:center;color:var(--ink-soft);font-size:13px;">No hay notificaciones.</div>`}
+    </div>
+  </div>`;
+}
+function toggleNotifRead(i){ NOTIFICACIONES[i].leida = !NOTIFICACIONES[i].leida; render(); }
+function dismissNotif(i){ NOTIFICACIONES.splice(i,1); render(); showToast('Notificación descartada','trash'); }
+
+/* ============================== AUDITORÍA ============================== */
+function renderAuditoria(){
+  const columns = [
+    {label:'Fecha / hora'}, {label:'Usuario'}, {label:'Acción'}, {label:'Módulo'}, {label:'Registro'}, {label:'IP'},
+  ];
+  const rows = AUDITORIA.map(a=>({
+    onclick:null,
+    cells:[
+      { text:a.fecha, html:`<span style="color:var(--ink-soft);">${a.fecha}</span>` },
+      { text:a.usuario, html:a.usuario },
+      { text:a.accion, html:badge(a.accion,'neutral') },
+      { text:a.modulo, html:a.modulo },
+      { text:a.registro, html:`<span class="mono">${a.registro}</span>` },
+      { text:a.ip, html:`<span class="mono" style="color:var(--ink-soft);">${a.ip}</span>` },
+    ]
+  }));
+  return `
+  <div class="fadein">
+    ${pageHeader('shield','Auditoría', 'Bitácora central: usuario, fecha, hora, módulo, registro y operación')}
+    <div class="info-banner">${ICONS.lock} Los registros de auditoría no se pueden editar ni eliminar: son la fuente de trazabilidad del sistema.</div>
+    ${renderTable('auditoria', columns, rows)}
+  </div>`;
+}
+
+/* ============================== FORMULARIOS DE ALTA / EDICIÓN ============================== */
+function openForm(type, mode, key){ state.modalForm = { type, mode, key }; render(); }
+function closeForm(){ state.modalForm = null; render(); }
+function modalHead(title){
+  return `<div class="modal-head"><div style="font-size:16px;font-weight:500;">${title}</div><span onclick="closeForm()" style="cursor:pointer;color:var(--ink-soft);">${ICONS.x}</span></div>`;
+}
+function selectChip(el){ el.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); }
+
+function renderFormModal(){
+  switch(state.modalForm.type){
+    case 'colaborador': return renderColaboradorForm();
+    case 'sucursal': return renderSucursalForm();
+    case 'area': return renderAreaForm();
+    case 'puesto': return renderPuestoForm();
+    case 'movimiento': return renderMovimientoForm();
+    case 'contenido': return renderContenidoForm();
+    case 'horario': return renderHorarioForm();
+    case 'vacacion': return renderVacacionForm();
+    case 'permiso': return renderPermisoForm();
+    case 'curso': return renderCursoForm();
+    case 'contrato': return renderContratoForm();
+    case 'formato': return renderFormatoForm();
+    case 'usuario': return renderUsuarioForm();
+    case 'prestacion': return renderPrestacionForm();
+    default: return '';
+  }
+}
+
+/* ---- Colaborador ---- */
+function renderColaboradorForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? COLABORADORES.find(c=>c.folio===state.modalForm.key) : {};
+  const fv = (k,d='')=> r&&r[k]!==undefined ? r[k] : d;
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" style="width:600px;" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar colaborador':'Nuevo colaborador')}
+      <div class="form-grid">
+        <div><label class="field-label">Folio</label><input id="f-folio" class="field-input" value="${fv('folio')}" placeholder="COL-0000" ${editing?'disabled':''}></div>
+        <div><label class="field-label">Nombre completo</label><input id="f-nombre" class="field-input" value="${fv('nombre')}"></div>
+        <div><label class="field-label">Tipo de vinculación</label><select id="f-tipo" class="field-input">${['Interno','Externo'].map(o=>`<option ${fv('tipo','Interno')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+        <div><label class="field-label">Estado</label><select id="f-estado" class="field-input">${['Activo','Suspendido','Baja'].map(o=>`<option ${fv('estado','Activo')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+        <div><label class="field-label">Puesto</label><select id="f-puesto" class="field-input">${PUESTOS.map(p=>`<option ${fv('puesto')===p.nombre?'selected':''}>${p.nombre}</option>`).join('')}</select></div>
+        <div><label class="field-label">Área</label><select id="f-area" class="field-input">${AREAS.map(a=>`<option ${fv('area')===a.nombre?'selected':''}>${a.nombre}</option>`).join('')}</select></div>
+        <div><label class="field-label">Sucursal</label><select id="f-sucursal" class="field-input">${SUCURSALES.map(s=>`<option ${fv('sucursal')===s.nombre?'selected':''}>${s.nombre}</option>`).join('')}</select></div>
+        <div><label class="field-label">Especialidad</label><input id="f-especialidad" class="field-input" value="${fv('especialidad')}" placeholder="— si no aplica"></div>
+        <div><label class="field-label">Teléfono</label><input id="f-telefono" class="field-input" value="${fv('telefono')}"></div>
+        <div><label class="field-label">Correo</label><input id="f-correo" class="field-input" value="${fv('correo')}"></div>
+        <div>${dateField('f-ingreso','Fecha de ingreso', fv('ingreso'))}</div>
+        <div><label class="field-label">Documentación</label><select id="f-docEstado" class="field-input">${['Completo','Pendiente','Vencido'].map(o=>`<option ${fv('docEstado','Pendiente')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+      </div>
+      ${fileField('f-documento','Documento de identificación / expediente', fv('documentoNombre'), fv('documentoUrl'))}
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitColaboradorForm()">${editing?'Guardar cambios':'Crear colaborador'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitColaboradorForm(){
+  const folio = val('f-folio'), nombre = val('f-nombre');
+  if(!folio || !nombre){ showToast('Completa al menos el folio y el nombre','alert'); return; }
+  const editing = state.modalForm.mode==='edit';
+  if(!editing && COLABORADORES.some(c=>c.folio===folio)){ showToast('Ya existe un colaborador con ese folio','alert'); return; }
+  const prevC = editing ? COLABORADORES.find(c=>c.folio===state.modalForm.key) : {};
+  const documento = getFileData('f-documento', prevC.documentoNombre, prevC.documentoUrl);
+  const data = { folio, nombre, tipo: selVal('f-tipo'), puesto: selVal('f-puesto'), area: selVal('f-area'),
+    sucursal: selVal('f-sucursal'), especialidad: val('f-especialidad')||'—', ingreso: dateVal('f-ingreso')||fv_prev(prevC,'ingreso'),
+    estado: selVal('f-estado'), telefono: val('f-telefono'), correo: val('f-correo'), docEstado: selVal('f-docEstado'),
+    documentoNombre: documento.name, documentoUrl: documento.url,
+    cumple: editing? r_cumple(folio) : '—', antiguedad: editing? r_antig(folio) : 'Nuevo ingreso' };
+  if(editing){
+    const idx = COLABORADORES.findIndex(c=>c.folio===state.modalForm.key);
+    COLABORADORES[idx] = data;
+    if(state.colSel===state.modalForm.key) state.colSel = folio;
+    showToast('Colaborador actualizado','check2');
+  } else {
+    COLABORADORES.push(data);
+    showToast('Colaborador creado correctamente','check2');
+  }
+  state.modalForm = null; render();
+}
+function r_cumple(folio){ const c=COLABORADORES.find(x=>x.folio===folio); return c?c.cumple:'—'; }
+function r_antig(folio){ const c=COLABORADORES.find(x=>x.folio===folio); return c?c.antiguedad:'—'; }
+
+/* ---- Sucursal ---- */
+function renderSucursalForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? SUCURSALES.find(s=>s.id===state.modalForm.key) : {};
+  const fv=(k,d='')=> r&&r[k]!==undefined?r[k]:d;
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar sucursal':'Nueva sucursal')}
+      <label class="field-label">Nombre</label><input id="f-nombre" class="field-input" value="${fv('nombre')}">
+      <label class="field-label">Empresa</label><select id="f-empresa" class="field-input">${EMPRESAS.map(e=>`<option ${fv('empresa')===e?'selected':''}>${e}</option>`).join('')}</select>
+      <label class="field-label">Dirección</label><input id="f-direccion" class="field-input" value="${fv('direccion')}">
+      <div class="form-grid">
+        <div><label class="field-label">Responsable</label><input id="f-responsable" class="field-input" value="${fv('responsable')}"></div>
+        <div><label class="field-label">Teléfono</label><input id="f-telefono" class="field-input" value="${fv('telefono')}"></div>
+      </div>
+      <label class="field-label">Estado</label><select id="f-estado" class="field-input">${['Activa','Inactiva'].map(o=>`<option ${fv('estado','Activa')===o?'selected':''}>${o}</option>`).join('')}</select>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitSucursalForm()">${editing?'Guardar cambios':'Crear sucursal'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitSucursalForm(){
+  const nombre = val('f-nombre');
+  if(!nombre){ showToast('Ingresa el nombre de la sucursal','alert'); return; }
+  const editing = state.modalForm.mode==='edit';
+  const data = { id: editing? state.modalForm.key : (SUCURSALES.length? Math.max(...SUCURSALES.map(s=>s.id))+1 : 1),
+    nombre, empresa: selVal('f-empresa'), direccion: val('f-direccion'), responsable: val('f-responsable'), telefono: val('f-telefono'), estado: selVal('f-estado') };
+  if(editing){ const idx=SUCURSALES.findIndex(s=>s.id===state.modalForm.key); SUCURSALES[idx]=data; showToast('Sucursal actualizada','check2'); }
+  else { SUCURSALES.push(data); showToast('Sucursal creada correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Área ---- */
+function renderAreaForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? AREAS[state.modalForm.key] : {};
+  const fv=(k,d='')=> r&&r[k]!==undefined?r[k]:d;
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar área':'Nueva área')}
+      <label class="field-label">Nombre del área</label><input id="f-nombre" class="field-input" value="${fv('nombre')}">
+      <label class="field-label">Sucursal</label><select id="f-sucursal" class="field-input">${SUCURSALES.map(s=>`<option ${fv('sucursal')===s.nombre?'selected':''}>${s.nombre}</option>`).join('')}</select>
+      <label class="field-label">Responsable</label><input id="f-responsable" class="field-input" value="${fv('responsable')}">
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitAreaForm()">${editing?'Guardar cambios':'Crear área'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitAreaForm(){
+  const nombre = val('f-nombre');
+  if(!nombre){ showToast('Ingresa el nombre del área','alert'); return; }
+  const data = { nombre, sucursal: selVal('f-sucursal'), responsable: val('f-responsable') };
+  const editing = state.modalForm.mode==='edit';
+  if(editing){ AREAS[state.modalForm.key]={...AREAS[state.modalForm.key], ...data}; showToast('Área actualizada','check2'); }
+  else { AREAS.push({ id: AREAS.length? Math.max(...AREAS.map(a=>a.id))+1:1, ...data}); showToast('Área creada correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Puesto ---- */
+function renderPuestoForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? PUESTOS[state.modalForm.key] : {};
+  const fv=(k,d='')=> r&&r[k]!==undefined?r[k]:d;
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar puesto':'Nuevo puesto')}
+      <label class="field-label">Nombre del puesto</label><input id="f-nombre" class="field-input" value="${fv('nombre')}">
+      <div class="form-grid">
+        <div><label class="field-label">Área</label><select id="f-area" class="field-input">${AREAS.map(a=>`<option ${fv('area')===a.nombre?'selected':''}>${a.nombre}</option>`).join('')}</select></div>
+        <div><label class="field-label">Nivel jerárquico</label><select id="f-nivel" class="field-input">${['Operativo','Mando medio','Dirección'].map(o=>`<option ${fv('nivel','Operativo')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+      </div>
+      <label class="field-label">Jefe inmediato</label><input id="f-jefe" class="field-input" value="${fv('jefe')}">
+      <div class="form-grid">
+        <div><label class="field-label">Plazas autorizadas</label><input id="f-plazas" type="number" class="field-input" value="${fv('plazas',1)}"></div>
+        <div><label class="field-label">Plazas ocupadas</label><input id="f-ocupadas" type="number" class="field-input" value="${fv('ocupadas',0)}"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitPuestoForm()">${editing?'Guardar cambios':'Crear puesto'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitPuestoForm(){
+  const nombre = val('f-nombre');
+  if(!nombre){ showToast('Ingresa el nombre del puesto','alert'); return; }
+  const data = { nombre, area: selVal('f-area'), nivel: selVal('f-nivel'), jefe: val('f-jefe'),
+    plazas: Number(val('f-plazas'))||1, ocupadas: Number(val('f-ocupadas'))||0, estado:'Activo' };
+  const editing = state.modalForm.mode==='edit';
+  if(editing){ PUESTOS[state.modalForm.key]={...PUESTOS[state.modalForm.key], ...data}; showToast('Puesto actualizado','check2'); }
+  else { PUESTOS.push({ id: PUESTOS.length? Math.max(...PUESTOS.map(p=>p.id))+1:1, ...data}); showToast('Puesto creado correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Movimiento (alta/baja/reingreso) ---- */
+function renderMovimientoForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? MOVIMIENTOS[state.modalForm.key] : {};
+  const fv=(k,d='')=> r&&r[k]!==undefined?r[k]:d;
+  const tipos = ['Alta','Baja','Reingreso','Cambio interno'];
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar movimiento':'Nuevo movimiento')}
+      <label class="field-label">Colaborador</label>
+      <select id="f-colaborador" class="field-input">${COLABORADORES.map(c=>{ const opt=c.folio+' · '+c.nombre; return `<option ${fv('colaborador')===opt?'selected':''}>${opt}</option>`; }).join('')}</select>
+      <label class="field-label">Tipo de movimiento</label>
+      <div id="chip-tipo" style="display:flex;gap:8px;margin:6px 0 14px;flex-wrap:wrap;">
+        ${tipos.map(t=>`<div class="chip ${fv('tipo','Alta')===t?'active':''}" data-value="${t}" onclick="selectChip(this)">${t}</div>`).join('')}
+      </div>
+      ${dateField('f-fecha','Fecha', fv('fecha'))}
+      <label class="field-label">Motivo</label><input id="f-motivo" class="field-input" value="${fv('motivo')}">
+      <label class="field-label">Responsable</label><input id="f-responsable" class="field-input" value="${fv('responsable','J. Peña')}">
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitMovimientoForm()">${editing?'Guardar cambios':'Registrar movimiento'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitMovimientoForm(){
+  const colaborador = selVal('f-colaborador'), fecha = dateVal('f-fecha');
+  if(!fecha){ showToast('Indica la fecha del movimiento','alert'); return; }
+  const data = { colaborador, tipo: chipVal('chip-tipo'), fecha, motivo: val('f-motivo'), responsable: val('f-responsable') };
+  const editing = state.modalForm.mode==='edit';
+  if(editing){ MOVIMIENTOS[state.modalForm.key]={...MOVIMIENTOS[state.modalForm.key], ...data}; showToast('Movimiento actualizado','check2'); }
+  else { MOVIMIENTOS.push({ folio: nextFolio(MOVIMIENTOS.length?MOVIMIENTOS:[{folio:'MOV-2026-000'}],'MOV-2026'), ...data}); showToast('Movimiento registrado','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Contenido institucional ---- */
+function renderContenidoForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? CONTENIDO[state.modalForm.key] : {};
+  const fv=(k,d='')=> r&&r[k]!==undefined?r[k]:d;
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" style="width:520px;" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar publicación':'Nueva publicación en el muro')}
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px;">
+        <div style="width:34px;height:34px;border-radius:50%;background:var(--steel-soft);color:var(--steel-dark);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;">${initialsOf(fv('autor','Jorge Peña'))}</div>
+        <input id="f-autor" class="field-input" style="margin-bottom:0;" value="${fv('autor','Jorge Peña Villarreal')}" placeholder="Publicado por…">
+      </div>
+      <label class="field-label">Título</label><input id="f-titulo" class="field-input" value="${fv('titulo')}" placeholder="Título de la publicación">
+      <label class="field-label">Texto de la publicación</label>
+      <textarea id="f-cuerpo" class="field-input" rows="4" style="resize:none;" placeholder="¿Qué quieres compartir con el equipo?">${fv('cuerpo')}</textarea>
+      <div class="form-grid">
+        <div><label class="field-label">Categoría</label><input id="f-categoria" class="field-input" value="${fv('categoria')}"></div>
+        <div><label class="field-label">Empresa</label><select id="f-empresa" class="field-input"><option ${fv('empresa')==='Ambas empresas'?'selected':''}>Ambas empresas</option>${EMPRESAS.map(e=>`<option ${fv('empresa')===e?'selected':''}>${e}</option>`).join('')}</select></div>
+      </div>
+      ${fileField('f-archivo','Adjuntar foto o archivo', fv('archivoNombre'), fv('archivoUrl'))}
+      <label class="field-label">Estado</label><select id="f-estado" class="field-input">${['Publicado','Borrador'].map(o=>`<option ${fv('estado','Borrador')===o?'selected':''}>${o}</option>`).join('')}</select>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitContenidoForm()">${editing?'Guardar cambios':'Publicar'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitContenidoForm(){
+  const titulo = val('f-titulo');
+  if(!titulo){ showToast('Ingresa el título de la publicación','alert'); return; }
+  const editing = state.modalForm.mode==='edit';
+  const prev = editing ? CONTENIDO[state.modalForm.key] : {};
+  const archivo = getFileData('f-archivo', prev.archivoNombre, prev.archivoUrl);
+  const hoy = new Date();
+  const data = { titulo, autor: val('f-autor')||'Recursos Humanos', cuerpo: val('f-cuerpo'), categoria: val('f-categoria'), empresa: selVal('f-empresa'), estado: selVal('f-estado'),
+    fecha: editing ? prev.fecha : (MES_ABBR[hoy.getMonth()]+' '+hoy.getFullYear()),
+    archivoNombre: archivo.name, archivoUrl: archivo.url,
+    likes: editing ? prev.likes||0 : 0, comentarios: editing ? prev.comentarios||0 : 0 };
+  if(editing){ CONTENIDO[state.modalForm.key]={...prev, ...data}; showToast('Publicación actualizada','check2'); }
+  else { CONTENIDO.push(data); showToast('Publicación creada correctamente','check2'); }
+  state.modalForm=null; render();
+}
+function reaccionarContenido(i){ CONTENIDO[i].likes = (CONTENIDO[i].likes||0) + 1; render(); }
+
+/* ---- Horario ---- */
+function renderHorarioForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? HORARIOS[state.modalForm.key] : {};
+  const fv=(k,d='')=> r&&r[k]!==undefined?r[k]:d;
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar asignación':'Nueva asignación de horario')}
+      <label class="field-label">Colaborador</label>
+      <select id="f-colaborador" class="field-input">${COLABORADORES.map(c=>{ const opt=c.folio+' · '+c.nombre; return `<option ${fv('colaborador')===opt?'selected':''}>${opt}</option>`; }).join('')}</select>
+      <div class="form-grid">
+        <div><label class="field-label">Tipo de horario</label><select id="f-tipo" class="field-input">${['Fijo diurno','Fijo mixto','Guardia rotativa','Por evento'].map(o=>`<option ${fv('tipo')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+        <div><label class="field-label">Sucursal</label><select id="f-sucursal" class="field-input">${SUCURSALES.map(s=>`<option ${fv('sucursal')===s.nombre?'selected':''}>${s.nombre}</option>`).join('')}</select></div>
+      </div>
+      <label class="field-label">Días (rango con lista desplegable)</label>
+      <div class="form-grid">
+        <div><select id="f-dias-desde" class="field-input">${DIAS_SEMANA.map(d=>`<option ${parseDiasRango(fv('dias')).desde===d?'selected':''}>${d}</option>`).join('')}</select></div>
+        <div><select id="f-dias-hasta" class="field-input">${DIAS_SEMANA.map(d=>`<option ${parseDiasRango(fv('dias')).hasta===d?'selected':''}>${d}</option>`).join('')}</select></div>
+      </div>
+      <input id="f-dias-libre" class="field-input" value="${parseDiasRango(fv('dias')).libre}" placeholder="…o descripción libre, ej. Rotativo 24×48 (tiene prioridad si se llena)">
+      <label class="field-label" style="margin-top:4px;">Horario (reloj de entrada y salida)</label>
+      <div class="form-grid">
+        <div><input id="f-hora-entrada" type="time" class="field-input" value="${parseHorarioRango(fv('horario')).entrada}"></div>
+        <div><input id="f-hora-salida" type="time" class="field-input" value="${parseHorarioRango(fv('horario')).salida}"></div>
+      </div>
+      <input id="f-horario-libre" class="field-input" value="${parseHorarioRango(fv('horario')).libre}" placeholder="…o descripción libre, ej. Guardia completa / Variable (tiene prioridad si se llena)">
+      <label class="field-label">Vigencia</label><input id="f-vigencia" class="field-input" value="${fv('vigencia')}" placeholder="Desde mmm aaaa">
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitHorarioForm()">${editing?'Guardar cambios':'Crear asignación'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitHorarioForm(){
+  const colaborador = selVal('f-colaborador');
+  const diasLibre = val('f-dias-libre');
+  const desde = selVal('f-dias-desde'), hasta = selVal('f-dias-hasta');
+  const dias = diasLibre || (desde===hasta ? desde : `${desde} a ${hasta}`);
+  const horarioLibre = val('f-horario-libre');
+  const entrada = val('f-hora-entrada'), salida = val('f-hora-salida');
+  const horario = horarioLibre || (entrada && salida ? `${entrada} – ${salida}` : '');
+  const data = { colaborador, tipo: selVal('f-tipo'), dias, horario, sucursal: selVal('f-sucursal'), vigencia: val('f-vigencia') };
+  const editing = state.modalForm.mode==='edit';
+  if(editing){ HORARIOS[state.modalForm.key]=data; showToast('Asignación actualizada','check2'); }
+  else { HORARIOS.push(data); showToast('Asignación creada correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Vacación ---- */
+function renderVacacionForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? VACACIONES.find(v=>v.folio===state.modalForm.key) : {};
+  const fv=(k,d='')=> r&&r[k]!==undefined?r[k]:d;
+  const estados = ['Borrador','Solicitada','En revisión','Autorizada','Rechazada','Cancelada','Disfrutada'];
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar solicitud de vacaciones':'Nueva solicitud de vacaciones')}
+      <label class="field-label">Colaborador</label>
+      <select id="f-colaborador" class="field-input">${COLABORADORES.map(c=>{ const opt=c.folio+' · '+c.nombre; return `<option ${fv('colaborador')===opt?'selected':''}>${opt}</option>`; }).join('')}</select>
+      <div class="form-grid">
+        <div><label class="field-label">Periodo</label><input id="f-periodo" class="field-input" value="${fv('periodo','2026')}"></div>
+        <div><label class="field-label">Días solicitados</label><input id="f-dias" type="number" class="field-input" value="${fv('dias',1)}"></div>
+      </div>
+      <div class="form-grid">
+        <div>${dateField('f-inicio','Fecha de salida', fv('inicio'))}</div>
+        <div>${dateField('f-regreso','Fecha de regreso', fv('regreso'))}</div>
+      </div>
+      <label class="field-label">Estado</label><select id="f-estado" class="field-input">${estados.map(o=>`<option ${fv('estado','Solicitada')===o?'selected':''}>${o}</option>`).join('')}</select>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitVacacionForm()">${editing?'Guardar cambios':'Enviar solicitud'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitVacacionForm(){
+  const colaborador = selVal('f-colaborador'), inicio = dateVal('f-inicio');
+  if(!inicio){ showToast('Indica la fecha de salida','alert'); return; }
+  const data = { colaborador, periodo: val('f-periodo'), dias: Number(val('f-dias'))||1, inicio, regreso: dateVal('f-regreso'), estado: selVal('f-estado') };
+  const editing = state.modalForm.mode==='edit';
+  if(editing){ const idx=VACACIONES.findIndex(v=>v.folio===state.modalForm.key); VACACIONES[idx]={...VACACIONES[idx], ...data}; showToast('Solicitud actualizada','check2'); }
+  else { VACACIONES.push({ folio: nextFolio(VACACIONES,'VAC-2026'), ...data, estado:'Solicitada' }); showToast('Solicitud de vacaciones enviada','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Permiso ---- */
+function renderPermisoForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? PERMISOS.find(p=>p.folio===state.modalForm.key) : {};
+  const fv=(k,d='')=> r&&r[k]!==undefined?r[k]:d;
+  const estados = ['Borrador','Solicitada','En revisión','Autorizada','Rechazada','Cancelada'];
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar permiso':'Nueva solicitud de permiso')}
+      <label class="field-label">Colaborador</label>
+      <select id="f-colaborador" class="field-input">${COLABORADORES.map(c=>{ const opt=c.folio+' · '+c.nombre; return `<option ${fv('colaborador')===opt?'selected':''}>${opt}</option>`; }).join('')}</select>
+      <div class="form-grid">
+        <div><label class="field-label">Tipo</label><select id="f-tipo" class="field-input">${CATALOGOS.find(c=>c.nombre==='Tipos de permiso').items.map(o=>`<option ${fv('tipo')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+        <div><label class="field-label">Condición</label><select id="f-goce" class="field-input">${['Con goce','Sin goce'].map(o=>`<option ${fv('goce','Con goce')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+      </div>
+      <div class="form-grid">
+        <div>${dateField('f-fecha','Fecha', fv('fecha'))}</div>
+        <div><label class="field-label">Duración</label><input id="f-duracion" class="field-input" value="${fv('duracion')}" placeholder="Ej. 2 horas"></div>
+      </div>
+      <label class="field-label">Estado</label><select id="f-estado" class="field-input">${estados.map(o=>`<option ${fv('estado','Solicitada')===o?'selected':''}>${o}</option>`).join('')}</select>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitPermisoForm()">${editing?'Guardar cambios':'Enviar solicitud'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitPermisoForm(){
+  const colaborador = selVal('f-colaborador'), fecha = dateVal('f-fecha');
+  if(!fecha){ showToast('Indica la fecha del permiso','alert'); return; }
+  const data = { colaborador, tipo: selVal('f-tipo'), goce: selVal('f-goce'), fecha, duracion: val('f-duracion'), estado: selVal('f-estado') };
+  const editing = state.modalForm.mode==='edit';
+  if(editing){ const idx=PERMISOS.findIndex(p=>p.folio===state.modalForm.key); PERMISOS[idx]={...PERMISOS[idx], ...data}; showToast('Permiso actualizado','check2'); }
+  else { PERMISOS.push({ folio: nextFolio(PERMISOS,'PER-2026'), ...data, estado:'Solicitada' }); showToast('Solicitud de permiso enviada','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Curso ---- */
+function renderCursoForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? CURSOS[state.modalForm.key] : {};
+  const fv=(k,d='')=> r&&r[k]!==undefined?r[k]:d;
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar curso':'Nuevo curso')}
+      <div class="form-grid">
+        <div><label class="field-label">Código</label><input id="f-codigo" class="field-input" value="${fv('codigo')}" placeholder="CAP-000"></div>
+        <div><label class="field-label">Modalidad</label><select id="f-modalidad" class="field-input">${['Presencial','Virtual','Mixta'].map(o=>`<option ${fv('modalidad','Presencial')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+      </div>
+      <label class="field-label">Nombre del curso</label><input id="f-nombre" class="field-input" value="${fv('nombre')}">
+      <div class="form-grid">
+        <div><label class="field-label">Duración</label><input id="f-duracion" class="field-input" value="${fv('duracion')}" placeholder="Ej. 4 hrs"></div>
+        <div><label class="field-label">Vigencia</label><input id="f-vigencia" class="field-input" value="${fv('vigencia')}" placeholder="Ej. 1 año"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitCursoForm()">${editing?'Guardar cambios':'Crear curso'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitCursoForm(){
+  const nombre = val('f-nombre');
+  if(!nombre){ showToast('Ingresa el nombre del curso','alert'); return; }
+  const data = { codigo: val('f-codigo'), nombre, modalidad: selVal('f-modalidad'), duracion: val('f-duracion'), vigencia: val('f-vigencia') };
+  const editing = state.modalForm.mode==='edit';
+  if(editing){ CURSOS[state.modalForm.key]=data; showToast('Curso actualizado','check2'); }
+  else { CURSOS.push(data); showToast('Curso creado correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Contrato ---- */
+function renderContratoForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? CONTRATOS.find(c=>c.folio===state.modalForm.key) : {};
+  const fv=(k,d='')=> r&&r[k]!==undefined?r[k]:d;
+  const tipos = CATALOGOS.find(c=>c.nombre==='Tipos de contrato').items;
+  const estados = ['Vigente','Por vencer','Pendiente de firma','Vencido'];
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar contrato':'Nuevo contrato')}
+      <label class="field-label">Colaborador</label>
+      <select id="f-colaborador" class="field-input">${COLABORADORES.map(c=>{ const opt=c.folio+' · '+c.nombre; return `<option ${fv('colaborador')===opt?'selected':''}>${opt}</option>`; }).join('')}</select>
+      <label class="field-label">Tipo de documento</label>
+      <select id="f-tipo" class="field-input">${tipos.map(o=>`<option ${fv('tipo')===o?'selected':''}>${o}</option>`).join('')}</select>
+      <div class="form-grid">
+        <div>${dateField('f-inicio','Fecha de inicio', fv('inicio'))}</div>
+        <div>${dateField('f-fin','Fecha de término', fv('fin')!=='Indeterminado'?fv('fin'):'')}</div>
+      </div>
+      <input id="f-fin-indeterminado" type="checkbox" ${fv('fin')==='Indeterminado'?'checked':''} style="margin-right:6px;" onclick="document.getElementById('f-fin').disabled=this.checked;"><label style="font-size:12px;color:var(--ink-soft);">Contrato por tiempo indeterminado (sin fecha de término)</label>
+      <div style="margin-top:14px;"></div>
+      <label class="field-label">Estado</label><select id="f-estado" class="field-input">${estados.map(o=>`<option ${fv('estado','Pendiente de firma')===o?'selected':''}>${o}</option>`).join('')}</select>
+      <label class="field-label">Responsable</label><input id="f-responsable" class="field-input" value="${fv('responsable','J. Peña')}">
+      ${fileField('f-archivo','Archivo del contrato firmado', fv('archivoNombre'), fv('archivoUrl'))}
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitContratoForm()">${editing?'Guardar cambios':'Crear contrato'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitContratoForm(){
+  const colaborador = selVal('f-colaborador'), inicio = dateVal('f-inicio');
+  if(!inicio){ showToast('Indica la fecha de inicio','alert'); return; }
+  const indeterminado = document.getElementById('f-fin-indeterminado').checked;
+  const fin = indeterminado ? 'Indeterminado' : dateVal('f-fin');
+  const editing = state.modalForm.mode==='edit';
+  const prevCt = editing ? CONTRATOS.find(c=>c.folio===state.modalForm.key) : {};
+  const archivo = getFileData('f-archivo', prevCt.archivoNombre, prevCt.archivoUrl);
+  const data = { colaborador, tipo: selVal('f-tipo'), inicio, fin, estado: selVal('f-estado'), responsable: val('f-responsable'), archivoNombre: archivo.name, archivoUrl: archivo.url };
+  if(editing){ const idx=CONTRATOS.findIndex(c=>c.folio===state.modalForm.key); CONTRATOS[idx]={...CONTRATOS[idx], ...data}; showToast('Contrato actualizado','check2'); }
+  else { CONTRATOS.push({ folio: nextFolio(CONTRATOS,'CTR-2026'), ...data }); showToast('Contrato creado correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Formato ---- */
+function renderFormatoForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? FORMATOS[state.modalForm.key] : {};
+  const fv=(k,d='')=> r&&r[k]!==undefined?r[k]:d;
+  const campos = editing ? r.campos.join(String.fromCharCode(10)) : '';
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar formato':'Nuevo formato')}
+      <label class="field-label">Nombre del formato</label><input id="f-nombre" class="field-input" value="${fv('nombre')}">
+      <label class="field-label">Categoría</label><input id="f-categoria" class="field-input" value="${fv('categoria')}">
+      <label class="field-label">Campos automáticos (uno por línea)</label>
+      <textarea id="f-campos" class="field-input" rows="6" style="resize:none;">${campos}</textarea>
+      ${fileField('f-plantilla','Plantilla del formato (Word / PDF)', fv('plantillaNombre'), fv('plantillaUrl'))}
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitFormatoForm()">${editing?'Guardar cambios':'Crear formato'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitFormatoForm(){
+  const nombre = val('f-nombre');
+  if(!nombre){ showToast('Ingresa el nombre del formato','alert'); return; }
+  const campos = document.getElementById('f-campos').value.split(String.fromCharCode(10)).map(s=>s.trim()).filter(Boolean);
+  const editing = state.modalForm.mode==='edit';
+  const prevFmt = editing ? FORMATOS[state.modalForm.key] : {};
+  const plantilla = getFileData('f-plantilla', prevFmt.plantillaNombre, prevFmt.plantillaUrl);
+  const data = { nombre, categoria: val('f-categoria'), campos, plantillaNombre: plantilla.name, plantillaUrl: plantilla.url, usos: editing? FORMATOS[state.modalForm.key].usos : 0 };
+  if(editing){ FORMATOS[state.modalForm.key]=data; showToast('Formato actualizado','check2'); }
+  else { FORMATOS.push(data); showToast('Formato creado correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Usuario ---- */
+function renderUsuarioForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? USUARIOS[state.modalForm.key] : {};
+  const fv=(k,d='')=> r&&r[k]!==undefined?r[k]:d;
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar usuario':'Nuevo usuario')}
+      <label class="field-label">Nombre completo</label><input id="f-nombre" class="field-input" value="${fv('nombre')}">
+      <label class="field-label">Correo</label><input id="f-correo" class="field-input" value="${fv('correo')}">
+      <label class="field-label">Rol</label><select id="f-rol" class="field-input">${ROLES.map(o=>`<option ${fv('rol','Colaborador / Profesional externo')===o?'selected':''}>${o}</option>`).join('')}</select>
+      <div class="form-grid">
+        <div><label class="field-label">Sucursal</label><select id="f-sucursal" class="field-input"><option ${fv('sucursal','Todas')==='Todas'?'selected':''}>Todas</option>${SUCURSALES.map(s=>`<option ${fv('sucursal')===s.nombre?'selected':''}>${s.nombre}</option>`).join('')}</select></div>
+        <div><label class="field-label">Estado</label><select id="f-estado" class="field-input">${['Activo','Inactivo'].map(o=>`<option ${fv('estado','Activo')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitUsuarioForm()">${editing?'Guardar cambios':'Crear usuario'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitUsuarioForm(){
+  const nombre = val('f-nombre'), correo = val('f-correo');
+  if(!nombre || !correo){ showToast('Completa el nombre y el correo del usuario','alert'); return; }
+  const editing = state.modalForm.mode==='edit';
+  const data = { nombre, correo, rol: selVal('f-rol'), sucursal: selVal('f-sucursal'), estado: selVal('f-estado'),
+    acceso: editing? USUARIOS[state.modalForm.key].acceso : 'Sin accesos aún' };
+  if(editing){ USUARIOS[state.modalForm.key]=data; showToast('Usuario actualizado','check2'); }
+  else { USUARIOS.push(data); showToast('Usuario creado correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ---- Prestación ---- */
+function renderPrestacionForm(){
+  const editing = state.modalForm.mode==='edit';
+  const r = editing ? PRESTACIONES.find(p=>p.folio===state.modalForm.key) : {};
+  const fv=(k,d='')=> r&&r[k]!==undefined?r[k]:d;
+  const estados = ['Borrador','En revisión','Autorizado','Pagado','Cancelado'];
+  return `<div class="modal-backdrop" onclick="closeForm()">
+    <div class="modal-box fadein" onclick="event.stopPropagation()">
+      ${modalHead(editing?'Editar cálculo':'Nuevo cálculo de prestación')}
+      <label class="field-label">Colaborador</label>
+      <select id="f-colaborador" class="field-input">${COLABORADORES.map(c=>{ const opt=c.folio+' · '+c.nombre; return `<option ${fv('colaborador')===opt?'selected':''}>${opt}</option>`; }).join('')}</select>
+      <div class="form-grid">
+        <div><label class="field-label">Concepto</label><select id="f-concepto" class="field-input">${['Aguinaldo','Prima vacacional','Bono'].map(o=>`<option ${fv('concepto','Aguinaldo')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+        <div><label class="field-label">Periodo</label><input id="f-periodo" class="field-input" value="${fv('periodo','2026')}"></div>
+      </div>
+      <div class="form-grid">
+        <div><label class="field-label">Importe calculado (MXN)</label><input id="f-importe" type="number" class="field-input" value="${fv('importe',0)}"></div>
+        <div><label class="field-label">Estado</label><select id="f-estado" class="field-input">${estados.map(o=>`<option ${fv('estado','Borrador')===o?'selected':''}>${o}</option>`).join('')}</select></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="closeForm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;justify-content:center;padding:10px 0;" onclick="submitPrestacionForm()">${editing?'Guardar cambios':'Crear cálculo'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function submitPrestacionForm(){
+  const colaborador = selVal('f-colaborador');
+  const data = { colaborador, concepto: selVal('f-concepto'), periodo: val('f-periodo'), importe: Number(val('f-importe'))||0, estado: selVal('f-estado') };
+  const editing = state.modalForm.mode==='edit';
+  if(editing){ const idx=PRESTACIONES.findIndex(p=>p.folio===state.modalForm.key); PRESTACIONES[idx]={...PRESTACIONES[idx], ...data}; showToast('Cálculo actualizado','check2'); }
+  else { PRESTACIONES.push({ folio: nextFolio(PRESTACIONES,'PRE-2026'), ...data }); showToast('Cálculo creado correctamente','check2'); }
+  state.modalForm=null; render();
+}
+
+/* ============================== CONFIRMACIÓN DE ELIMINACIÓN ============================== */
+function askDelete(type, key, label){ state.confirmDelete = { type, key, label }; render(); }
+function cancelDeleteModal(){ state.confirmDelete = null; render(); }
+function renderConfirmDeleteModal(){
+  const { label } = state.confirmDelete;
+  return `<div class="modal-backdrop" onclick="cancelDeleteModal()">
+    <div class="modal-box fadein" style="width:380px;text-align:center;" onclick="event.stopPropagation()">
+      <div style="width:44px;height:44px;border-radius:50%;background:var(--danger-soft);color:var(--danger);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">${ICONS.trash}</div>
+      <div style="font-size:15px;font-weight:500;margin-bottom:6px;">¿Eliminar «${label}»?</div>
+      <p style="font-size:12.5px;color:var(--ink-soft);line-height:1.6;margin:0 0 20px;">Esta acción es permanente dentro de esta sesión de demostración y no se puede deshacer.</p>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center;padding:10px 0;" onclick="cancelDeleteModal()">Cancelar</button>
+        <button class="btn btn-danger" style="flex:1;justify-content:center;padding:10px 0;" onclick="doDelete()">Eliminar</button>
+      </div>
+    </div>
+  </div>`;
+}
+function doDelete(){
+  const { type, key, label } = state.confirmDelete;
+  switch(type){
+    case 'colaborador': { const idx=COLABORADORES.findIndex(c=>c.folio===key); if(idx>-1) COLABORADORES.splice(idx,1); if(state.colSel===key){ state.colSel=null; state.page='colaboradores'; } break; }
+    case 'sucursal': { const idx=SUCURSALES.findIndex(s=>s.id===key); if(idx>-1) SUCURSALES.splice(idx,1); break; }
+    case 'area': AREAS.splice(key,1); break;
+    case 'puesto': PUESTOS.splice(key,1); break;
+    case 'movimiento': MOVIMIENTOS.splice(key,1); break;
+    case 'contenido': CONTENIDO.splice(key,1); break;
+    case 'horario': HORARIOS.splice(key,1); break;
+    case 'vacacion': { const idx=VACACIONES.findIndex(v=>v.folio===key); if(idx>-1) VACACIONES.splice(idx,1); break; }
+    case 'permiso': { const idx=PERMISOS.findIndex(p=>p.folio===key); if(idx>-1) PERMISOS.splice(idx,1); break; }
+    case 'curso': CURSOS.splice(key,1); break;
+    case 'contrato': { const idx=CONTRATOS.findIndex(c=>c.folio===key); if(idx>-1) CONTRATOS.splice(idx,1); break; }
+    case 'formato': FORMATOS.splice(key,1); break;
+    case 'usuario': USUARIOS.splice(key,1); break;
+    case 'prestacion': { const idx=PRESTACIONES.findIndex(p=>p.folio===key); if(idx>-1) PRESTACIONES.splice(idx,1); break; }
+  }
+  showToast((label||'Registro')+' eliminado','trash');
+  state.confirmDelete = null;
+  render();
+}
+
+/* ============================== ACCIONES / RUTEO ============================== */
+function render(){
+  document.getElementById('app').innerHTML = state.session ? renderShell() : renderLogin();
+}
+function login(){ state.session = true; render(); showToast('Sesión iniciada','check2'); }
+function logout(){ state.session = false; render(); }
+function goTo(page){ state.page = page; state.colSel = null; state.showNotif = false; render(); }
+function changeRole(role){
+  state.role = role;
+  if(!ROLE_ACCESS[role].includes(state.page)) state.page = 'dashboard';
+  state.colSel = null; render();
+  showToast('Vista cambiada al rol '+role,'users');
+}
+function selectCol(folio){ state.colSel = folio; render(); }
+function backCol(){ state.colSel = null; render(); }
+function toggleNotif(ev){ ev.stopPropagation(); state.showNotif = !state.showNotif; render(); }
+function filtroColChange(v){
+  state.filtroCol = v; render();
+  const input = document.querySelector('#app input[placeholder^="Buscar"]');
+  if(input){ input.focus(); input.setSelectionRange(v.length, v.length); }
+}
+function filtroTipoChange(v){ state.filtroTipo = v; render(); }
+function selectReporte(id){ state.reporteSel = id; render(); }
+
+document.addEventListener('click', ()=>{ if(state.showNotif){ state.showNotif=false; render(); } });
+
+render();
+</script>
+</body>
+</html>
